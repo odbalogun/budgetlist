@@ -1,0 +1,105 @@
+{% extends "layout.html" %}
+{% block secondLayer %}
+<div class="secondLayer">
+    <div class="wrapper">
+        <ul>
+            <li>
+                <a class="{% if request.path == '/assigned-tasks'%} active {% endif %}" href="{{ url_for('.assigned_tasks')}}">Your Projects</a>
+            </li>
+        </ul>
+    </div>
+</div>
+{% endblock %}
+
+
+{% block body %}
+<div class="banner">
+    <div class="content">
+        <div class="title">Welcome {{ current_user.full_name }}</div>
+        <ul class="myTabs" role="tablist">
+            <li role="presentation" class="active"><a href="#recent" aria-controls="recent" role="tab" data-toggle="tab">Recent</a></li>
+            <li role="presentation"><a href="#completed" aria-controls="completed" role="tab" data-toggle="tab">Completed</a></li>
+            <li role="presentation"><a href="#all" aria-controls="all" role="tab" data-toggle="tab">All</a></li>
+        </ul>
+    </div>
+</div>
+<div class="details infor pt-0">
+    <div class="wrapper">
+    <div class="tab-content">
+        <div role="tabpanel" class="tab-pane active mt-30" id="recent">
+            {% if tasks %}
+                {% for task in tasks %}
+                <div class="tableInfo clearfix">
+                    <a href="{{ url_for('.assigned_tasks')}}">
+                        <span class="projectName">{{ task.title }}</span>
+                        <span class="done">
+                            <div class="completion">
+                                {{ task.percent }}% completed
+                            </div>
+                            <div class="progress">
+                              <div class="progress-bar progress-bar-success progress-bar-striped" role="progressbar" aria-valuenow="{{ task.percent }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ task.percent }}%">
+                              </div>
+                            </div>
+                        </span>
+                        <span class="status">{{ task.statusText }}</span>
+                        <span class="Date">{{ task.deadline }}</span>
+                    </a>
+                </div>
+                {% endfor %}
+            {% else %}
+                <p>There are no tasks assigned to you</p>
+            {% endif %}
+        </div>
+        <div role="tabpanel" class="tab-pane" id="completed">
+            {% if tasks %}
+                {% for task in tasks if task.status == 2 %}
+                <div class="tableInfo clearfix">
+                    <a href="{{ url_for('.assigned_tasks')}}">
+                        <span class="projectName">{{ task.title }}</span>
+                        <span class="done">
+                            <div class="completion">
+                                {{ task.percent }}% completed
+                            </div>
+                            <div class="progress">
+                              <div class="progress-bar progress-bar-success progress-bar-striped" role="progressbar" aria-valuenow="{{ task.percent }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ task.percent }}%">
+                              </div>
+                            </div>
+                        </span>
+                        <span class="status">{{ task.statusText }}</span>
+                        <span class="Date">{{ task.deadline }}</span>
+                    </a>
+                </div>
+                {% endfor %}
+            {% else %}
+                <p>There are no completed tasks assigned to you</p>
+            {% endif %}
+        </div>
+        <div role="tabpanel" class="tab-pane" id="all">
+            {% if tasks %}
+                {% for task in tasks %}
+                <div class="tableInfo clearfix">
+                    <a href="{{ url_for('.assigned_tasks')}}">
+                        <span class="projectName">{{ task.title }}</span>
+                        <span class="done">
+                            <div class="completion">
+                                {{ task.percent }}% completed
+                            </div>
+                            <div class="progress">
+                              <div class="progress-bar progress-bar-success progress-bar-striped" role="progressbar" aria-valuenow="{{ task.percent }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ task.percent }}%">
+                              </div>
+                            </div>
+                        </span>
+                        <span class="status">{{ task.statusText }}</span>
+                        <span class="Date">{{ task.deadline }}</span>
+                    </a>
+                </div>
+                {% endfor %}
+            {% else %}
+                <p>There are no tasks assigned to you</p>
+            {% endif %}
+        </div>
+    </div>
+    
+    </div>
+</div>
+{% endblock %}

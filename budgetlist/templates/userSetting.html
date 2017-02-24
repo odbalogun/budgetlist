@@ -1,0 +1,102 @@
+{% extends "layout.html" %}
+{% block secondLayer %}
+<div class="secondLayer">
+    <div class="wrapper">
+        <ul>
+            <li>
+                <a class="{% if request.path == '/settings'%} active {% endif %}" href="{{ url_for('.settings')}}">Company Settings</a>
+            </li>
+            <li>
+                <a class="{% if request.path == '/periods'%} active {% endif %}" href="{{ url_for('.periods')}}">Period Settings</a>
+            </li>
+            <li>
+                <a class="{% if request.path == '/create-user'%} active {% endif %}" href="{{ url_for('.create_user')}}">User Settings</a>
+            </li>
+            <li>
+                <a class="{% if request.path == '/departments'%} active {% endif %}" href="{{ url_for('.departments')}}">Department Settings</a>
+            </li>
+            <li>
+                <a class="{% if request.path == '/budgets'%} active {% endif %}" href="{{ url_for('.budgets')}}">Budget Settings</a>
+            </li>
+        </ul>
+    </div>
+</div>
+{% endblock %}
+
+
+
+{% block body %}
+<div class="details">
+    <div class="wrapper">
+        <div class="settings">
+            <form method="post" class="clearfix">
+                {{ form.csrf_token }}
+                {{ form.errors }}
+                <div class="clearfix">
+                    <div class="col-md-offset-1 col-md-8 pl-0 ">
+                        <div class="title">User Settings</div>
+                        <div class="form-wrap">
+                            <div class="form-group clearfix">
+                                <label class="col-md-3 control-label">User Name</label>
+                                <div class="col-md-9 borderd">
+                                  <input name="username" class="form-control" placeholder="User Name">
+                                  <span class="input-group-addon"><i class="fa fa-user" aria-hidden="true"></i></span>
+                                </div>
+                            </div>
+                        </div> 
+                        <div class="form-wrap clearfix">
+                            <div class="form-group clearfix">
+                                <label class="col-md-3 control-label">Full Name</label>
+                                <div class="col-md-9 borderd">
+                                  <input name="full_name" class="form-control" placeholder="Full Name">
+                                  <span class="input-group-addon"><i class="fa fa-user" aria-hidden="true"></i></span> 
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-wrap">
+                            <div class="form-group clearfix">
+                                <label class="col-md-3 control-label">Email</label>
+                                <div class="col-md-9 borderd">
+                                  <input type="email" name="email" class="form-control" placeholder="Email">
+                                  <span class="input-group-addon"><i class="fa fa-at" aria-hidden="true"></i></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-wrap clearfix">
+                            <div class="form-group clearfix">
+                                <label class="col-md-3 control-label">Password</label>
+                                <div class="col-md-9 borderd">
+                                  <input type="password" name="password" class="form-control" placeholder="Password">
+                                  <span class="input-group-addon"><i class="fa fa-lock" aria-hidden="true"></i></span> 
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-wrap clearfix">
+                            <div class="form-group clearfix">
+                                <label class="col-md-3 control-label">Confirm Password</label>
+                                <div class="col-md-9 borderd">
+                                  <input type="password" name="confirm_password" class="form-control" placeholder="Confirm Password">
+                                  <span class="input-group-addon"><i class="fa fa-lock" aria-hidden="true"></i></span> 
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-wrap">
+                            <div class="form-group clearfix">
+                                <label class="col-md-3 control-label">User Type</label>
+                                <div class="col-md-9 borderd">
+                                    {{ form.user_type(class_="form-control") }}
+                                    <span class="input-group-addon"><i class="fa fa-user-secret" aria-hidden="true"></i></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-offset-1 col-md-8 pl-0 ">
+                    <button type="submit" class="submit">Save</button>
+                    <button type="button" class="cancel">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

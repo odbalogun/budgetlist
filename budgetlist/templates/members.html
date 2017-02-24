@@ -1,0 +1,57 @@
+{% extends "layout.html" %}
+{% block secondLayer %}
+<div class="secondLayer">
+    <div class="wrapper">
+        <ul>
+            <li>
+                <a class="{% if request.path == '/users' %} active {% endif %}" href="{{ url_for('.users')}}">All Members</a>
+            </li>
+            <li>
+                <a class="{% if request.path == '/activeUsers' %} active {% endif %}" href="{{ url_for('.active_users')}}">Active Members</a>
+            </li>
+            <li>
+                <a class="{% if request.path == '/inactiveUsers' %} active {% endif %}" href="{{ url_for('.inactive_users')}}">Inactive Members</a>
+            </li>
+        </ul>
+    </div>
+</div>
+{% endblock %}
+
+
+{% block body %}
+<div class="details">
+    <div class="wrapper">
+        {% if users %}
+        <table class="">
+            <tr>
+                <th>Username</th>
+                <th>Full Name</th>
+                <th>Department</th>
+                <th>User Type</th>
+                <th>Email</th>
+                <th></th>
+            </tr>
+            {% for user in users %}
+            <tr>
+                <td>{{ user.username }}</td>
+                <td>{{ user.full_name }}</td>
+                <td>{{ user.department.name }}</td>
+                <td>{{ user.user_type }}</td>
+                <td><a href="{{ user.email }}">{{ user.email }}</a></td>
+                <td>
+                    {% if user.status == 0 %}
+                        <a class="deactivated" href="{{ url_for('.toggle_user_status', action=1, userid=user.id) }}">Deactivate</a>
+                    {% else %}
+                        <a class="activated" href="{{ url_for('.toggle_user_status', action=0, userid=user.id) }}">Activate</a>
+                    {% endif %}
+                    <a class="edited" href="{{ url_for('.edit_user', userid=user.id) }}">Edit</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+        {% else %}
+            <p>There are no users to display...</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

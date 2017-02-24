@@ -1,0 +1,207 @@
+/*
+ ####################################
+        SourceSansPro  Font
+ ####################################
+ */
+
+@font-face {
+    font-family: SourceSansPro;
+    src: url('SourceSansPro-Black.otf');
+    font-style: normal;
+    font-weight: bold;
+}
+
+@font-face {
+    font-family: SourceSansPro;
+    src: url('SourceSansPro-BlackIt.otf');
+    font-style: italic;
+    font-weight: bold;
+}
+
+@font-face {
+    font-family: SourceSansPro;
+    src: url('SourceSansPro-BoldIt.otf');
+    font-style: italic;
+    font-weight: 700;
+}
+
+@font-face {
+    font-family: SourceSansPro;
+    src: url('SourceSansPro-Bold.otf');
+    font-style: normal;
+    font-weight: 700;
+}
+
+@font-face {
+    font-family: SourceSansPro;
+    src: url('SourceSansPro-SemiboldIt.otf');
+    font-style: italic;
+    font-weight: 600;
+}
+
+@font-face {
+    font-family: SourceSansPro;
+    src: url('SourceSansPro-Semibold.otf');
+    font-style: normal;
+    font-weight: 600;
+}
+
+@font-face {
+    font-family: SourceSansPro;
+    src: url('SourceSansPro-Regular.otf');
+    font-style: normal;
+    font-weight: 500;
+}
+
+@font-face {
+    font-family: SourceSansPro;
+    src: url('SourceSansPro-It.otf');
+    font-style: italic;
+    font-weight: 500;
+}
+
+@font-face {
+    font-family: SourceSansPro;
+    src: url('SourceSansPro-Light.otf');
+    font-style: normal;
+    font-weight: 300;
+}
+
+@font-face {
+    font-family: SourceSansPro;
+    src: url('SourceSansPro-LightIt.otf');
+    font-style: italic;
+    font-weight: 300;
+}
+
+@font-face {
+    font-family: SourceSansPro;
+    src: url('SourceSansPro-ExtraLight.otf');
+    font-style: normal;
+    font-weight: 100;
+}
+
+
+
+/*
+ ####################################
+        gt_walsheim  Font
+ ####################################
+ */
+
+
+@font-face {
+    font-family: gt_walsheim;
+    src: url('gt-walsheim/gt-walsheim-medium-web.woff');
+    font-style: normal;
+    font-weight: 500;
+}
+
+@font-face {
+    font-family: gt_walsheim;
+    src: url('gt-walsheim/gt-walsheim-thin-web.woff');
+    font-style: normal;
+    font-weight: 400;
+}
+
+
+
+
+/*
+ ####################################
+        palanquin  Font
+ ####################################
+ */
+
+@font-face {
+    font-family: palanquin;
+    src: url('palanquin/palanquindark-bold.ttf');
+    font-style: normal;
+    font-weight: bold;
+}
+
+@font-face {
+    font-family: palanquin;
+    src: url('palanquin/palanquindark-semibold.ttf');
+    font-style: normal;
+    font-weight: 900;
+}
+
+@font-face {
+    font-family: palanquin;
+    src: url('palanquin/palanquindark-medium.ttf');
+    font-style: normal;
+    font-weight: 600;
+}
+
+@font-face {
+    font-family: palanquin;
+    src: url('palanquin/palanquindark-regular.ttf');
+    font-style: normal;
+    font-weight: 500;
+}
+
+@font-face {
+    font-family: palanquin;
+    src: url('palanquin/palanquin-semibold.ttf');
+    font-style: normal;
+    font-weight: 400;
+}
+
+@font-face {
+    font-family: palanquin;
+    src: url('palanquin/palanquin-medium.ttf');
+    font-style: normal;
+    font-weight: 300;
+}
+
+@font-face {
+    font-family: palanquin;
+    src: url('palanquin/palanquin-light.ttf');
+    font-style: normal;
+    font-weight: 200;
+}
+
+@font-face {
+    font-family: palanquin;
+    src: url('palanquin/palanquin-thin.ttf');
+    font-style: normal;
+    font-weight: 100;
+}
+
+
+/*
+ ####################################
+        SegoeUi  Font
+ ####################################
+ */
+
+
+ @font-face {
+    font-family: segoeui;
+    src: url('segoe-ui/segoeuib.ttf');
+    font-style: normal;
+    font-weight: bold;
+}
+
+@font-face {
+    font-family: segoeui;
+    src: url('segoe-ui/segoeuiz.ttf');
+    font-style: normal;
+    font-weight: 900;
+}
+
+@font-face {
+    font-family: segoeui;
+    src: url('segoe-ui/segoeui.ttf');
+    font-style: normal;
+    font-weight: 500;
+}
+
+@font-face {
+    font-family: segoeui;
+    src: url('segoe-ui/segoeuii.ttf');
+    font-style: italic;
+    font-weight: 500;
+}
+

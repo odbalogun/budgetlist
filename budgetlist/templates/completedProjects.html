@@ -1,0 +1,45 @@
+{% extends "layout.html" %}
+
+{% block body %}
+<div class="details headerSpace">
+    <div class="wrapper">
+        <div class="col-md-12 p-0">
+            <div class="information">
+                <div class="title">Completed Projects</div>
+                <div class="projectTabWrap all clearfix">
+                   {% if projects %}
+                    <ul>
+                        {% for project in projects %}
+                        <li class="projectTab completed">
+                            <a href="backlogs.html">
+                                <span class="project">
+                                    {{ project.title }}
+                                </span>
+                                <span class="date">
+                                    {{ project.end_date }}
+                                </span>
+                                <div class="completion">
+                                    {{ project.completion }}% completed
+                                </div>
+                                <div class="progress">
+                                  <div class="progress-bar progress-bar-success progress-bar-striped" role="progressbar" aria-valuenow="{{ project.completion }}" aria-valuemin="0" aria-valuemax="100" style="width: {{project.completion}}%">
+                                  </div>
+                                </div>
+                                <span class="icon">
+                                    <i class="fa fa-long-arrow-right" aria-hidden="true"></i>
+                                </span>
+                            </a>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                    {% else %}
+                        <p>There are no completed projects to display</p>
+                    {% endif %}
+                
+                </div>
+                
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
