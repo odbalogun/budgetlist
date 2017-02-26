@@ -1,8 +1,8 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SelectField, DateField, SelectMultipleField, \
+from wtforms import StringField, PasswordField, SelectField, DateField, HiddenField, \
     DecimalField, TextAreaField, IntegerField, RadioField
 from wtforms.validators import DataRequired, Email, EqualTo, Length, Optional
-from helpers import Unique, list_account_types
+from helpers import Unique, list_account_types, list_budget_types
 from models import User
 
 class LoginForm(FlaskForm):
@@ -16,12 +16,11 @@ class CompanyForm(FlaskForm):
 
 class PeriodForm(FlaskForm):
     name = StringField('Period Name', validators=[DataRequired()])
-    start_date = DateField('Start Date', validators=[DataRequired()])
-    end_date = DateField('End Date', validators=[DataRequired()])
+    start_date = DateField('Start Date', validators=[DataRequired()], format='%d/%m/%Y')
+    end_date = DateField('End Date', validators=[DataRequired()], format='%d/%m/%Y')
 
 class DepartmentForm(FlaskForm):
     name = StringField('Department Name', validators=[DataRequired()])
-    head = SelectField('Department Head', validators=[DataRequired()], coerce=int)
 
 class UserForm(FlaskForm):
     full_name = StringField('Full Name', validators=[DataRequired(), Length(max=100)])
@@ -30,4 +29,21 @@ class UserForm(FlaskForm):
     password = PasswordField('Password', validators=[DataRequired()])
     confirm_password = PasswordField('Confirm Password', [DataRequired(),
                                                           EqualTo('password', 'The passwords do not match')])
-    user_type = SelectField('Account Type', [DataRequired()], choices=list_account_types, default=0)
+    department = SelectField('Department', validators=[DataRequired()], coerce=int)
+    user_type = SelectField('Account Type', [DataRequired()], choices=[(list_account_types.index(a), a) for a in list_account_types], coerce=int)
+
+class BudgetForm(FlaskForm):
+    name = StringField('Name', validators=[DataRequired(), Length(max=100)])
+    allocation = IntegerField('Allocation', validators=[DataRequired()])
+    period = SelectField('Fiscal Period', validators=[DataRequired()], coerce=int)
+    budget_type = SelectField('Budget Type', coerce=int)
+
+class ProjectForm(FlaskForm):
+    title = StringField('Name', validators=[DataRequired(), Length(max=100)])
+    description = TextAreaField('Description')
+    budget_limit = IntegerField('Allocation')
+    budget_id = SelectField('Budget Type', coerce=int)
+    start_date = DateField('Start Date', validators=[DataRequired()], format='%d/%m/%Y')
+    end_date = DateField('End Date', validators=[DataRequired()], format='%d/%m/%Y')
+    priority = SelectField('Priority', coerce=int)
+    owner_id = HiddenField()

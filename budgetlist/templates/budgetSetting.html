@@ -4,19 +4,19 @@
     <div class="wrapper">
         <ul>
             <li>
-                <a class="{% if request.path == '/settings'%} active {% endif %}" href="{{ url_for('settings')}}">Company Settings</a>
+                <a class="{% if request.path == '/settings'%} active {% endif %}" href="{{ url_for('.settings')}}">Company Settings</a>
             </li>
             <li>
-                <a class="{% if request.path == '/periodSettings'%} active {% endif %}" href="{{ url_for('periodSettings')}}">Period Settings</a>
+                <a class="{% if request.path == '/periods'%} active {% endif %}" href="{{ url_for('.periods')}}">Period Settings</a>
             </li>
             <li>
-                <a class="{% if request.path == '/userSetting'%} active {% endif %}" href="{{ url_for('userSetting')}}">User Settings</a>
+                <a class="{% if request.path == '/create-user'%} active {% endif %}" href="{{ url_for('.create_user')}}">User Settings</a>
             </li>
             <li>
-                <a class="{% if request.path == '/departmentSetting'%} active {% endif %}" href="{{ url_for('departmentSetting')}}">Department Settings</a>
+                <a class="{% if request.path == '/departments'%} active {% endif %}" href="{{ url_for('.departments')}}">Department Settings</a>
             </li>
             <li>
-                <a class="{% if request.path == '/budgetSetting'%} active {% endif %}" href="{{ url_for('budgetSetting')}}">Budget Settings</a>
+                <a class="{% if request.path == '/budgets'%} active {% endif %}" href="{{ url_for('.budgets')}}">Budget Settings</a>
             </li>
         </ul>
     </div>
@@ -29,14 +29,16 @@
 <div class="details">
     <div class="wrapper">
         <div class="settings">
-            <form action="">
+            <form method="post">
+                {{ form.errors }}
+                {{ form.csrf_token }}
                 <div class="col-md-offset-1 col-md-8 pl-0">
                     <div class="title">Budget Settings</div>
                     <div class="form-wrap">
                         <div class="form-group clearfix">
                             <label class="col-md-3 control-label">Budget Name</label>
                             <div class="col-md-9 borderd">
-                              <input type="name" class="form-control" placeholder="Budget Name">
+                              <input type="text" name="name" class="form-control" placeholder="Budget Name">
                               <span class="input-group-addon"><i class="fa fa-money" aria-hidden="true"></i></span>
                             </div>
                         </div>
@@ -45,18 +47,16 @@
                         <div class="form-group clearfix">
                             <label class="col-md-3 control-label">Period</label>
                             <div class="col-md-9 borderd">
-                                <select class="form-control">
-                                    <option>-- Choose Period --</option>
-                                </select>
+                                {{ form.period(class_='form-control') }}
                                 <span class="input-group-addon"><i class="fa fa-money" aria-hidden="true"></i></span>
                             </div>
                         </div>
                     </div>
                     <div class="form-wrap">
                         <div class="form-group clearfix">
-                            <label class="col-md-3 control-label">Budget</label>
+                            <label class="col-md-3 control-label">Allocation</label>
                             <div class="col-md-9 borderd">
-                              <input type="name" class="form-control" placeholder="Budget">
+                              <input type="text" name="allocation" class="form-control" placeholder="Allocation">
                               <span class="input-group-addon">₦</span>
                             </div>
                         </div>
@@ -65,20 +65,7 @@
                         <div class="form-group clearfix">
                             <label class="col-md-3 control-label">Budget Type</label>
                             <div class="col-md-9 borderd">
-                                <select class="form-control">
-                                    <option>-- Choose Budget Type --</option>
-                                </select>
-                                <span class="input-group-addon"><i class="fa fa-money" aria-hidden="true"></i></span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="form-wrap">
-                        <div class="form-group clearfix">
-                            <label class="col-md-3 control-label">Budget Status</label>
-                            <div class="col-md-9 borderd">
-                                <select class="form-control">
-                                    <option>-- Choose Budget Status --</option>
-                                </select>
+                                {{ form.budget_type(class_='form-control') }}
                                 <span class="input-group-addon"><i class="fa fa-money" aria-hidden="true"></i></span>
                             </div>
                         </div>

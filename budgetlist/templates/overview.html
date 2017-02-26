@@ -7,8 +7,27 @@
             <div class="information">
                 <div class="title">Create and manage Projects</div>
                 <div class="projectTabWrap clearfix">
-                {% if projects %}
-                <ul>
+                <ul id="projectGrid">
+                    <!-- ko foreach: projects -->
+                    <li class="projectTab">
+                        <a data-bind='attr: { "href": "/project-detail/" + id() }'>
+                            <span class="project" data-bind="text: title">
+                            </span>
+                            <span class="date" data-bind="text: end_date">
+                            </span>
+                            <div class="completion" data-bind="text: complete_string"></div>
+                            <div class="progress">
+                              <div class="progress-bar progress-bar-success progress-bar-striped" role="progressbar"
+                              data-bind='attr: { "aria-valuenow": complete(), "style": "width: "+complete()+"%" }' aria-valuemin="0" aria-valuemax="100">
+                              </div>
+                            </div>
+                            <span class="icon">
+                                <i class="fa fa-long-arrow-right" aria-hidden="true"></i>
+                            </span>
+                        </a>
+                    </li>
+                    <!-- /ko -->
+                    {% if projects %}
                     {% for project in projects %}
                     <li class="projectTab {% if project.status == 2 %} completed {% endif %}">
                         <a href="{{ url_for('.project_detail', id=project.id)}}">
@@ -31,18 +50,16 @@
                         </a>
                     </li>
                     {% endfor %}
+                    {% endif %}
                     <li class="projectTab add">
-                        <a href="{{ url_for('.all_projects')}}">
+                        <a href="#" data-toggle="modal" data-target=".addProject">
                             <div >
                                <div class="icon"><i class="fa fa-eye" aria-hidden="true"></i></div>
-                               <div class="text">View all Projects</div>
+                               <div class="text">Add Project</div>
                             </div>
                         </a>
                     </li>
                 </ul>
-                {% else %}
-                    <p>There are no projects to display</p>
-                {% endif %}
                 </div>
                 <div class="updateWrap clearfix">
                     <div class="col-md-6 pl-0">
@@ -134,5 +151,160 @@
         </div>
     </div>
 </div>
+
+<!-- Add new project -->
+<div class="generalModal modal fade addProject" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" data-backdrop="static" data-keyboard="false">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content" id="addProject">
+    <form>
+        {{ form.csrf_token }}
+        {{ form.owner_id(value=current_user.id, **{'data-bind': 'value: owner_id'}) }}
+        <div class="titleSection">
+            <div class="cancel clearfix">
+                <span class="title">Add new project</span>
+                <i data-dismiss="modal" class="fa fa-times" aria-hidden="true"></i>
+            </div>
+            <input type="text" name="title" class="title" data-bind="value: title" placeholder="Enter Title">
+            <div class="assign clearfix">
+                <button data-dismiss="modal" data-bind="click: addProject" class="save" type="button"><i class="fa fa-floppy-o" aria-hidden="true"></i> Save & close</button>
+            </div>
+        </div>
+        <div class="stateSection clearfix">
+            <div class="col-md-5">
+                <div class="form-wrap clearfix">
+                    <div class="col-md-2 p-0">
+                        <div class="title">Budget</div>
+                    </div>
+                    <div class="col-md-10">
+                        {{ form.budget_id(class_='stateForm', **{'data-bind': 'value: budget_id'}) }}
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-7">
+                <div class="form-wrap clearfix">
+                    <div class="col-md-1 p-0">
+                        <div class="title">Allocation</div>
+                    </div>
+                    <div class="col-md-11">
+                        <input type="text" class="stateForm" data-bind="value: allocation" name="budget_limit" placeholder="Amount(₦)">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="descritpionSection clearfix">
+            <div class="col-md-8">
+                <div class="title">Description</div>
+                <textarea data-bind="text: description" name="description"></textarea>
+            </div>
+            <div class="col-md-4">
+                <div class="title">Planning</div>
+                <div class="planingForms">
+                   <div class="title">Priority</div>
+                   {{ form.priority(class_='plan', **{'data-bind': 'value: priority'}) }}
+                </div>
+                <div class="planingForms">
+                   <div class="title">Start Date</div>
+                   <input data-bind="value: start_date" class="datetimepicker plan" name="start_date" type="text">
+                </div>
+                <div class="planingForms">
+                   <div class="title">End Date</div>
+                   <input data-bind="value: end_date" class="datetimepicker plan" name="end_date" type="text">
+                </div>
+            </div>
+        </div>
+    </form>
+    </div>
+  </div>
+</div>
+<script type="text/javascript">
+function ProjectsModel(){
+    var self = this;
+    self.projectsURI = 'http://localhost:9000/api/v1.0/projects/create';
+    self.projects = ko.observableArray();
+
+    self.projects([
+        {
+            id: ko.observable('1'),
+            title: ko.observable('Title #1'),
+            end_date: ko.observable('23-02-17'),
+            complete: ko.observable('76'),
+            complete_string: ko.observable('76% completed')
+        },
+        {
+            id: ko.observable('2'),
+            title: ko.observable('Title #2'),
+            end_date: ko.observable('02-02-16'),
+            complete: ko.observable('46'),
+            complete_string: ko.observable('46% completed')
+        }
+    ]);
+
+    self.ajax = function(uri, method, data){
+        var request = {
+            url: uri,
+            type: method,
+            contentType: "application/json",
+            accepts: "application/json",
+            cache: false,
+            dataType: 'json',
+            data: JSON.stringify(data),
+            error: function(jqXHR) {
+                console.log("ajax error " + jqXHR.status);
+            }
+        };
+        return $.ajax(request);
+    }
+
+    self.add = function(project){
+        self.ajax(self.projectsURI, 'POST', project).done(function(data){
+            self.projects.push({
+                id: ko.observable(data.project.id),
+                title: ko.observable(data.project.title),
+                end_date: ko.observable(data.project.end_date),
+                complete: ko.observable(data.project.completion),
+                complete_string: ko.observable(data.project.completion + "% completed")
+            });
+        });
+    }
+
+}
+function CreateProjectModel() {
+    var self = this;
+    self.title = ko.observable();
+    self.owner_id = ko.observable();
+    self.priority = ko.observable();
+    self.budget_id = ko.observable();
+    self.allocation = ko.observable();
+    self.description = ko.observable();
+    self.start_date = ko.observable();
+    self.end_date = ko.observable();
+
+    self.addProject = function() {
+        console.log('title' + self.title);
+        projectView.add({
+            title: self.title(),
+            owner_id: self.owner_id(),
+            priority: self.priority(),
+            budget_id: self.budget_id(),
+            budget_limit: self.allocation(),
+            description: self.description(),
+            start_date: self.start_date(),
+            end_date: self.end_date()
+        });
+        self.title("");
+        self.owner_id("");
+        self.priority("");
+        self.budget_id("");
+        self.allocation("");
+        self.description("");
+        self.start_date("");
+        self.end_date("");
+    }
+}
+var projectView = new ProjectsModel();
+var createView = new CreateProjectModel();
+ko.applyBindings(projectView, $('#projectGrid')[0]);
+ko.applyBindings(createView, $('#addProject')[0]);
+</script>
 {% endblock %}
 

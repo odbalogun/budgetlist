@@ -35,10 +35,11 @@ class User(UserMixin, db.Model):
     department = relationship("Department", back_populates="members", foreign_keys=[department_id])
     permissions = relationship("Permissions", back_populates="owner")
 
-    def __init__(self, full_name, username, email, password, account_type=0):
+    def __init__(self, full_name, username, email, password, department, account_type=0):
         self.full_name = full_name
         self.username = username.lower()
         self.email = email.lower()
+        self.department_id = department
         self.set_password(password)
         self.account_type = account_type
 
@@ -123,12 +124,14 @@ class Project(db.Model):
     def __repr__(self):
         return self.title
 
-    def __init__(self, title, description, budget_limit, start_month_period, end_month_period, owner_id):
+    def __init__(self, title, description, budget_limit, budget_id, start_date, end_date, priority, owner_id):
         self.title = title
         self.description = description
         self.budget_limit = budget_limit
-        self.start_month_period = start_month_period
-        self.end_month_period = end_month_period
+        self.budget_id = budget_id
+        self.start_date = start_date
+        self.end_date = end_date
+        self.priority = priority
         self.owner_id = owner_id
 
     @property
@@ -139,8 +142,8 @@ class Project(db.Model):
             'title': self.title,
             'description': self.description,
             'budget_limit': self.budget_limit,
-            'start_month_period': self.start_month_period,
-            'end_month_period': self.end_month_period,
+            'start_date': self.start_date,
+            'end_date': self.end_date,
             'status': self.status,
             'completion': self.completion,
             'date_created': dump_datetime(self.date_created),
@@ -259,13 +262,25 @@ class Period(db.Model):
     status = Column(Integer)
     date_created = Column(DateTime, default=func.now())
 
+    budgets = relationship("Budget")
 
 class Department(db.Model):
     __tablename__ = 'departments'
 
     id = Column(Integer, primary_key=True)
     name = Column(String(100))
-    head_id = Column(Integer, ForeignKey('users.id'))
 
-    head = relationship("User", uselist=False, foreign_keys=[head_id])
     members = relationship("User", back_populates="department", foreign_keys="User.department_id")
+
+
+class Budget(db.Model):
+    __tablename__ = 'budgets'
+
+    id = Column(Integer, primary_key=True)
+    name = Column(String(100))
+    period_id = Column(Integer, ForeignKey('periods.id'))
+    budget_type = Column(Integer, default=0)
+    allocation = Column(Integer)
+    date_created = Column(DateTime, default=func.now())
+
+    period = relationship("Period", uselist=False)

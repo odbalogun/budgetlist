@@ -19,6 +19,9 @@
         <link rel="stylesheet" href="{{ url_for('static', filename='css/font/font.css') }}" />
         <link rel="stylesheet" href="{{ url_for('static', filename='css/general.css') }}" />
 
+        <script type="text/javascript" src="{{ url_for('static', filename='js/jquery-2.0.3.min.js') }}"></script>
+        <script type="text/javascript" src="{{ url_for('static', filename='js/knockout.js') }}"></script>
+
         
     </head>
     <body {% block loginImage %}{% endblock %}>
@@ -88,10 +91,10 @@
                         <li class="
                             {% if 
                                 request.path == '/settings' or
-                                request.path == '/periodSettings' or
-                                request.path == '/userSetting' or
-                                request.path == '/departmentSetting' or
-                                request.path == '/budgetSetting'
+                                request.path == '/periods' or
+                                request.path == '/create-user' or
+                                request.path == '/departments' or
+                                request.path == '/budgets'
 
                             %} selected {% endif %}">
                             <a href="{{ url_for('.settings')}}">Settings</a>
@@ -132,7 +135,7 @@
 
 
 
-        <script type="text/javascript" src="{{ url_for('static', filename='js/jquery-2.0.3.min.js') }}"></script>
+
 
         <script type="text/javascript" src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
         <script type="text/javascript" src="{{ url_for('static', filename='js/moment.js') }}"></script>

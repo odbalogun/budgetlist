@@ -1,9 +1,10 @@
 from flask import Blueprint, redirect, url_for, abort, render_template, flash
 from flask_login import login_user, logout_user, login_required, current_user
-from budgetlist.models import db, User, Project, Task, Company, Period, Department, Permissions
+from budgetlist.models import db, User, Project, Task, Company, Period, Department, Permissions, Budget
 from functools import wraps
 from budgetlist import lm
-from budgetlist.forms import LoginForm, CompanyForm, PeriodForm, DepartmentForm, UserForm
+from budgetlist.forms import LoginForm, CompanyForm, PeriodForm, DepartmentForm, UserForm, BudgetForm, ProjectForm
+from budgetlist.helpers import list_budget_types, list_priority
 
 main = Blueprint('main', __name__)
 lm.login_view = '.login'
@@ -45,18 +46,26 @@ def home():
 @main.route('/overview', methods=['GET'])
 @login_required
 def overview():
+    form = ProjectForm()
+    form.priority.choices = [(list_priority.index(a), a) for a in list_priority]
+    form.budget_id.choices = [(a.id, a.name) for a in Budget.query.all()]
+
     # get all projects
     projects = Project.query.order_by(Project.date_created.desc()).limit(5).all()
     ongoing = Project.query.order_by(Project.date_created.desc()).limit(3).all()
     overdue = Project.query.filter().order_by(Project.date_created.desc()).limit(3).all()
 
-    return render_template('overview.html', projects=projects, overdue=overdue, ongoing=ongoing)
+    return render_template('overview.html', projects=projects, overdue=overdue, ongoing=ongoing, form=form)
 
 @main.route('/all-projects', methods=['GET'])
 def all_projects():
     projects = Project.query.order_by(Project.date_created.desc()).all()
 
     return render_template('allProjects.html', projects=projects)
+
+@main.route('/project-detail/<int:id>', methods=['GET'])
+def project_detail(id):
+    pass
 
 @main.route('/completed-projects', methods=['GET'])
 def completed_projects():
@@ -136,7 +145,7 @@ def toggle_user_status(action, userid):
             db.session.add(user)
             db.session.commit()
             flash('The user\'s account status has been updated', 'success')
-            return redirect('.users')
+            return redirect(url_for('.users'))
         else:
             abort(404)
     else:
@@ -183,11 +192,9 @@ def periods():
 @main.route('/departments', methods=['GET', 'POST'])
 def departments():
     form = DepartmentForm()
-    form.head.choices = [(a.id, a.full_name) for a in User.query.all()]
 
     if form.validate_on_submit():
         dep = Department()
-        dep.head_id = form.head.data
         dep.name = form.name.data
 
         db.session.add(dep)
@@ -198,6 +205,7 @@ def departments():
 @main.route('/create-user', methods=['GET', 'POST'])
 def create_user():
     form = UserForm()
+    form.department.choices = [(a.id, a.name) for a in Department.query.all()]
 
     if form.validate_on_submit():
         user = User(form.full_name.data, form.username.data, form.email.data, form.password.data,
@@ -209,7 +217,20 @@ def create_user():
 
 @main.route('/budgets', methods=['GET', 'POST'])
 def budgets():
-    pass
+    form = BudgetForm()
+    form.period.choices = [(a.id, a.name) for a in Period.query.all()]
+    form.budget_type.choices = [(list_budget_types.index(a), a) for a in list_budget_types]
+
+    if form.validate_on_submit():
+        budget = Budget()
+        budget.name = form.name.data
+        budget.period_id = form.period.data
+        budget.allocation = form.allocation.data
+        budget.budget_type = form.budget_type.data
+        db.session.add(budget)
+        db.session.commit()
+        flash('The budget has been successfully created', 'success')
+    return render_template('budgetSetting.html', form=form)
 
 # error handling
 @main.app_errorhandler(404)

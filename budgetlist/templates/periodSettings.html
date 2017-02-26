@@ -30,6 +30,7 @@
     <div class="wrapper">
         <div class="settings">
             <form method="post">
+                {{ form.errors }}
                 {{ form.csrf_token }}
                 <div class="col-md-offset-1 col-md-8 pl-0">
                     <div class="title">Period Settings</div>

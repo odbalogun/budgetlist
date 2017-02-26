@@ -6,6 +6,9 @@ list_account_types = ['Basic', 'Super User', 'Administrator']
 list_project_status = ['Pending', 'Ongoing', 'Completed', 'Suspended']
 list_task_status = ['Pending', 'Ongoing', 'Completed', 'Suspended']
 
+list_budget_types = ['Operations', 'Trading']
+list_priority = ['Normal', 'Urgent']
+
 
 def dump_datetime(value):
     """Deserialize datetime object into string form for JSON processing."""

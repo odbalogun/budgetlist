@@ -62,13 +62,16 @@ def login():
 
 @api.route('/v1.0/projects/create', methods=['POST'])
 def create_project():
+    dict = request.json
+    for key in dict:
+        print 'form key '+dict[key]
     if not request.json or 'title' not in request.json or 'description' not in request.json or 'budget_limit' not in \
-            request.json or 'start_month_period' not in request.json or 'end_month_period' not in request.json or \
+            request.json or 'start_date' not in request.json or 'end_date' not in request.json or \
             'owner_id' not in request.json:
         abort(400)
 
-    project = Project(request.json['title'], request.json['description'], request.json['budget_limit'],
-                      request.json['start_month_period'], request.json['end_month_period'], request.json['owner_id'])
+    project = Project(request.json['title'], request.json['description'], request.json['budget_limit'], request.json['budget_id'],
+                      request.json['start_date'], request.json['end_date'], request.json['priority'], request.json['owner_id'])
     db.session.add(project)
     db.session.commit()
 
