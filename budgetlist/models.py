@@ -172,9 +172,11 @@ class Task(db.Model):
 
     id = Column(Integer, primary_key=True)
     title = Column(String(100))
+    description = Column(Text)
     budget = Column(Integer)
     percent = Column(Integer)
     project_id = Column(Integer, ForeignKey('projects.id'))
+    parent_task = Column(Integer, ForeignKey('tasks.id'))
     owner_id = Column(Integer, ForeignKey('users.id'))
     date_created = Column(DateTime, default=func.now())
     deadline = Column(Date)

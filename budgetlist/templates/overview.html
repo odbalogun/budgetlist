@@ -81,7 +81,7 @@
                                 </li>
                                 {% endfor %}
                             </ul>
-                            <a class="pull-right" href="{{ url_for('.overdue')}}">View All <i class="fa fa-long-arrow-right" aria-hidden="true"></i></a>
+                            <a class="pull-right" href="{{ url_for('.overdue_projects')}}">View All <i class="fa fa-long-arrow-right" aria-hidden="true"></i></a>
                             {% else %}
                             <p>There are no overdue projects to display</p>
                             {% endif %}
@@ -158,7 +158,7 @@
     <div class="modal-content" id="addProject">
     <form>
         {{ form.csrf_token }}
-        {{ form.owner_id(value=current_user.id, **{'data-bind': 'value: owner_id'}) }}
+        {{ form.owner_id(**{'data-bind': 'value: owner_id'}) }}
         <div class="titleSection">
             <div class="cancel clearfix">
                 <span class="title">Add new project</span>
@@ -194,7 +194,7 @@
         <div class="descritpionSection clearfix">
             <div class="col-md-8">
                 <div class="title">Description</div>
-                <textarea data-bind="text: description" name="description"></textarea>
+                <textarea data-bind="value: description" name="description"></textarea>
             </div>
             <div class="col-md-4">
                 <div class="title">Planning</div>
@@ -204,11 +204,11 @@
                 </div>
                 <div class="planingForms">
                    <div class="title">Start Date</div>
-                   <input data-bind="value: start_date" class="datetimepicker plan" name="start_date" type="text">
+                   <input data-bind="value: start_date" name="start_date" type="text">
                 </div>
                 <div class="planingForms">
                    <div class="title">End Date</div>
-                   <input data-bind="value: end_date" class="datetimepicker plan" name="end_date" type="text">
+                   <input data-bind="value: end_date" name="end_date" type="date">
                 </div>
             </div>
         </div>
@@ -221,23 +221,6 @@ function ProjectsModel(){
     var self = this;
     self.projectsURI = 'http://localhost:9000/api/v1.0/projects/create';
     self.projects = ko.observableArray();
-
-    self.projects([
-        {
-            id: ko.observable('1'),
-            title: ko.observable('Title #1'),
-            end_date: ko.observable('23-02-17'),
-            complete: ko.observable('76'),
-            complete_string: ko.observable('76% completed')
-        },
-        {
-            id: ko.observable('2'),
-            title: ko.observable('Title #2'),
-            end_date: ko.observable('02-02-16'),
-            complete: ko.observable('46'),
-            complete_string: ko.observable('46% completed')
-        }
-    ]);
 
     self.ajax = function(uri, method, data){
         var request = {
@@ -271,7 +254,7 @@ function ProjectsModel(){
 function CreateProjectModel() {
     var self = this;
     self.title = ko.observable();
-    self.owner_id = ko.observable();
+    self.owner_id = ko.observable('{{current_user.id}}');
     self.priority = ko.observable();
     self.budget_id = ko.observable();
     self.allocation = ko.observable();
@@ -280,7 +263,15 @@ function CreateProjectModel() {
     self.end_date = ko.observable();
 
     self.addProject = function() {
-        console.log('title' + self.title);
+        console.log('title: ' + self.title());
+        console.log('owner_id: ' + self.owner_id());
+        console.log('priority: ' + self.priority());
+        console.log('budget_id: ' + self.budget_id());
+        console.log('allocation: ' + self.allocation());
+        console.log('description: ' + self.description());
+        console.log('start_date: ' + self.start_date());
+        console.log('end_date: ' + self.end_date());
+
         projectView.add({
             title: self.title(),
             owner_id: self.owner_id(),

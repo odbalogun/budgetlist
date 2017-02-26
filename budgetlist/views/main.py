@@ -47,6 +47,7 @@ def home():
 @login_required
 def overview():
     form = ProjectForm()
+    form.owner_id.data = current_user.id
     form.priority.choices = [(list_priority.index(a), a) for a in list_priority]
     form.budget_id.choices = [(a.id, a.name) for a in Budget.query.all()]
 
@@ -65,6 +66,12 @@ def all_projects():
 
 @main.route('/project-detail/<int:id>', methods=['GET'])
 def project_detail(id):
+    project = Project.query.get(id)
+
+    return render_template('backlogs.html', project=project)
+
+@main.route('/ongoing', methods=['GET'])
+def ongoing():
     pass
 
 @main.route('/completed-projects', methods=['GET'])
