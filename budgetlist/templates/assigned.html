@@ -31,18 +31,18 @@
                 {% for task in tasks %}
                 <div class="tableInfo clearfix">
                     <a href="{{ url_for('.assigned_tasks')}}">
-                        <span class="projectName">{{ task.title }}</span>
+                        <span class="projectName">{{ task.task.title }}</span>
                         <span class="done">
                             <div class="completion">
-                                {{ task.percent }}% completed
+                                {{ task.task.percent }}% completed
                             </div>
                             <div class="progress">
-                              <div class="progress-bar progress-bar-success progress-bar-striped" role="progressbar" aria-valuenow="{{ task.percent }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ task.percent }}%">
+                              <div class="progress-bar progress-bar-success progress-bar-striped" role="progressbar" aria-valuenow="{{ task.task.percent }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ task.task.percent }}%">
                               </div>
                             </div>
                         </span>
-                        <span class="status">{{ task.statusText }}</span>
-                        <span class="Date">{{ task.deadline }}</span>
+                        <span class="status">{{ task.task.statusText }}</span>
+                        <span class="Date">{{ task.task.deadline_string.date }}</span>
                     </a>
                 </div>
                 {% endfor %}
@@ -55,18 +55,18 @@
                 {% for task in tasks if task.status == 2 %}
                 <div class="tableInfo clearfix">
                     <a href="{{ url_for('.assigned_tasks')}}">
-                        <span class="projectName">{{ task.title }}</span>
+                        <span class="projectName">{{ task.task.title }}</span>
                         <span class="done">
                             <div class="completion">
-                                {{ task.percent }}% completed
+                                {{ task.task.percent }}% completed
                             </div>
                             <div class="progress">
-                              <div class="progress-bar progress-bar-success progress-bar-striped" role="progressbar" aria-valuenow="{{ task.percent }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ task.percent }}%">
+                              <div class="progress-bar progress-bar-success progress-bar-striped" role="progressbar" aria-valuenow="{{ task.task.percent }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ task.task.percent }}%">
                               </div>
                             </div>
                         </span>
-                        <span class="status">{{ task.statusText }}</span>
-                        <span class="Date">{{ task.deadline }}</span>
+                        <span class="status">{{ task.task.statusText }}</span>
+                        <span class="Date">{{ task.task.deadline_string.date }}</span>
                     </a>
                 </div>
                 {% endfor %}
@@ -79,18 +79,18 @@
                 {% for task in tasks %}
                 <div class="tableInfo clearfix">
                     <a href="{{ url_for('.assigned_tasks')}}">
-                        <span class="projectName">{{ task.title }}</span>
+                        <span class="projectName">{{ task.task.title }}</span>
                         <span class="done">
                             <div class="completion">
-                                {{ task.percent }}% completed
+                                {{ task.task.percent }}% completed
                             </div>
                             <div class="progress">
-                              <div class="progress-bar progress-bar-success progress-bar-striped" role="progressbar" aria-valuenow="{{ task.percent }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ task.percent }}%">
+                              <div class="progress-bar progress-bar-success progress-bar-striped" role="progressbar" aria-valuenow="{{ task.task.percent }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ task.task.percent }}%">
                               </div>
                             </div>
                         </span>
-                        <span class="status">{{ task.statusText }}</span>
-                        <span class="Date">{{ task.deadline }}</span>
+                        <span class="status">{{ task.task.statusText }}</span>
+                        <span class="Date">{{ task.task.deadline_string.date }}</span>
                     </a>
                 </div>
                 {% endfor %}

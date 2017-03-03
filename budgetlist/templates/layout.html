@@ -20,6 +20,8 @@
         <link rel="stylesheet" href="{{ url_for('static', filename='css/general.css') }}" />
 
         <script type="text/javascript" src="{{ url_for('static', filename='js/jquery-2.0.3.min.js') }}"></script>
+        <!-- for dates in js -->
+        <script type="text/javascript" src="{{ url_for('static', filename='js/moment.js') }}"></script>
         <script type="text/javascript" src="{{ url_for('static', filename='js/knockout.js') }}"></script>
 
         
@@ -82,7 +84,7 @@
                             {% if 
                                 request.path == '/users' or
                                 request.path == '/activeUsers' or
-                                request.path == '/inactiveUsers'
+                                request.path == '/create-user'
 
 
                             %} selected {% endif %}">
@@ -93,7 +95,6 @@
                             {% if 
                                 request.path == '/settings' or
                                 request.path == '/periods' or
-                                request.path == '/create-user' or
                                 request.path == '/departments' or
                                 request.path == '/budgets'
 
@@ -139,7 +140,6 @@
 
 
         <script type="text/javascript" src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
-        <script type="text/javascript" src="{{ url_for('static', filename='js/moment.js') }}"></script>
         <script type="text/javascript" src="{{ url_for('static', filename='js/bootstrap-datetimepicker.js') }}"></script>
         <script type="text/javascript" src="{{ url_for('static', filename='js/jquery.easing.min.js') }}"></script>
         <script type="text/javascript" src="{{ url_for('static', filename='js/jquery.easy-pie-chart.js') }}"></script>

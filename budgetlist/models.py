@@ -1,5 +1,5 @@
 from sqlalchemy import Column, Integer, DECIMAL, String, Date, DateTime, func, ForeignKey, Table, Text
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import relationship, remote, foreign
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
 from helpers import dump_datetime, to_json, list_task_status
@@ -7,13 +7,6 @@ import random
 from flask_login import UserMixin
 
 db = SQLAlchemy()
-
-# association tables
-child_tasks = Table('task_mapping', db.metadata,
-                        Column('parent_id', Integer, ForeignKey('tasks.id')),
-                        Column('child_id', Integer, ForeignKey('tasks.id'))
-                        )
-
 
 class User(UserMixin, db.Model):
     __tablename__ = 'users'
@@ -107,6 +100,7 @@ class Project(db.Model):
 
     id = Column(Integer, primary_key=True)
     title = Column(String(100))
+    percent = Column(Integer)
     description = Column(Text)
     budget_limit = Column(Integer)
     budget_id = Column(Integer)
@@ -119,6 +113,8 @@ class Project(db.Model):
     # 0 for open: 1 for ongoing: 2 for completed: 3 for suspended
 
     owner = relationship("User", uselist=False, back_populates="projects")
+    main_tasks = relationship("Task", foreign_keys="Task.project_id")
+
     tasks = relationship("Task", back_populates="project")
 
     def __repr__(self):
@@ -133,6 +129,7 @@ class Project(db.Model):
         self.end_date = end_date
         self.priority = priority
         self.owner_id = owner_id
+        self.percent = random.randrange(20, 100)
 
     @property
     def serialize(self):
@@ -153,7 +150,15 @@ class Project(db.Model):
 
     @property
     def completion(self):
-        return random.randrange(20, 100)
+        return self.percent
+
+    @property
+    def amount_spent(self):
+        return int(0.25 * self.budget_limit)
+
+    @property
+    def amount_remaining(self):
+        return int(0.75 * self.budget_limit)
 
     @property
     def serialize_owner(self):
@@ -174,7 +179,8 @@ class Task(db.Model):
     title = Column(String(100))
     description = Column(Text)
     budget = Column(Integer)
-    percent = Column(Integer)
+    percent = Column(Integer, default=0)
+    priority = Column(Integer, default=0)
     project_id = Column(Integer, ForeignKey('projects.id'))
     parent_task = Column(Integer, ForeignKey('tasks.id'))
     owner_id = Column(Integer, ForeignKey('users.id'))
@@ -185,14 +191,18 @@ class Task(db.Model):
 
     owner = relationship("User", uselist=False, back_populates="ownTasks")
     project = relationship("Project", uselist=False, back_populates="tasks")
+    child_tasks = relationship("Task", foreign(parent_task))
     notes = relationship("Notes", back_populates="task")
 
-    def __init__(self, title, budget, project_id, owner_id, deadline=None):
+    def __init__(self, title, description, budget, project_id, owner_id, priority, deadline=None):
         self.title = title
+        self.description = description
         self.budget = budget
         self.project_id = project_id
         self.owner_id = owner_id
+        self.priority = priority
         self.deadline = deadline
+        self.percent = random.randrange(20, 100)
 
     def __repr__(self):
         return self.title
@@ -200,6 +210,10 @@ class Task(db.Model):
     @property
     def statusText(self):
         return list_task_status[self.status]
+
+    @property
+    def deadline_string(self):
+        return dump_datetime(self.deadline)
 
     @property
     def serialize(self):
@@ -239,6 +253,11 @@ class Permissions(db.Model):
     task_id = Column(Integer, ForeignKey('tasks.id'))
     access_level = Column(Integer)
     date_created = Column(DateTime, default=func.now())
+
+    def __init__(self, user_id, task_id, access_level=0):
+        self.user_id = user_id
+        self.task_id = task_id
+        self.access_level = access_level
 
     owner = relationship("User", uselist=False)
     task = relationship("Task", uselist=False)

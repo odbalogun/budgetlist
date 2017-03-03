@@ -122,7 +122,7 @@
                     <div class="analytics blue">
                         <div class="icon"><i class="fa fa-calendar-check-o" aria-hidden="true"></i></div>
                         <div class="data">
-                            <span>512</span>
+                            <span>{{ completed_count }}</span>
                             <span>Completed Projects</span>
                         </div>
                     </div>
@@ -131,14 +131,14 @@
                             <i class="fa fa-hourglass-start" aria-hidden="true"></i>
                         </div>
                         <div class="data">
-                            <span>12</span>
+                            <span>{{ overdue_count }}</span>
                             <span>Delayed Projects</span>
                         </div>
                     </div>
                     <div class="analytics pupple">
                         <div class="icon"><i class="fa fa-money" aria-hidden="true"></i></i></div>
                         <div class="data">
-                            <span>2</span>
+                            <span>{{ deficit_count }}</span>
                             <span>Deficit project</span>
                         </div>
                     </div>
@@ -204,7 +204,7 @@
                 </div>
                 <div class="planingForms">
                    <div class="title">Start Date</div>
-                   <input data-bind="value: start_date" name="start_date" type="text">
+                   <input data-bind="value: start_date" name="start_date" type="date">
                 </div>
                 <div class="planingForms">
                    <div class="title">End Date</div>
@@ -243,7 +243,7 @@ function ProjectsModel(){
             self.projects.push({
                 id: ko.observable(data.project.id),
                 title: ko.observable(data.project.title),
-                end_date: ko.observable(data.project.end_date),
+                end_date: ko.observable(moment(data.project.end_date).format('YYYY-MM-DD')),
                 complete: ko.observable(data.project.completion),
                 complete_string: ko.observable(data.project.completion + "% completed")
             });

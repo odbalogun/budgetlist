@@ -11,7 +11,7 @@
                     <ul>
                         {% for project in projects %}
                         <li class="projectTab {% if project.status == 2 %} completed {% endif %}">
-                            <a href="backlogs.html">
+                            <a href="{{ url_for('.project_detail', id=project.id)}}">
                                 <span class="project">
                                     {{ project.title }}
                                 </span>

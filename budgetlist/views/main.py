@@ -3,8 +3,10 @@ from flask_login import login_user, logout_user, login_required, current_user
 from budgetlist.models import db, User, Project, Task, Company, Period, Department, Permissions, Budget
 from functools import wraps
 from budgetlist import lm
-from budgetlist.forms import LoginForm, CompanyForm, PeriodForm, DepartmentForm, UserForm, BudgetForm, ProjectForm
+from budgetlist.forms import LoginForm, CompanyForm, PeriodForm, DepartmentForm, UserForm, BudgetForm, ProjectForm, \
+    TaskForm, SubTaskForm
 from budgetlist.helpers import list_budget_types, list_priority
+from datetime import date
 
 main = Blueprint('main', __name__)
 lm.login_view = '.login'
@@ -53,10 +55,17 @@ def overview():
 
     # get all projects
     projects = Project.query.order_by(Project.date_created.desc()).limit(5).all()
-    ongoing = Project.query.order_by(Project.date_created.desc()).limit(3).all()
-    overdue = Project.query.filter().order_by(Project.date_created.desc()).limit(3).all()
+    overdue = Project.query.filter(date.today() > Project.end_date, Project.status != 2).order_by(Project.date_created.desc()).limit(3).all()
+    ongoing = Project.query.filter(Project.status == 1).order_by(Project.date_created.desc()).limit(3).all()
 
-    return render_template('overview.html', projects=projects, overdue=overdue, ongoing=ongoing, form=form)
+    # get count of projects
+    completed_count = db.session.query(Project.id).filter(Project.status == 2).count()
+    # todo add deficit conditions
+    deficit_count = db.session.query(Project.id).filter(Project.status == 5).count()
+    overdue_count = len(overdue)
+
+    return render_template('overview.html', projects=projects, overdue=overdue, ongoing=ongoing, form=form, completed_count=completed_count,
+                           deficit_count=deficit_count, overdue_count=overdue_count)
 
 @main.route('/all-projects', methods=['GET'])
 def all_projects():
@@ -64,15 +73,39 @@ def all_projects():
 
     return render_template('allProjects.html', projects=projects)
 
-@main.route('/project-detail/<int:id>', methods=['GET'])
+@main.route('/project-detail/<int:id>', methods=['GET', 'POST'])
 def project_detail(id):
     project = Project.query.get(id)
+    form = TaskForm()
+    form.assigned_to.choices = [(a.id, a.full_name) for a in User.query.all()]
+    form.priority.choices = [(list_priority.index(a), a) for a in list_priority]
 
-    return render_template('backlogs.html', project=project)
+    subform = SubTaskForm()
+    subform.assigned_to.choices = [(a.id, a.full_name) for a in User.query.all()]
+    subform.priority.choices = [(list_priority.index(a), a) for a in list_priority]
 
-@main.route('/ongoing', methods=['GET'])
-def ongoing():
-    pass
+    if subform.validate_on_submit():
+        task = Task(subform.title.data, subform.description.data, subform.allocation.data, id, current_user.id,
+                    subform.priority.data, subform.end_date.data)
+        task.parent_task = subform.parent_id.data
+        db.session.add(task)
+        db.session.commit()
+        permission = Permissions(current_user.id, task.id, 0)
+        db.session.add(permission)
+        db.session.commit()
+        flash('Task has been successfully created', 'success')
+
+    if form.validate_on_submit():
+        task = Task(form.title.data, form.description.data, form.allocation.data, id, current_user.id,
+                    form.priority.data, form.end_date.data)
+        db.session.add(task)
+        db.session.commit()
+        permission = Permissions(current_user.id, task.id, 0)
+        db.session.add(permission)
+        db.session.commit()
+        flash('Task has been successfully created', 'success')
+
+    return render_template('backlogs.html', project=project, form=form, subform=subform)
 
 @main.route('/completed-projects', methods=['GET'])
 def completed_projects():
@@ -82,7 +115,7 @@ def completed_projects():
 
 @main.route('/overdue-projects', methods=['GET'])
 def overdue_projects():
-    projects = Project.query.filter().order_by(Project.date_created.desc()).all()
+    projects = Project.query.filter(date.today() > Project.end_date, Project.status != 2).order_by(Project.date_created.desc()).all()
 
     return render_template('overdueProjects.html', projects=projects)
 
@@ -93,6 +126,8 @@ def assigned_tasks():
     return render_template('assigned.html', tasks=tasks)
 
 # login function
+@main.route('/', methods=['GET', 'POST'])
+@main.route('/index', methods=['GET', 'POST'])
 @main.route('/login', methods=['GET', 'POST'])
 def login():
     if current_user.is_authenticated:
@@ -111,6 +146,12 @@ def login():
                 flash('Invalid login credentials', 'error')
     return render_template('login.html', form=form)
 
+@main.route('/logout', methods=['GET'])
+@login_required
+def logout():
+    logout_user()
+    flash('You have been logged out', 'error')
+    return redirect(url_for('.login'))
 
 # user management
 @main.route('/users', methods=['GET'])

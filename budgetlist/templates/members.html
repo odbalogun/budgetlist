@@ -10,7 +10,7 @@
                 <a class="{% if request.path == '/activeUsers' %} active {% endif %}" href="{{ url_for('.active_users')}}">Active Members</a>
             </li>
             <li>
-                <a class="{% if request.path == '/inactiveUsers' %} active {% endif %}" href="{{ url_for('.inactive_users')}}">Inactive Members</a>
+                <a class="{% if request.path == '/create-user' %} active {% endif %}" href="{{ url_for('.create_user')}}">Create User</a>
             </li>
         </ul>
     </div>

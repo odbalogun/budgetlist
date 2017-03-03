@@ -16,7 +16,6 @@ def dump_datetime(value):
         return None
     return {'date': value.strftime("%d %b %Y"), 'time': value.strftime("%H:%M:%S")}
 
-
 def to_json(inst, cls):
     """
     Jsonify the sql alchemy query result.

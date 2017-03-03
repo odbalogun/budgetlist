@@ -4,19 +4,13 @@
     <div class="wrapper">
         <ul>
             <li>
-                <a class="{% if request.path == '/settings'%} active {% endif %}" href="{{ url_for('.settings')}}">Company Settings</a>
+                <a class="{% if request.path == '/users' %} active {% endif %}" href="{{ url_for('.users')}}">All Members</a>
             </li>
             <li>
-                <a class="{% if request.path == '/periods'%} active {% endif %}" href="{{ url_for('.periods')}}">Period Settings</a>
+                <a class="{% if request.path == '/activeUsers' %} active {% endif %}" href="{{ url_for('.active_users')}}">Active Members</a>
             </li>
             <li>
-                <a class="{% if request.path == '/create-user'%} active {% endif %}" href="{{ url_for('.create_user')}}">User Settings</a>
-            </li>
-            <li>
-                <a class="{% if request.path == '/departments'%} active {% endif %}" href="{{ url_for('.departments')}}">Department Settings</a>
-            </li>
-            <li>
-                <a class="{% if request.path == '/budgets'%} active {% endif %}" href="{{ url_for('.budgets')}}">Budget Settings</a>
+                <a class="{% if request.path == '/create-user' %} active {% endif %}" href="{{ url_for('.create_user')}}">Create User</a>
             </li>
         </ul>
     </div>
