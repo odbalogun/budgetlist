@@ -17,7 +17,12 @@
                     <div class="tableData width2"></div>
                     <div class="tableData width2"></div>
                 </div>
-
+                {% if form.errors %}
+                    {{ form.errors }}
+                {% endif %}
+                {% if subform.errors %}
+                    {{ subform.errors}}
+                {% endif %}
                 {% if not project.main_tasks %}
                     <div>
                         There are no tasks to display...
@@ -32,8 +37,45 @@
                             {% if not task.parent_id or not task.parent.parent_id %}
                                 <div class="tableData width8 task" data-toggle="modal" data-target=".addSubTask" data-id="{{ task.id }}"><i class="fa fa-plus" aria-hidden="true"></i> Add Task</div>
                             {% endif %}
-
+                            {% if task.child_tasks %}
+                                <!-- add trigger for child tasks -->
+                                <div class="tableData width8 task" data-toggle="collapse" data-target=".innertable">View Task <i class="fa fa-angle-down" aria-hidden="true"></i></div>
+                            {% endif %}
                         </div>
+                        {% if task.child_tasks %}
+                            <!-- add class for collapsible tasks -->
+                            {% for child in task.child_tasks %}
+                            <div class="innertable collapse" style="padding: 0 0 0 10px;">
+                                <div class="tablerow content">
+                                    <div class="tableData width30 withInnerBar" data-toggle="modal" data-target=".updateProject">{{ child.title }}</div>
+                                    <div class="tableData width30">₦{{ child.budget }}</div>
+                                    <div class="tableData width20 {% if child.status == 0 %} ongoing {% endif %}">{{ child.statusText }}</div>
+                                    <div class="tableData width20">{{ child.deadline_string.date }}</div>
+                                    {% if not child.parent_id or not child.parent.parent_id %}
+                                        <div class="tableData width8 task" data-toggle="modal" data-target=".addSubTask" data-id="{{ child.id }}"><i class="fa fa-plus" aria-hidden="true"></i> Add Task</div>
+                                    {% endif %}
+                                    {% if child.child_tasks %}
+                                        <!-- add trigger for child tasks -->
+                                        <div class="tableData width8 task" data-toggle="collapse" data-target=".innerinnertable">View Task <i class="fa fa-angle-down" aria-hidden="true"></i></div>
+                                    {% endif %}
+                                </div>
+                                {% if child.child_tasks %}
+                                    <div>
+                                        {% for grandkid in child.child_tasks %}
+                                        <div class="innerinnertable collapse" style="padding: 0 0 0 10px;">
+                                            <div class="tablerow content">
+                                                <div class="tableData width30 minus2 withInnerinnerBar" data-toggle="modal" data-target=".innertable">{{ grandkid.title }}</div>
+                                                <div class="tableData width30" data-toggle="modal" data-target=".innertable">₦{{ grandkid.budget }}</div>
+                                                <div class="tableData width20 {% if grandkid.status == 0 %} ongoing {% endif %}">{{ grandkid.statusText }}</div>
+                                                <div class="tableData width20">{{ grandkid.deadline_string.date }}</div>
+                                            </div>
+                                        </div>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                            {% endfor %}
+                        {% endif %}
                     {% endfor %}
                 {% endif %}
 
@@ -75,7 +117,7 @@
   <div class="modal-dialog modal-lg" role="document">
     <div class="modal-content">
     <form method="post" id="addSubTaskForm" action="{{ request.path }}">
-        {{ form.csrf_token }}
+        {{ subform.csrf_token }}
         <input type="hidden" name="parent_id" id="parent_id" value="" />
         <div class="titleSection">
             <div class="cancel clearfix">
@@ -84,8 +126,8 @@
             </div>
             <input type="text" class="title" name="title" placeholder="Enter Title">
             <div class="assign clearfix">
-                {{ form.assigned_to(class_='assignTo', prompt='Assigned to') }}
-                <button type="submit" onclick="subform_submit()" data-dismiss="modal" class="save" type="button"><i class="fa fa-floppy-o" aria-hidden="true"></i> Save & close</button>
+                {{ subform.assigned_to(class_='assignTo', prompt='Assigned to') }}
+                <button type="submit" name="subtask_submit" onclick="subform_submit()" data-dismiss="modal" class="save"><i class="fa fa-floppy-o" aria-hidden="true"></i> Save & close</button>
             </div>
         </div>
         <div class="stateSection clearfix">
@@ -109,7 +151,7 @@
                 <div class="title">Planning</div>
                 <div class="planingForms">
                    <div class="title">Priority</div>
-                   {{ form.priority(class_='plan') }}
+                   {{ subform.priority(class_='plan') }}
                 </div>
                 <div class="planingForms">
                    <div class="title">End Date</div>
@@ -133,10 +175,11 @@
                 <span class="title">Add new task</span>
                 <i data-dismiss="modal" class="fa fa-times" aria-hidden="true"></i>
             </div>
-            <input type="text" class="title" name="title" placeholder="Enter Title">
+            {{ form.title(class_='title', placeholder='Enter Title') }}
             <div class="assign clearfix">
                 {{ form.assigned_to(class_='assignTo', prompt='Assigned to') }}
-                <button type="submit" onclick="form_submit()" data-dismiss="modal" class="save" type="button"><i class="fa fa-floppy-o" aria-hidden="true"></i> Save & close</button>
+                {{ form.task_submit(value='True') }}
+                <button type="submit" onclick="form_submit()" data-dismiss="modal" class="save"><i class="fa fa-floppy-o" aria-hidden="true"></i> Save & close</button>
             </div>
         </div>
         <div class="stateSection clearfix">
@@ -146,7 +189,7 @@
                         <div class="title">Allocation</div>
                     </div>
                     <div class="col-md-11">
-                        <input type="text" name="allocation" class="stateForm" placeholder="Amount(₦)">
+                        {{ form.allocation(class_='stateForm', placeholder="Amount(₦)")}}
                     </div>
                 </div>
             </div>
@@ -154,7 +197,7 @@
         <div class="descritpionSection clearfix">
             <div class="col-md-8">
                 <div class="title">Description</div>
-                <textarea name="description"></textarea>
+                {{ form.description() }}
             </div>
             <div class="col-md-4">
                 <div class="title">Planning</div>
@@ -163,8 +206,8 @@
                    {{ form.priority(class_='plan') }}
                 </div>
                 <div class="planingForms">
-                   <div class="title">End Date</div> 
-                   <input class="datetimepicker plan" name="end_date" type="text">
+                   <div class="title">End Date</div>
+                   {{ form.end_date(class_="datetimepicker plan") }}
                 </div>
             </div>
         </div>

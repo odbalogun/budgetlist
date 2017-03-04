@@ -95,6 +95,66 @@ class User(UserMixin, db.Model):
         return [item.serialize for item in self.projects]
 
 
+
+class Task(db.Model):
+    __tablename__ = 'tasks'
+
+    id = Column(Integer, primary_key=True)
+    title = Column(String(100))
+    description = Column(Text)
+    budget = Column(Integer)
+    percent = Column(Integer, default=0)
+    priority = Column(Integer, default=0)
+    project_id = Column(Integer, ForeignKey('projects.id'))
+    parent_task = Column(Integer, ForeignKey('tasks.id'))
+    owner_id = Column(Integer, ForeignKey('users.id'))
+    date_created = Column(DateTime, default=func.now())
+    deadline = Column(Date)
+    status = Column(Integer, default=0)
+    # 0 for open: 1 for done
+
+    owner = relationship("User", uselist=False, back_populates="ownTasks")
+    project = relationship("Project", uselist=False, back_populates="tasks")
+    child_tasks = relationship("Task", primaryjoin="Task.id == Task.parent_task")
+    notes = relationship("Notes", back_populates="task")
+
+    def __init__(self, title, description, budget, project_id, owner_id, priority, deadline=None):
+        self.title = title
+        self.description = description
+        self.budget = int(budget)
+        self.project_id = int(project_id)
+        self.owner_id = int(owner_id)
+        self.priority = int(priority)
+        self.deadline = deadline
+        self.percent = random.randrange(20, 100)
+
+    def __repr__(self):
+        return self.title
+
+    @property
+    def statusText(self):
+        return list_task_status[self.status]
+
+    @property
+    def deadline_string(self):
+        return dump_datetime(self.deadline)
+
+    @property
+    def serialize(self):
+        """Return object data in easily serializeable format"""
+        return {
+            'id': self.id,
+            'title': self.title,
+            'budget': self.budget,
+            'project_id': self.project_id,
+            'owner_id': self.owner_id,
+            'deadline': self.deadline,
+            'status': self.status,
+            'date_created': dump_datetime(self.date_created),
+            # This is an example how to deal with Many2Many relations
+            'owner': self.owner.serialize
+        }
+
 class Project(db.Model):
     __tablename__ = 'projects'
 
@@ -113,8 +173,7 @@ class Project(db.Model):
     # 0 for open: 1 for ongoing: 2 for completed: 3 for suspended
 
     owner = relationship("User", uselist=False, back_populates="projects")
-    main_tasks = relationship("Task", foreign_keys="Task.project_id")
-
+    main_tasks = relationship("Task", foreign_keys="Task.project_id", primaryjoin="and_(Project.id==Task.project_id, Task.parent_task == None)")
     tasks = relationship("Task", back_populates="project")
 
     def __repr__(self):
@@ -172,66 +231,6 @@ class Project(db.Model):
         """
         return [item.serialize for item in self.tasks]
 
-class Task(db.Model):
-    __tablename__ = 'tasks'
-
-    id = Column(Integer, primary_key=True)
-    title = Column(String(100))
-    description = Column(Text)
-    budget = Column(Integer)
-    percent = Column(Integer, default=0)
-    priority = Column(Integer, default=0)
-    project_id = Column(Integer, ForeignKey('projects.id'))
-    parent_task = Column(Integer, ForeignKey('tasks.id'))
-    owner_id = Column(Integer, ForeignKey('users.id'))
-    date_created = Column(DateTime, default=func.now())
-    deadline = Column(Date)
-    status = Column(Integer, default=0)
-    # 0 for open: 1 for done
-
-    owner = relationship("User", uselist=False, back_populates="ownTasks")
-    project = relationship("Project", uselist=False, back_populates="tasks")
-    child_tasks = relationship("Task", foreign(parent_task))
-    notes = relationship("Notes", back_populates="task")
-
-    def __init__(self, title, description, budget, project_id, owner_id, priority, deadline=None):
-        self.title = title
-        self.description = description
-        self.budget = budget
-        self.project_id = project_id
-        self.owner_id = owner_id
-        self.priority = priority
-        self.deadline = deadline
-        self.percent = random.randrange(20, 100)
-
-    def __repr__(self):
-        return self.title
-
-    @property
-    def statusText(self):
-        return list_task_status[self.status]
-
-    @property
-    def deadline_string(self):
-        return dump_datetime(self.deadline)
-
-    @property
-    def serialize(self):
-        """Return object data in easily serializeable format"""
-        return {
-            'id': self.id,
-            'title': self.title,
-            'budget': self.budget,
-            'project_id': self.project_id,
-            'owner_id': self.owner_id,
-            'deadline': self.deadline,
-            'status': self.status,
-            'date_created': dump_datetime(self.date_created),
-            # This is an example how to deal with Many2Many relations
-            'owner': self.owner.serialize
-        }
-
-
 class Notes(db.Model):
     __tablename__ = 'notes'
 
@@ -282,6 +281,9 @@ class Period(db.Model):
     end_date = Column(DateTime)
     status = Column(Integer)
     date_created = Column(DateTime, default=func.now())
+
+    def string_date(self, value):
+        return dump_datetime(value)
 
     budgets = relationship("Budget")
 

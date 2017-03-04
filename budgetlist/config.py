@@ -13,7 +13,7 @@ class Config(object):
 
     DEBUG = False
     SECRET_KEY = 'rcace2376bde12345'
-    SQLALCHEMY_DATABASE_URI = os.environ['BUDGET_DB_CONN']
+    SQLALCHEMY_DATABASE_URI = "postgresql://budgetuser:budge1234list*@localhost:5432/budgetlist"
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     # SERVER_NAME = 'budgetlist.local:5000'
 

@@ -84,26 +84,32 @@ def project_detail(id):
     subform.assigned_to.choices = [(a.id, a.full_name) for a in User.query.all()]
     subform.priority.choices = [(list_priority.index(a), a) for a in list_priority]
 
-    if subform.validate_on_submit():
-        task = Task(subform.title.data, subform.description.data, subform.allocation.data, id, current_user.id,
-                    subform.priority.data, subform.end_date.data)
-        task.parent_task = subform.parent_id.data
-        db.session.add(task)
-        db.session.commit()
-        permission = Permissions(current_user.id, task.id, 0)
-        db.session.add(permission)
-        db.session.commit()
-        flash('Task has been successfully created', 'success')
-
-    if form.validate_on_submit():
-        task = Task(form.title.data, form.description.data, form.allocation.data, id, current_user.id,
-                    form.priority.data, form.end_date.data)
-        db.session.add(task)
-        db.session.commit()
-        permission = Permissions(current_user.id, task.id, 0)
-        db.session.add(permission)
-        db.session.commit()
-        flash('Task has been successfully created', 'success')
+    print(form.task_submit)
+    if form.task_submit.data:
+        print('taskform')
+        if form.validate_on_submit():
+            task = Task(form.title.data, form.description.data, form.allocation.data, id, current_user.id,
+                        form.priority.data, form.end_date.data)
+            db.session.add(task)
+            db.session.commit()
+            permission = Permissions(current_user.id, task.id, 0)
+            db.session.add(permission)
+            db.session.commit()
+            flash('Task has been successfully created', 'success')
+    elif subform.parent_id.data:
+        print('subform submit')
+        if subform.validate_on_submit():
+            print('subform')
+            task = Task(subform.title.data, subform.description.data, subform.allocation.data, id, current_user.id,
+                        subform.priority.data, subform.end_date.data)
+            task.parent_task = subform.parent_id.data
+            db.session.add(task)
+            db.session.commit()
+            permission = Permissions(current_user.id, task.id, 0)
+            db.session.add(permission)
+            db.session.commit()
+            flash('Task has been successfully created', 'success')
+    
 
     return render_template('backlogs.html', project=project, form=form, subform=subform)
 
@@ -203,6 +209,7 @@ def toggle_user_status(action, userid):
 # settings
 @main.route('/settings', methods=['GET', 'POST'])
 def settings():
+    return redirect(url_for('.periods'))
     company = Company.query.first()
     form = CompanyForm()
     if company:
@@ -226,6 +233,7 @@ def settings():
 @main.route('/periods', methods=['GET', 'POST'])
 def periods():
     form = PeriodForm()
+    periods = Period.query.all()
     if form.validate_on_submit():
         period = Period()
         period.name = form.name.data
@@ -235,7 +243,7 @@ def periods():
         db.session.add(period)
         db.session.commit()
         flash('The period has been successfully created', 'success')
-    return render_template('periodSettings.html', form=form)
+    return render_template('periodSettings.html', form=form, periods=periods)
 
 @main.route('/departments', methods=['GET', 'POST'])
 def departments():

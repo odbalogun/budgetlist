@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SelectField, DateField, HiddenField, \
-    DecimalField, TextAreaField, IntegerField, RadioField
+    DecimalField, TextAreaField, IntegerField, RadioField, SubmitField
 from wtforms.validators import DataRequired, Email, EqualTo, Length, Optional
 from helpers import Unique, list_account_types, list_budget_types
 from models import User
@@ -56,6 +56,15 @@ class TaskForm(FlaskForm):
     end_date = DateField('End Date', validators=[DataRequired()], format='%d/%m/%Y')
     priority = SelectField('Priority', coerce=int)
     owner_id = HiddenField()
+    task_submit = HiddenField()
 
-class SubTaskForm(TaskForm):
+class SubTaskForm(FlaskForm):
+    title = StringField('Name', validators=[DataRequired(), Length(max=100)])
+    description = TextAreaField('Description')
+    allocation = IntegerField('Allocation')
+    assigned_to = SelectField('Assigned To', coerce=int)
+    end_date = DateField('End Date', validators=[DataRequired()], format='%d/%m/%Y')
+    priority = SelectField('Priority', coerce=int)
+    owner_id = HiddenField()
     parent_id = HiddenField()
+    subtask_submit = SubmitField()
