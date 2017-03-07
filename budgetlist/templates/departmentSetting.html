@@ -4,13 +4,10 @@
     <div class="wrapper">
         <ul>
             <li>
-                <a class="{% if request.path == '/settings'%} active {% endif %}" href="{{ url_for('.settings')}}">Company Settings</a>
-            </li>
-            <li>
                 <a class="{% if request.path == '/periods'%} active {% endif %}" href="{{ url_for('.periods')}}">Period Settings</a>
             </li>
             <li>
-                <a class="{% if request.path == '/create-user'%} active {% endif %}" href="{{ url_for('.create_user')}}">User Settings</a>
+                <a class="{% if request.path == '/user-settings'%} active {% endif %}" href="{{ url_for('.user_settings')}}">User Settings</a>
             </li>
             <li>
                 <a class="{% if request.path == '/departments'%} active {% endif %}" href="{{ url_for('.departments')}}">Department Settings</a>
@@ -29,25 +26,47 @@
 <div class="details">
     <div class="wrapper">
         <div class="settings">
-            <form method="post">
-                {{form.csrf_token}}
-                <div class="col-md-offset-1 col-md-8 pl-0">
-                    <div class="title">Department Settings</div>
-                    <div class="form-wrap">
-                        <div class="form-group clearfix">
-                            <label class="col-md-3 control-label">Department Name</label>
-                            <div class="col-md-9 borderd">
-                              <input type="text" name="name" class="form-control" placeholder="Department Name">
-                              <span class="input-group-addon"><i class="fa fa-clock-o" aria-hidden="true"></i></span>
+            <div class="col-md-6">
+                <form method="post"  class="clearfix">
+                    {{ form.csrf_token }}
+                    <div class="clearfix">
+                        <div class="col-md-12 pl-0 ">
+                            <div class="title">Department Settings</div>
+                            <div class="form-wrap">
+                                <div class="form-group clearfix">
+                                    <label class="col-md-3 control-label">Department Name</label>
+                                    <div class="col-md-9 borderd">
+                                      <input type="text" name="name" class="form-control" placeholder="Department Name">
+                                      <span class="input-group-addon"><i class="fa fa-clock-o" aria-hidden="true"></i></span>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-                <div class="col-md-offset-1 col-md-8 pl-0 ">
-                    <button type="submit" class="submit">Save</button>
-                    <button type="button" class="cancel">Cancel</button>
-                </div>
-            </form>
+                    <div class="col-md-12 pl-0 ">
+                        <button type="submit" class="submit">Save</button>
+                        <button type="button" class="cancel">Cancel</button>
+                    </div>
+                </form>
+            </div>
+            <div class="col-md-6">
+                <table id="table_id" class="display datatable">
+                    <thead>
+                        <tr>
+                            <th>Departments</th>
+                            <th>No. of Members</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for d in departments %}
+                        <tr>
+                            <td>{{ d.name }}</td>
+                            <td>{{ d.member_count }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 </div>

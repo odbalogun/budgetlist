@@ -80,7 +80,7 @@
                             %} selected {% endif %}">
                             <a href="{{ url_for('.assigned_tasks')}}">Assigned</a>
                         </li>
-
+                        <!--
                         <li class="
                             {% if 
                                 request.path == '/users' or
@@ -91,10 +91,12 @@
                             %} selected {% endif %}">
                             <a href="{{ url_for('.users')}}">Users</a>
                         </li>
+                        -->
 
                         <li class="
                             {% if 
                                 request.path == '/settings' or
+                                request.path == '/user-settings' or
                                 request.path == '/periods' or
                                 request.path == '/departments' or
                                 request.path == '/budgets'

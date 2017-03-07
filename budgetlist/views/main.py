@@ -61,7 +61,7 @@ def overview():
     # get count of projects
     completed_count = db.session.query(Project.id).filter(Project.status == 2).count()
     # todo add deficit conditions
-    deficit_count = db.session.query(Project.id).filter(Project.status == 5).count()
+    deficit_count = db.session.query(Project.id).filter(Project.amount_remaining < 0).count()
     overdue_count = len(overdue)
 
     return render_template('overview.html', projects=projects, overdue=overdue, ongoing=ongoing, form=form, completed_count=completed_count,
@@ -84,9 +84,7 @@ def project_detail(id):
     subform.assigned_to.choices = [(a.id, a.full_name) for a in User.query.all()]
     subform.priority.choices = [(list_priority.index(a), a) for a in list_priority]
 
-    print(form.task_submit)
     if form.task_submit.data:
-        print('taskform')
         if form.validate_on_submit():
             task = Task(form.title.data, form.description.data, form.allocation.data, id, current_user.id,
                         form.priority.data, form.end_date.data)
@@ -97,9 +95,7 @@ def project_detail(id):
             db.session.commit()
             flash('Task has been successfully created', 'success')
     elif subform.parent_id.data:
-        print('subform submit')
         if subform.validate_on_submit():
-            print('subform')
             task = Task(subform.title.data, subform.description.data, subform.allocation.data, id, current_user.id,
                         subform.priority.data, subform.end_date.data)
             task.parent_task = subform.parent_id.data
@@ -245,6 +241,20 @@ def periods():
         flash('The period has been successfully created', 'success')
     return render_template('periodSettings.html', form=form, periods=periods)
 
+@main.route('/activate-period/<int:id>', methods=['GET'])
+def activate_period(id):
+    period = Period.query.get(id)
+    if period:
+        period.status = 0
+        db.session.add(period)
+        db.session.commit()
+
+        # todo fix expression below
+        db.session.query(Period).filter(Period.id != id).update()
+        db.session.commit()
+        flash('The period has been activated', 'success')
+    return redirect(url_for('.periods'))
+
 @main.route('/departments', methods=['GET', 'POST'])
 def departments():
     form = DepartmentForm()
@@ -256,7 +266,8 @@ def departments():
         db.session.add(dep)
         db.session.commit()
         flash('The department has been successfully created', 'success')
-    return render_template('departmentSetting.html', form=form)
+    departments = Department.query.all()
+    return render_template('departmentSetting.html', form=form, departments=departments)
 
 @main.route('/create-user', methods=['GET', 'POST'])
 def create_user():
@@ -270,6 +281,20 @@ def create_user():
         db.session.commit()
         flash('The user has been successfully created', 'success')
     return render_template('userSetting.html', form=form)
+
+@main.route('/user-settings', methods=['GET', 'POST'])
+def user_settings():
+    form = UserForm()
+    form.department.choices = [(a.id, a.name) for a in Department.query.all()]
+
+    if form.validate_on_submit():
+        user = User(form.full_name.data, form.username.data, form.email.data, form.password.data,
+                form.user_type.data)
+        db.session.add(user)
+        db.session.commit()
+        flash('The user has been successfully created', 'success')
+    users = User.query.all()
+    return render_template('user_setting.html', form=form, users=users)
 
 @main.route('/budgets', methods=['GET', 'POST'])
 def budgets():
@@ -286,7 +311,8 @@ def budgets():
         db.session.add(budget)
         db.session.commit()
         flash('The budget has been successfully created', 'success')
-    return render_template('budgetSetting.html', form=form)
+    budgets = Budget.query.all()
+    return render_template('budgetSetting.html', form=form, budgets=budgets)
 
 # error handling
 @main.app_errorhandler(404)

@@ -7,7 +7,7 @@
                 <a class="{% if request.path == '/periods'%} active {% endif %}" href="{{ url_for('.periods')}}">Period Settings</a>
             </li>
             <li>
-                <a class="{% if request.path == '/create-user'%} active {% endif %}" href="{{ url_for('.create_user')}}">User Settings</a>
+                <a class="{% if request.path == '/user-settings'%} active {% endif %}" href="{{ url_for('.user_settings')}}">User Settings</a>
             </li>
             <li>
                 <a class="{% if request.path == '/departments'%} active {% endif %}" href="{{ url_for('.departments')}}">Department Settings</a>
@@ -75,7 +75,6 @@
                             <th>Start Date</th>
                             <th>End Date</th>
                             <th></th>
-                            <th></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -85,10 +84,11 @@
                             <td>{{ p.string_date(p.start_date).date }}</td>
                             <td>{{ p.string_date(p.end_date).date }}</td>
                             <td>
-                                <button type="button" class="btn btn-sm btn-primary">Edit Record</button>
-                            </td>
-                            <td>
-                                <button type="button" class="btn btn-sm btn-warning">Activate Period</button>
+                                {% if p.status != 0 %}
+                                <a href="{{ url_for('.activate_period', id=p.id) }}">
+                                    <button type="button" class="btn btn-sm btn-warning">Activate Period</button>
+                                </a>
+                                {% endif %}
                             </td>
                         </tr>
                         {% endfor %}
