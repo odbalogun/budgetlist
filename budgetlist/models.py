@@ -198,6 +198,7 @@ class Task(db.Model):
     parent_task = Column(Integer, ForeignKey('tasks.id'))
     owner_id = Column(Integer, ForeignKey('users.id'))
     date_created = Column(DateTime, default=func.now())
+    start_date = Column(Date)
     deadline = Column(Date)
     status = Column(Integer, default=0)
     # 0 for open: 1 for done
@@ -207,13 +208,14 @@ class Task(db.Model):
     child_tasks = relationship("Task", primaryjoin="Task.id == Task.parent_task")
     history = relationship("TaskHistory", back_populates="task", order_by="TaskHistory.date_created")
 
-    def __init__(self, title, description, budget, project_id, owner_id, priority, deadline=None):
+    def __init__(self, title, description, budget, project_id, owner_id, priority, start_date, deadline=None):
         self.title = title
         self.description = description
         self.budget = int(budget)
         self.project_id = int(project_id)
         self.owner_id = int(owner_id)
         self.priority = int(priority)
+        self.start_date = start_date
         self.deadline = deadline
 
     def __repr__(self):
