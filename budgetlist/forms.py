@@ -30,7 +30,7 @@ class UserForm(FlaskForm):
     confirm_password = PasswordField('Confirm Password', [DataRequired(),
                                                           EqualTo('password', 'The passwords do not match')])
     department = SelectField('Department', validators=[DataRequired()], coerce=int)
-    user_type = SelectField('Account Type', [DataRequired()], choices=[(list_account_types.index(a), a) for a in list_account_types], coerce=int)
+    user_type = SelectField('Account Type', validators=[DataRequired()], choices=[(list_account_types.index(a), a) for a in list_account_types], coerce=int)
 
 class BudgetForm(FlaskForm):
     name = StringField('Name', validators=[DataRequired(), Length(max=100)])
@@ -53,6 +53,7 @@ class TaskForm(FlaskForm):
     description = TextAreaField('Description')
     allocation = IntegerField('Allocation')
     assigned_to = SelectField('Assigned To', coerce=int)
+    start_date = DateField('Start Date', validators=[DataRequired()], format='%d/%m/%Y')
     end_date = DateField('End Date', validators=[DataRequired()], format='%d/%m/%Y')
     priority = SelectField('Priority', coerce=int)
     owner_id = HiddenField()
@@ -63,6 +64,7 @@ class SubTaskForm(FlaskForm):
     description = TextAreaField('Description')
     allocation = IntegerField('Allocation')
     assigned_to = SelectField('Assigned To', coerce=int)
+    start_date = DateField('Start Date', validators=[DataRequired()], format='%d/%m/%Y')
     end_date = DateField('End Date', validators=[DataRequired()], format='%d/%m/%Y')
     priority = SelectField('Priority', coerce=int)
     owner_id = HiddenField()

@@ -87,7 +87,7 @@ def project_detail(id):
     if form.task_submit.data:
         if form.validate_on_submit():
             task = Task(form.title.data, form.description.data, form.allocation.data, id, current_user.id,
-                        form.priority.data, form.end_date.data)
+                        form.priority.data, form.start_date.data, form.end_date.data)
             db.session.add(task)
             db.session.commit()
             permission = Permissions(current_user.id, task.id, 0)
@@ -97,7 +97,7 @@ def project_detail(id):
     elif subform.parent_id.data:
         if subform.validate_on_submit():
             task = Task(subform.title.data, subform.description.data, subform.allocation.data, id, current_user.id,
-                        subform.priority.data, subform.end_date.data)
+                        subform.priority.data, subform.start_date.data, subform.end_date.data)
             task.parent_task = subform.parent_id.data
             db.session.add(task)
             db.session.commit()
@@ -229,7 +229,6 @@ def settings():
 @main.route('/periods', methods=['GET', 'POST'])
 def periods():
     form = PeriodForm()
-    periods = Period.query.all()
     if form.validate_on_submit():
         period = Period()
         period.name = form.name.data
@@ -239,6 +238,7 @@ def periods():
         db.session.add(period)
         db.session.commit()
         flash('The period has been successfully created', 'success')
+    periods = Period.query.all()
     return render_template('periodSettings.html', form=form, periods=periods)
 
 @main.route('/activate-period/<int:id>', methods=['GET'])
@@ -269,13 +269,34 @@ def departments():
     departments = Department.query.all()
     return render_template('departmentSetting.html', form=form, departments=departments)
 
+@main.route('/edit-department/<int:id>', methods=['GET', 'POST'])
+def edit_department(id):
+    dept = Department.query.get(id)
+
+    form = DepartmentForm()
+    if form.validate_on_submit():
+        dept.name = form.name.data
+
+        db.session.add(dept)
+        db.session.commit()
+        flash('The department has been successfully updated', 'success')
+        return redirect(url_for('.departments'))
+    departments = Department.query.all()
+    return render_template('edit_department.html', form=form, dept=dept, departments=departments)
+
 @main.route('/create-user', methods=['GET', 'POST'])
 def create_user():
     form = UserForm()
     form.department.choices = [(a.id, a.name) for a in Department.query.all()]
 
     if form.validate_on_submit():
-        user = User(form.full_name.data, form.username.data, form.email.data, form.password.data,
+        print('full_name: ' + form.full_name.data)
+        print('username: ' + form.username.data)
+        print('email: ' + form.email.data)
+        print('password: ' + form.password.data)
+        print('department: ' + form.department.data)
+        print('user_type: ' + form.user_type.data)
+        user = User(form.full_name.data, form.username.data, form.email.data, form.password.data, form.department.data,
                 form.user_type.data)
         db.session.add(user)
         db.session.commit()
@@ -288,7 +309,7 @@ def user_settings():
     form.department.choices = [(a.id, a.name) for a in Department.query.all()]
 
     if form.validate_on_submit():
-        user = User(form.full_name.data, form.username.data, form.email.data, form.password.data,
+        user = User(form.full_name.data, form.username.data, form.email.data, form.password.data, form.department.data,
                 form.user_type.data)
         db.session.add(user)
         db.session.commit()

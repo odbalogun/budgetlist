@@ -35,7 +35,7 @@
                             <div class="tableData width20 {% if task.status == 0 %} ongoing {% endif %}">{{ task.statusText }}</div>
                             <div class="tableData width20">{{ task.deadline_string.date }}</div>
                             {% if not task.parent_id or not task.parent.parent_id %}
-                                <div class="tableData width8 task" data-toggle="modal" data-target=".addSubTask" data-id="{{ task.id }}"><i class="fa fa-plus" aria-hidden="true"></i> Add Task</div>
+                                <div class="tableData width8 task" data-toggle="modal" data-target=".addSubTask" data-id="{{ task.id }}"><i class="fa fa-plus" aria-hidden="true"></i> Add Subtask</div>
                             {% endif %}
                             {% if task.child_tasks %}
                                 <!-- add trigger for child tasks -->
@@ -52,7 +52,7 @@
                                     <div class="tableData width20 {% if child.status == 0 %} ongoing {% endif %}">{{ child.statusText }}</div>
                                     <div class="tableData width20">{{ child.deadline_string.date }}</div>
                                     {% if not child.parent_id or not child.parent.parent_id %}
-                                        <div class="tableData width8 task" data-toggle="modal" data-target=".addSubTask" data-id="{{ child.id }}"><i class="fa fa-plus" aria-hidden="true"></i> Add Task</div>
+                                        <div class="tableData width8 task" data-toggle="modal" data-target=".addSubTask" data-id="{{ child.id }}"><i class="fa fa-plus" aria-hidden="true"></i> Add Subtask</div>
                                     {% endif %}
                                     {% if child.child_tasks %}
                                         <!-- add trigger for child tasks -->
@@ -102,7 +102,7 @@
                     </div>
                 </div>
                 <div class="infoSec">
-                    <div class="title">Balance</div>
+                    <div class="title">Amount Unassigned</div>
                     <div class="content smallPrice red">
                         ₦{{ project.amount_remaining }}
                     </div>
@@ -152,6 +152,10 @@
                 <div class="planingForms">
                    <div class="title">Priority</div>
                    {{ subform.priority(class_='plan') }}
+                </div>
+                <div class="planingForms">
+                   <div class="title">Start Date</div>
+                   {{ subform.start_date(class_="datetimepicker plan") }}
                 </div>
                 <div class="planingForms">
                    <div class="title">End Date</div>
@@ -204,6 +208,10 @@
                 <div class="planingForms">
                    <div class="title">Priority</div> 
                    {{ form.priority(class_='plan') }}
+                </div>
+                <div class="planingForms">
+                   <div class="title">Start Date</div>
+                   {{ form.start_date(class_="datetimepicker plan") }}
                 </div>
                 <div class="planingForms">
                    <div class="title">End Date</div>

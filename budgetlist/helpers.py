@@ -7,7 +7,7 @@ list_project_status = ['Pending', 'Ongoing', 'Completed', 'Suspended']
 list_task_status = ['Pending', 'Ongoing', 'Completed', 'Suspended']
 
 list_budget_types = ['Operations', 'Trading']
-list_priority = ['Normal', 'Urgent']
+list_priority = ['Normal', 'Medium', 'High']
 
 
 def dump_datetime(value):

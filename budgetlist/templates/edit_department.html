@@ -31,12 +31,12 @@
                     {{ form.csrf_token }}
                     <div class="clearfix">
                         <div class="col-md-12 pl-0 ">
-                            <div class="title">Department Settings</div>
+                            <div class="title">Edit {{ dept.name }}</div>
                             <div class="form-wrap">
                                 <div class="form-group clearfix">
                                     <label class="col-md-3 control-label">Department Name</label>
                                     <div class="col-md-9 borderd">
-                                      <input type="text" name="name" class="form-control" placeholder="Department Name">
+                                      <input type="text" name="name" value="{{ dept.name }}" class="form-control" placeholder="Department Name">
                                       <span class="input-group-addon"><i class="fa fa-clock-o" aria-hidden="true"></i></span>
                                     </div>
                                 </div>
