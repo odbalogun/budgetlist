@@ -97,7 +97,7 @@
                             {{ task.task.title }}
                         </td>
                         <td>
-                            12/12/2017
+                            {{ task.task.deadline.strftime('%d/%m/%Y') }}
                         </td>
                         <td >
                             {{ task.task.percent }}% completed
@@ -113,7 +113,7 @@
                             {{ task.task.statusText }}
                         </td>
                         <td>
-                            <a href="#" data-toggle="modal" data-target=".editTask">Update</a>
+                            <a href="#" data-toggle="modal" data-target=".editTask" data-id="{{ task.task_id }}">Update</a>
                         </td>
                         <td>
                             <a href="#">View details</a>
@@ -140,7 +140,7 @@
                     <th></th>
                     <th></th>
                 </tr>
-                {% for task in tasks if task.status == 2 %}
+                {% for task in tasks if task.task.status == 2 %}
                     <tr >
                         <td>{{loop.index}}</td>
                         <td class="projectName">
