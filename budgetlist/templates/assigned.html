@@ -142,15 +142,44 @@
                 
                 
                 <table class="assignedTask">
-                    <tr>
-                        <th>S/N</th>
-                        <th>Name</th>
-                        <th>Date</th>
-                        <th>%Completion</th>
-                        <th></th>
-                        <th>Status</th>
-                        <th></th>
-                        <th></th>
+                <tr>
+                    <th>S/N</th>
+                    <th>Name</th>
+                    <th>Date</th>
+                    <th>%Completion</th>
+                    <th></th>
+                    <th>Status</th>
+                    <th></th>
+                    <th></th>
+                </tr>
+                {% for task in tasks %}
+                    <tr >
+                        <td>{{loop.index}}</td>
+                        <td class="projectName">
+                            {{ task.task.title }}
+                        </td>
+                        <td>
+                            {{ task.task.deadline.strftime('%d/%m/%Y') }}
+                        </td>
+                        <td >
+                            {{ task.task.percent }}% completed
+                        </td>
+                        <td class="progressBar">
+                            <div class="progress">
+                                <div class="progressBar" role="progressbar" aria-valuenow="70" aria-valuemin="0" aria-valuemax="{{ task.task.percent }}">
+                                  <span class="sr-only">{{ task.task.percent }}% Complete</span>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            {{ task.task.statusText }}
+                        </td>
+                        <td>
+                            <a class="update" href="#" data-toggle="modal" data-target=".editTask">Update</a>
+                        </td>
+                        <td>
+                            <a class="details" href="#" data-toggle="modal" data-target=".taskDetails">View details</a>
+                        </td>
                     </tr>
                     {% for task in tasks %}
                         <tr >
@@ -202,7 +231,7 @@
                     <th></th>
                     <th></th>
                 </tr>
-                {% for task in tasks if task.status == 2 %}
+                {% for task in tasks if task.task.status == 2 %}
                     <tr >
                         <td>{{loop.index}}</td>
                         <td class="projectName">

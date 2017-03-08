@@ -13,7 +13,8 @@
                     <div class="withHover tableData width30 minus2">Title</div>
                     <div class="withHover tableData width30">Allocation</div>
                     <div class="withHover tableData width20">Status</div>
-                    <div class="withHover tableData width20">End Date</div>
+                    <div class="withHover tableData width20">Start Date</div>
+                    <div class="withHover tableData width20">Deadline</div>
                     <div class="tableData width2"></div>
                     <div class="tableData width2"></div>
                 </div>
@@ -33,6 +34,11 @@
                             <div class="tableData width30 withBar" data-toggle="modal" data-target=".updateProject">{{ task.title }}</div>
                             <div class="tableData width30">₦{{ task.budget }}</div>
                             <div class="tableData width20 {% if task.status == 0 %} ongoing {% endif %}">{{ task.statusText }}</div>
+                            <div class="tableData width20">
+                                {% if task.start_date %}
+                                {{ task.start_date.strftime("%d %b %Y") }}
+                                {% endif %}
+                            </div>
                             <div class="tableData width20">{{ task.deadline_string.date }}</div>
                             {% if not task.parent_id or not task.parent.parent_id %}
                                 <div class="tableData width8 task" data-toggle="modal" data-target=".addSubTask" data-id="{{ task.id }}"><i class="fa fa-plus" aria-hidden="true"></i> Add Subtask</div>
@@ -50,6 +56,11 @@
                                     <div class="tableData width30 withInnerBar" data-toggle="modal" data-target=".updateProject">{{ child.title }}</div>
                                     <div class="tableData width30">₦{{ child.budget }}</div>
                                     <div class="tableData width20 {% if child.status == 0 %} ongoing {% endif %}">{{ child.statusText }}</div>
+                                    <div class="tableData width20">
+                                        {% if child.start_date %}
+                                            {{ child.start_date.strftime("%d %b %Y") }}
+                                        {% endif %}
+                                    </div>
                                     <div class="tableData width20">{{ child.deadline_string.date }}</div>
                                     {% if not child.parent_id or not child.parent.parent_id %}
                                         <div class="tableData width8 task" data-toggle="modal" data-target=".addSubTask" data-id="{{ child.id }}"><i class="fa fa-plus" aria-hidden="true"></i> Add Subtask</div>
@@ -67,6 +78,11 @@
                                                 <div class="tableData width30 minus2 withInnerinnerBar" data-toggle="modal" data-target=".innertable">{{ grandkid.title }}</div>
                                                 <div class="tableData width30" data-toggle="modal" data-target=".innertable">₦{{ grandkid.budget }}</div>
                                                 <div class="tableData width20 {% if grandkid.status == 0 %} ongoing {% endif %}">{{ grandkid.statusText }}</div>
+                                                <div class="tableData width20">
+                                                    {% if grandkid.start_date %}
+                                                        {{ grandkid.start_date.strftime("%d %b %Y") }}
+                                                    {% endif %}
+                                                </div>
                                                 <div class="tableData width20">{{ grandkid.deadline_string.date }}</div>
                                             </div>
                                         </div>

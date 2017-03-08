@@ -102,11 +102,13 @@
                             <td>{{ user.full_name }}</td>
                             <td>{{ user.department.name }}</td>
                             <td>{{ user.user_type }}</td>
-                            <td style="width: 15%"">
-                                {% if user.status == 0 %}
-                                    <a class="deactivated" href="{{ url_for('.toggle_user_status', action=1, userid=user.id) }}">Deactivate</a>
-                                {% else %}
-                                    <a class="activated" href="{{ url_for('.toggle_user_status', action=0, userid=user.id) }}">Activate</a>
+                            <td style="width: 15%">
+                                {% if user.id != current_user.id %}
+                                    {% if user.status == 0 %}
+                                        <a class="deactivated" href="{{ url_for('.toggle_user_status', action=1, userid=user.id) }}">Deactivate</a>
+                                    {% else %}
+                                        <a class="activated" href="{{ url_for('.toggle_user_status', action=0, userid=user.id) }}">Activate</a>
+                                    {% endif %}
                                 {% endif %}
                                 <a class="edited" href="{{ url_for('.edit_user', userid=user.id) }}">Edit</a>
                             </td>

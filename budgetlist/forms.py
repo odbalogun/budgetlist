@@ -25,9 +25,19 @@ class DepartmentForm(FlaskForm):
 class UserForm(FlaskForm):
     full_name = StringField('Full Name', validators=[DataRequired(), Length(max=100)])
     username = StringField('Username', validators=[DataRequired(), Length(min=2, max=50), Unique(User, User.username, 'This username already exists')])
-    email = StringField('Email Address', validators=[Optional(), Length(min=6, max=120), Email(), Unique(User, User.email, 'This email already exists')])
+    email = StringField('Email Address', validators=[DataRequired(), Length(min=6, max=120), Email(), Unique(User, User.email, 'This email already exists')])
     password = PasswordField('Password', validators=[DataRequired()])
     confirm_password = PasswordField('Confirm Password', [DataRequired(),
+                                                          EqualTo('password', 'The passwords do not match')])
+    department = SelectField('Department', validators=[DataRequired()], coerce=int)
+    user_type = SelectField('Account Type', validators=[DataRequired()], choices=[(list_account_types.index(a), a) for a in list_account_types], coerce=int)
+
+class EditUserForm(FlaskForm):
+    full_name = StringField('Full Name', validators=[DataRequired(), Length(max=100)])
+    username = StringField('Username', validators=[DataRequired(), Length(min=2, max=50)])
+    email = StringField('Email Address', validators=[DataRequired(), Length(min=6, max=120), Email()])
+    password = PasswordField('Password', validators=[Optional()])
+    confirm_password = PasswordField('Confirm Password', [Optional(),
                                                           EqualTo('password', 'The passwords do not match')])
     department = SelectField('Department', validators=[DataRequired()], coerce=int)
     user_type = SelectField('Account Type', validators=[DataRequired()], choices=[(list_account_types.index(a), a) for a in list_account_types], coerce=int)

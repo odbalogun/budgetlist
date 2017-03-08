@@ -4,7 +4,7 @@ from budgetlist.models import db, User, Project, Task, Company, Period, Departme
 from functools import wraps
 from budgetlist import lm
 from budgetlist.forms import LoginForm, CompanyForm, PeriodForm, DepartmentForm, UserForm, BudgetForm, ProjectForm, \
-    TaskForm, SubTaskForm
+    TaskForm, SubTaskForm, EditUserForm
 from budgetlist.helpers import list_budget_types, list_priority
 from datetime import date
 
@@ -177,12 +177,34 @@ def inactive_users():
 
     return render_template('members.html', users=users)
 
-@main.route('/edit-user/<int:userid>', methods=['GET'])
+@main.route('/edit-user/<int:userid>', methods=['GET', 'POST'])
 def edit_user(userid):
     # get users
-    users = User.query.filter(User.account_type==1).all()
+    user = User.query.get(userid)
 
-    return render_template('members.html', users=users)
+    form = EditUserForm()
+    form.department.choices = [(a.id, a.name) for a in Department.query.all()]
+
+    if form.validate_on_submit():
+        user.username = form.username.data
+        user.full_name = form.full_name.data
+        user.email = form.email.data
+        user.account_type = form.user_type.data
+        user.department_id = form.department.data
+
+        if form.password.data:
+            user.set_password(form.password.data)
+
+        db.session.add(user)
+        db.session.commit()
+        flash('The user\'s account status has been updated', 'success')
+        return redirect(url_for('.user_settings'))
+
+    form.department.data = (user.department_id if user.department_id else 0)
+    form.user_type.data = user.account_type
+
+    users = User.query.order_by(User.date_created.asc()).all()
+    return render_template('edit_user.html', user=user, users=users, form=form)
 
 @main.route('/toggle_user_status/<int:action>/<int:userid>', methods=['GET'])
 def toggle_user_status(action, userid):
@@ -195,7 +217,7 @@ def toggle_user_status(action, userid):
             db.session.add(user)
             db.session.commit()
             flash('The user\'s account status has been updated', 'success')
-            return redirect(url_for('.users'))
+            return redirect(url_for('.user_settings'))
         else:
             abort(404)
     else:
@@ -290,12 +312,6 @@ def create_user():
     form.department.choices = [(a.id, a.name) for a in Department.query.all()]
 
     if form.validate_on_submit():
-        print('full_name: ' + form.full_name.data)
-        print('username: ' + form.username.data)
-        print('email: ' + form.email.data)
-        print('password: ' + form.password.data)
-        print('department: ' + form.department.data)
-        print('user_type: ' + form.user_type.data)
         user = User(form.full_name.data, form.username.data, form.email.data, form.password.data, form.department.data,
                 form.user_type.data)
         db.session.add(user)
@@ -314,7 +330,7 @@ def user_settings():
         db.session.add(user)
         db.session.commit()
         flash('The user has been successfully created', 'success')
-    users = User.query.all()
+    users = User.query.order_by(User.date_created.asc()).all()
     return render_template('user_setting.html', form=form, users=users)
 
 @main.route('/budgets', methods=['GET', 'POST'])
