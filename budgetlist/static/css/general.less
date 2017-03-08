@@ -1304,3 +1304,86 @@ header{
 .closebtn:hover {
     color: black;
 }
+
+table.assignedTask{
+	width: 100%;
+	border-collapse: collapse;
+	tr{
+		&:nth-child(even){
+			background-color: #f9f9f9;
+		}
+		td{
+			border-top: 1px solid #ddd;
+		    border-bottom: 1px solid #ddd;
+		    padding: 10px;
+		    &.progressBar{
+		    	width: 150px;
+		    	.progress{
+		    		margin-bottom: 0;
+    				height: 5px;
+			    	.progress-bar{
+			    		background-color: #5cb85c;
+			    	}
+			    }
+		    }
+		}
+	}
+}
+
+.mce-notification.mce-has-close{
+	padding-right: 15px;
+    display: none;
+}
+
+.modal.fade.editTask.in .modal-content{
+	border-radius: 0;
+    width: 80%;
+    margin: auto;
+    .title{
+    	background-color: #0078D7;
+    	height: 3em;
+    	line-height: 3em;
+    	color: #fff;
+    	font-weight: 600;
+    	padding: 0 20px;
+    }
+    .content{
+		padding: 20px;
+		label{
+			display: block;
+			padding-bottom: 5px;
+		}
+		input, select, textarea{
+			box-shadow: none;
+		    border-radius: 0;
+		    outline: 0;
+		    height: 34px;
+		    color: #555;
+    		background-color: #fff;
+    		font-size: 14px;
+    		line-height: 1.42857143;
+    		transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
+    		border-radius: 0;
+    		border: 1px solid #c8c8c8;
+    		display: block;
+    		width: 100%;
+    		margin-bottom: 15px;
+		}
+    }
+    .buttonWrap{
+    	text-align: right;
+    	margin-left: 10px;
+    	padding: 10px 35px 35px 35px;
+    	button.save{
+    		border: none;
+		    background-color: #0078D7;
+		    color: #fff;
+		    padding: 6px 25px;
+		    outline: 0;
+    	}
+    }
+}
+
+.mce-menubar, .mce-panel, .mce-btn{
+	background-color: #F8F8F8!important;
+}

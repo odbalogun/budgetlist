@@ -23,77 +23,155 @@
         </ul>
     </div>
 </div>
+
+<!-- Edit Task modal -->
+
+<div class="modal fade editTask" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+        <div class="title clearfix">
+            <span class="pull-left">Edit Task</span>
+            <span data-dismiss="modal" aria-label="Close" class="pull-right"><i class="fa fa-times" aria-hidden="true"></i></span>
+        </div>
+        <form action="">
+            <div class="content clearfix">
+                <div class="col-md-6">
+                    <label for="">Percentage Completion</label>
+                    <select name="" id="">
+                        <option value="">10%</option>
+                        <option value="">20%</option>
+                        <option value="">30%</option>
+                        <option value="">40%</option>
+                        <option value="">50%</option>
+                        <option value="">60%</option>
+                        <option value="">70%</option>
+                        <option value="">80%</option>
+                        <option value="">90%</option>
+                        <option value="">100%</option>
+                        
+                    </select>
+                </div>  
+                <div class="col-md-6">
+                    <label for="">Status</label>
+                    <select name="" id="">
+                        <option value="">Pending</option>
+                        <option value="">Ongoing</option>
+                        <option value="">Completed</option>
+                    </select>
+                </div>
+                <div class="col-md-12">
+                    <label for="">Note</label>
+                    <textarea name="" id="" cols="30" rows="10"></textarea>
+                </div>  
+            </div>
+            <div class="buttonWrap">
+                <button type="submit" data-dismiss="modal" class="save"><i class="fa fa-floppy-o" aria-hidden="true"></i> Save &amp; close</button>
+            </div>
+        </form>
+    </div>
+  </div>
+</div>
+
 <div class="details infor pt-0">
     <div class="wrapper">
     <div class="tab-content">
         <div role="tabpanel" class="tab-pane active mt-30" id="recent">
             {% if tasks %}
+                
+                
+                <table class="assignedTask">
                 {% for task in tasks %}
-                <div class="tableInfo clearfix">
-                    <a href="{{ url_for('.assigned_tasks')}}">
-                        <span class="projectName">{{ task.task.title }}</span>
-                        <span class="done">
-                            <div class="completion">
-                                {{ task.task.percent }}% completed
-                            </div>
+                    <tr >
+                        <td>{{loop.index}}</td>
+                        <td class="projectName" data-toggle="modal" data-target=".editTask">
+                            {{ task.task.title }}
+                        </td>
+                        <td>
+                            {{ task.task.percent }}% completed
+                        </td>
+                        <td class="progressBar">
                             <div class="progress">
-                              <div class="progress-bar progress-bar-success progress-bar-striped" role="progressbar" aria-valuenow="{{ task.task.percent }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ task.task.percent }}%">
-                              </div>
+                                <div class="progressBar" role="progressbar" aria-valuenow="70" aria-valuemin="0" aria-valuemax="{{ task.task.percent }}">
+                                  <span class="sr-only">{{ task.task.percent }}% Complete</span>
+                                </div>
                             </div>
-                        </span>
-                        <span class="status">{{ task.task.statusText }}</span>
-                        <span class="Date">{{ task.task.deadline_string.date }}</span>
-                    </a>
-                </div>
+                        </td>
+                        <td>
+                            {{ task.task.statusText }}
+                        </td>
+                        <td>
+                            <a href="">View details</a>
+                        </td>
+                    </tr>
                 {% endfor %}
+                </table>
+
+                
             {% else %}
                 <p>There are no tasks assigned to you</p>
             {% endif %}
         </div>
         <div role="tabpanel" class="tab-pane" id="completed">
             {% if tasks %}
+                <table class="assignedTask">
                 {% for task in tasks if task.status == 2 %}
-                <div class="tableInfo clearfix">
-                    <a href="{{ url_for('.assigned_tasks')}}">
-                        <span class="projectName">{{ task.task.title }}</span>
-                        <span class="done">
-                            <div class="completion">
-                                {{ task.task.percent }}% completed
-                            </div>
+                    <tr >
+                        <td>{{loop.index}}</td>
+                        <td class="projectName" data-toggle="modal" data-target=".editTask">
+                            {{ task.task.title }}
+                        </td>
+                        <td>
+                            {{ task.task.percent }}% completed
+                        </td>
+                        <td class="progressBar">
                             <div class="progress">
-                              <div class="progress-bar progress-bar-success progress-bar-striped" role="progressbar" aria-valuenow="{{ task.task.percent }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ task.task.percent }}%">
-                              </div>
+                                <div class="progressBar" role="progressbar" aria-valuenow="70" aria-valuemin="0" aria-valuemax="{{ task.task.percent }}">
+                                  <span class="sr-only">{{ task.task.percent }}% Complete</span>
+                                </div>
                             </div>
-                        </span>
-                        <span class="status">{{ task.task.statusText }}</span>
-                        <span class="Date">{{ task.task.deadline_string.date }}</span>
-                    </a>
-                </div>
+                        </td>
+                        <td>
+                            {{ task.task.statusText }}
+                        </td>
+                        <td>
+                            <a href="">View details</a>
+                        </td>
+                    </tr>
                 {% endfor %}
+                </table>
             {% else %}
                 <p>There are no completed tasks assigned to you</p>
             {% endif %}
         </div>
         <div role="tabpanel" class="tab-pane" id="all">
             {% if tasks %}
+                
+                <table class="assignedTask">
                 {% for task in tasks %}
-                <div class="tableInfo clearfix">
-                    <a href="{{ url_for('.assigned_tasks')}}">
-                        <span class="projectName">{{ task.task.title }}</span>
-                        <span class="done">
-                            <div class="completion">
-                                {{ task.task.percent }}% completed
-                            </div>
+                    <tr >
+                        <td>{{loop.index}}</td>
+                        <td class="projectName" data-toggle="modal" data-target=".editTask">
+                            {{ task.task.title }}
+                        </td>
+                        <td>
+                            {{ task.task.percent }}% completed
+                        </td>
+                        <td class="progressBar">
                             <div class="progress">
-                              <div class="progress-bar progress-bar-success progress-bar-striped" role="progressbar" aria-valuenow="{{ task.task.percent }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ task.task.percent }}%">
-                              </div>
+                                <div class="progressBar" role="progressbar" aria-valuenow="70" aria-valuemin="0" aria-valuemax="{{ task.task.percent }}">
+                                  <span class="sr-only">{{ task.task.percent }}% Complete</span>
+                                </div>
                             </div>
-                        </span>
-                        <span class="status">{{ task.task.statusText }}</span>
-                        <span class="Date">{{ task.task.deadline_string.date }}</span>
-                    </a>
-                </div>
+                        </td>
+                        <td>
+                            {{ task.task.statusText }}
+                        </td>
+                        <td>
+                            <a href="">View details</a>
+                        </td>
+                    </tr>
                 {% endfor %}
+                </table>
             {% else %}
                 <p>There are no tasks assigned to you</p>
             {% endif %}
@@ -103,3 +181,55 @@
     </div>
 </div>
 {% endblock %}
+
+
+<div class="generalModal modal fade addTask" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" data-backdrop="static" data-keyboard="false">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+    <form method="post" id="addTaskForm" action="{{ request.path }}">
+        {{ form.csrf_token }}
+        <div class="titleSection">
+            <div class="cancel clearfix">
+                <span class="title">Add new task</span>
+                <i data-dismiss="modal" class="fa fa-times" aria-hidden="true"></i>
+            </div>
+            {{ form.title(class_='title', placeholder='Enter Title') }}
+            <div class="assign clearfix">
+                {{ form.assigned_to(class_='assignTo', prompt='Assigned to') }}
+                {{ form.task_submit(value='True') }}
+                <button type="submit" onclick="form_submit()" data-dismiss="modal" class="save"><i class="fa fa-floppy-o" aria-hidden="true"></i> Save & close</button>
+            </div>
+        </div>
+        <div class="stateSection clearfix">
+            <div class="col-md-8">
+                <div class="form-wrap clearfix">
+                    <div class="col-md-1 p-0">
+                        <div class="title">Allocation</div>
+                    </div>
+                    <div class="col-md-11">
+                        {{ form.allocation(class_='stateForm', placeholder="Amount(₦)")}}
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="descritpionSection clearfix">
+            <div class="col-md-8">
+                <div class="title">Description</div>
+                {{ form.description() }}
+            </div>
+            <div class="col-md-4">
+                <div class="title">Planning</div>
+                <div class="planingForms">
+                   <div class="title">Priority</div> 
+                   {{ form.priority(class_='plan') }}
+                </div>
+                <div class="planingForms">
+                   <div class="title">End Date</div>
+                   {{ form.end_date(class_="datetimepicker plan") }}
+                </div>
+            </div>
+        </div>
+    </form>
+    </div>
+  </div>
+</div>

@@ -11,11 +11,14 @@ $(function() {
     //     $('.chart').data('easyPieChart').update(40);
     // }, 5000);
 });
-//  $(document).ready(function () {
-//     $('.DinamicTable').DataTable({
-//         "ordering": false
-//     });
-// });
+
+$(document).ready(function(){
+    tinymce.init({
+         selector:'textarea',
+         toolbar: 'undo redo | insert | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image',
+     })
+});
+
 $(function() {              
    $('.datetimepicker').datetimepicker({
          format: 'DD/MM/YYYY'
