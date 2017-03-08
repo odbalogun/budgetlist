@@ -25,7 +25,6 @@
 </div>
 
 <!-- Edit Task modal -->
-
 <div class="modal fade editTask" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel">
   <div class="modal-dialog modal-lg" role="document">
     <div class="modal-content">
@@ -72,6 +71,69 @@
   </div>
 </div>
 
+<!-- Task Details modal -->
+<div class="modal fade taskDetails" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+        <div class="title clearfix">
+            <span class="pull-left">Mama</span>
+            <span data-dismiss="modal" aria-label="Close" class="pull-right"><i class="fa fa-times" aria-hidden="true"></i></span>
+        </div>
+        <div class="content clearfix">
+            <table class="detailTable">
+                <tr>
+                    <th>Task Name</th>
+                    <th>Task Description</th>
+                </tr>
+                <tr>
+                    <td>Mama</td>
+                    <td>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Vero, consectetur. Eum, ex dolorum quaerat repellat mollitia repellendus</td>
+                </tr>
+            </table>
+            <table class="moreDetailTable">
+                <tr>
+                    <td>Current Status</td>
+                    <td>Pending</td>
+                </tr>
+                <tr>
+                    <td>Start Date</td>
+                    <td>12/02/17</td>
+                </tr>
+                <tr>
+                    <td>End Date</td>
+                    <td>12/02/17</td>
+                </tr>
+                <tr>
+                    <td>Percentage Completion</td>
+                    <td>30%</td>
+                </tr>
+
+            </table>
+            <label class="myLabel">History</label>
+            <div class="bs-callout bs-callout-info" id="callout-pagination-label"> 
+                <h4>Odutola Dayo</h4> 
+                <small class="smallText">20/02/17 02:35pm</small>
+                <small class="smallText">Updated To: 
+                <strong>30%</strong></small>
+                <p>
+                    Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quisquam eligendi.
+                </p> 
+            </div>
+            <div class="bs-callout bs-callout-info" id="callout-pagination-label"> 
+                <h4>Babatunde</h4> 
+                <small class="smallText">20/02/17 02:35pm</small>
+                <small class="smallText">Updated To: 
+                <strong>50%</strong></small>
+                <p>
+                    Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quisquam eligendi molestiae, voluptas modi. Et obcaecati fuga dicta blanditiis eligendi pariatur nostrum eaque totam natus fugit delectus dolorem, asperiores, labore voluptas.
+                </p> 
+            </div>
+        </div>
+    </div>
+  </div>
+</div>
+
+
 <div class="details infor pt-0">
     <div class="wrapper">
     <div class="tab-content">
@@ -113,10 +175,10 @@
                             {{ task.task.statusText }}
                         </td>
                         <td>
-                            <a href="#" data-toggle="modal" data-target=".editTask">Update</a>
+                            <a class="update" href="#" data-toggle="modal" data-target=".editTask">Update</a>
                         </td>
                         <td>
-                            <a href="#">View details</a>
+                            <a class="details" href="#" data-toggle="modal" data-target=".taskDetails">View details</a>
                         </td>
                     </tr>
                 {% endfor %}
@@ -163,10 +225,10 @@
                             {{ task.task.statusText }}
                         </td>
                         <td>
-                            <a href="#" data-toggle="modal" data-target=".editTask">Update</a>
+                            <a class="update" href="#" data-toggle="modal" data-target=".editTask">Update</a>
                         </td>
                         <td>
-                            <a href="#">View details</a>
+                            <a class="details" href="#" data-toggle="modal" data-target=".taskDetails">View details</a>
                         </td>
                     </tr>
                 {% endfor %}
@@ -212,10 +274,10 @@
                             {{ task.task.statusText }}
                         </td>
                         <td>
-                            <a href="#" data-toggle="modal" data-target=".editTask">Update</a>
+                            <a class="update" href="#" data-toggle="modal" data-target=".editTask">Update</a>
                         </td>
                         <td>
-                            <a href="#">View details</a>
+                            <a class="details" href="#" data-toggle="modal" data-target=".taskDetails">View details</a>
                         </td>
                     </tr>
                 {% endfor %}
