@@ -83,10 +83,10 @@
                 {% for task in tasks %}
                     <tr >
                         <td>{{loop.index}}</td>
-                        <td class="projectName" data-toggle="modal" data-target=".editTask">
+                        <td class="projectName">
                             {{ task.task.title }}
                         </td>
-                        <td>
+                        <td >
                             {{ task.task.percent }}% completed
                         </td>
                         <td class="progressBar">
@@ -100,7 +100,10 @@
                             {{ task.task.statusText }}
                         </td>
                         <td>
-                            <a href="">View details</a>
+                            <a href="#" data-toggle="modal" data-target=".editTask">Update</a>
+                        </td>
+                        <td>
+                            <a href="#">View details</a>
                         </td>
                     </tr>
                 {% endfor %}
