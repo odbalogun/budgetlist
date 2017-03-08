@@ -1269,7 +1269,7 @@ header{
 	    float: right;
 	    margin-top: 20px;
 	    padding: 7px 35px;
-	    background-color: #D39727;
+	    background-color: #D39742;
 	    margin-right: 20px;
 	    &:hover{
 	    	background-color: #D39742;
@@ -1281,15 +1281,18 @@ header{
 
 
 .alert {
-    height: 50px;
+    height: 40px;
+    line-height: 40px;
     background-color: #6ABC6E;
     color: #fff;
     position: fixed;
     z-index: 2;
-    top: 84px;
-    right: 25px;
+    top: 72px;
+    right: 0;
+    left: 0;
     opacity: 0.95;
     border-radius: 0;
+    padding: 0 50px;
 
 }
 
@@ -1301,20 +1304,34 @@ header{
     font-size: 22px;
     cursor: pointer;
     transition: 0.3s;
-    margin-top: -8px;
+    margin-top: -3px;
 }
 
 .closebtn:hover {
     color: black;
 }
 
+.alert-danger {
+    color: #a94442!important;
+    background-color: #f2dede!important;
+    border-color: #ebccd1!important;
+}
+
 table.assignedTask{
 	width: 75%;
 	margin: auto;
 	border-collapse: collapse;
+	&.full{
+		width: 100%;
+	}
 	tr{
 		&:nth-child(even){
 			background-color: #f9f9f9;
+		}
+		th{
+			&.bordered{
+				border-right: 1px solid #ddd;
+			}
 		}
 		td{
 			border-top: 1px solid #ddd;
@@ -1330,6 +1347,9 @@ table.assignedTask{
 			    	}
 			    }
 		    }
+		    &.bordered{
+				border-right: 1px solid #ddd;
+			}
 		    a.update{
 				background: #5CB85C;
 			    color: #fff;
@@ -1358,6 +1378,61 @@ table.assignedTask{
 		}
 	    
 	}
+	&.dotted{
+		tr{
+			border-bottom: 1px dashed #ddd;
+			&:nth-child(even){
+				background-color: #f9f9f9;
+			}
+			td{
+				border-top: 1px dashed #ddd;
+			    border-bottom: 1px dotted #ddd;
+			    padding: 10px;
+			    &.progressBar{
+			    	width: 110px;
+			    	.progress{
+			    		margin-bottom: 0;
+	    				height: 5px;
+				    	.progress-bar{
+				    		background-color: #5cb85c;
+				    	}
+				    }
+			    }
+			    &.bordered{
+					border-right: 1px solid #ddd;
+				}
+			    a.update{
+					background: #5CB85C;
+				    color: #fff;
+				    padding: 4px 12px;
+				    border-radius: 4px;
+				    text-align: right;
+				    display: inline-block;
+				    &:focus{
+						text-decoration: none;
+						outline: none;
+				    }
+			    }
+			    a.details{
+			    	background-color: #337AB7;
+				    color: #fff;
+				    padding: 4px 12px;
+				    border-radius: 4px;
+				    text-align: right;
+				    display: inline-block;
+				    margin-top: 0;
+				    &:focus{
+						text-decoration: none;
+						outline: none;
+				    }
+			    }
+			}
+		    
+		}
+	}
+}
+.mt-50{
+	margin-top: 50px!important;
 }
 
 .mce-notification.mce-has-close{
@@ -1451,7 +1526,14 @@ table.assignedTask{
     	padding: 10px 35px 35px 35px;
     	button.save{
     		border: none;
-		    background-color: #0078D7;
+		    background-color: #5CB85C;
+		    color: #fff;
+		    padding: 6px 25px;
+		    outline: 0;
+    	}
+    	button.cancel{
+    		border: none;
+		    background-color: #D39742;
 		    color: #fff;
 		    padding: 6px 25px;
 		    outline: 0;
@@ -1484,5 +1566,29 @@ table.assignedTask{
 	    &.bs-callout-info {
 		    border-left-color: #1b809e;
 		}
+	}
+}
+.dHeading{
+	padding: 30px 15px;
+	.title{
+		font-size: 20px;
+	    color: #106EBE;
+	    padding-bottom: 5px;
+	    font-weight: 600;
+	    width: 40%;
+	    margin: 0;
+	}
+	a.adding{
+		display: block;
+	    color: #333;
+	    text-decoration: none;
+	    border: 1px solid #c8c8c8;
+	    padding: 5px 10px;
+	    margin: 0;
+	    font-size: 14px;
+	    &:hover{
+	    	background-color: #deecf9;
+    		border-color: #deecf9;
+	    }
 	}
 }

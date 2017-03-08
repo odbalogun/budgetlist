@@ -24,3 +24,7 @@ $(function() {
          format: 'DD/MM/YYYY'
    });
 });
+
+$(document).ready( function() {
+    $('.alert').delay(5000).fadeOut();
+});

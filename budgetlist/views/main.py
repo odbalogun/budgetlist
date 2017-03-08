@@ -250,7 +250,7 @@ def activate_period(id):
         db.session.commit()
 
         # todo fix expression below
-        db.session.query(Period).filter(Period.id != id).update()
+        db.session.query(Period).filter(Period.id != id).update({Period.status: 1})
         db.session.commit()
         flash('The period has been activated', 'success')
     return redirect(url_for('.periods'))

@@ -142,46 +142,46 @@
                 
                 
                 <table class="assignedTask">
-                <tr>
-                    <th>S/N</th>
-                    <th>Name</th>
-                    <th>Date</th>
-                    <th>%Completion</th>
-                    <th></th>
-                    <th>Status</th>
-                    <th></th>
-                    <th></th>
-                </tr>
-                {% for task in tasks %}
-                    <tr >
-                        <td>{{loop.index}}</td>
-                        <td class="projectName">
-                            {{ task.task.title }}
-                        </td>
-                        <td>
-                            12/12/2017
-                        </td>
-                        <td >
-                            {{ task.task.percent }}% completed
-                        </td>
-                        <td class="progressBar">
-                            <div class="progress">
-                                <div class="progressBar" role="progressbar" aria-valuenow="70" aria-valuemin="0" aria-valuemax="{{ task.task.percent }}">
-                                  <span class="sr-only">{{ task.task.percent }}% Complete</span>
-                                </div>
-                            </div>
-                        </td>
-                        <td>
-                            {{ task.task.statusText }}
-                        </td>
-                        <td>
-                            <a class="update" href="#" data-toggle="modal" data-target=".editTask">Update</a>
-                        </td>
-                        <td>
-                            <a class="details" href="#" data-toggle="modal" data-target=".taskDetails">View details</a>
-                        </td>
+                    <tr>
+                        <th>S/N</th>
+                        <th>Name</th>
+                        <th>Date</th>
+                        <th>%Completion</th>
+                        <th></th>
+                        <th>Status</th>
+                        <th></th>
+                        <th></th>
                     </tr>
-                {% endfor %}
+                    {% for task in tasks %}
+                        <tr >
+                            <td>{{loop.index}}</td>
+                            <td class="projectName">
+                                {{ task.task.title }}
+                            </td>
+                            <td>
+                                12/12/2017
+                            </td>
+                            <td >
+                                {{ task.task.percent }}% completed
+                            </td>
+                            <td class="progressBar">
+                                <div class="progress">
+                                    <div class="progressBar" role="progressbar" aria-valuenow="70" aria-valuemin="0" aria-valuemax="{{ task.task.percent }}">
+                                      <span class="sr-only">{{ task.task.percent }}% Complete</span>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                {{ task.task.statusText }}
+                            </td>
+                            <td>
+                                <a class="update" href="#" data-toggle="modal" data-target=".editTask">Update</a>
+                            </td>
+                            <td>
+                                <a class="details" href="#" data-toggle="modal" data-target=".taskDetails">View details</a>
+                            </td>
+                        </tr>
+                    {% endfor %}
                 </table>
 
                 
@@ -291,55 +291,3 @@
     </div>
 </div>
 {% endblock %}
-
-
-<div class="generalModal modal fade addTask" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" data-backdrop="static" data-keyboard="false">
-  <div class="modal-dialog modal-lg" role="document">
-    <div class="modal-content">
-    <form method="post" id="addTaskForm" action="{{ request.path }}">
-        {{ form.csrf_token }}
-        <div class="titleSection">
-            <div class="cancel clearfix">
-                <span class="title">Add new task</span>
-                <i data-dismiss="modal" class="fa fa-times" aria-hidden="true"></i>
-            </div>
-            {{ form.title(class_='title', placeholder='Enter Title') }}
-            <div class="assign clearfix">
-                {{ form.assigned_to(class_='assignTo', prompt='Assigned to') }}
-                {{ form.task_submit(value='True') }}
-                <button type="submit" onclick="form_submit()" data-dismiss="modal" class="save"><i class="fa fa-floppy-o" aria-hidden="true"></i> Save & close</button>
-            </div>
-        </div>
-        <div class="stateSection clearfix">
-            <div class="col-md-8">
-                <div class="form-wrap clearfix">
-                    <div class="col-md-1 p-0">
-                        <div class="title">Allocation</div>
-                    </div>
-                    <div class="col-md-11">
-                        {{ form.allocation(class_='stateForm', placeholder="Amount(₦)")}}
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="descritpionSection clearfix">
-            <div class="col-md-8">
-                <div class="title">Description</div>
-                {{ form.description() }}
-            </div>
-            <div class="col-md-4">
-                <div class="title">Planning</div>
-                <div class="planingForms">
-                   <div class="title">Priority</div> 
-                   {{ form.priority(class_='plan') }}
-                </div>
-                <div class="planingForms">
-                   <div class="title">End Date</div>
-                   {{ form.end_date(class_="datetimepicker plan") }}
-                </div>
-            </div>
-        </div>
-    </form>
-    </div>
-  </div>
-</div>
