@@ -80,11 +80,24 @@
                 
                 
                 <table class="assignedTask">
+                <tr>
+                    <th>S/N</th>
+                    <th>Name</th>
+                    <th>Date</th>
+                    <th>%Completion</th>
+                    <th></th>
+                    <th>Status</th>
+                    <th></th>
+                    <th></th>
+                </tr>
                 {% for task in tasks %}
                     <tr >
                         <td>{{loop.index}}</td>
                         <td class="projectName">
                             {{ task.task.title }}
+                        </td>
+                        <td>
+                            12/12/2017
                         </td>
                         <td >
                             {{ task.task.percent }}% completed
@@ -117,11 +130,24 @@
         <div role="tabpanel" class="tab-pane" id="completed">
             {% if tasks %}
                 <table class="assignedTask">
+                <tr>
+                    <th>S/N</th>
+                    <th>Name</th>
+                    <th>Date</th>
+                    <th>%Completion</th>
+                    <th></th>
+                    <th>Status</th>
+                    <th></th>
+                    <th></th>
+                </tr>
                 {% for task in tasks if task.status == 2 %}
                     <tr >
                         <td>{{loop.index}}</td>
-                        <td class="projectName" data-toggle="modal" data-target=".editTask">
+                        <td class="projectName">
                             {{ task.task.title }}
+                        </td>
+                        <td>
+                            12/12/2017
                         </td>
                         <td>
                             {{ task.task.percent }}% completed
@@ -137,7 +163,10 @@
                             {{ task.task.statusText }}
                         </td>
                         <td>
-                            <a href="">View details</a>
+                            <a href="#" data-toggle="modal" data-target=".editTask">Update</a>
+                        </td>
+                        <td>
+                            <a href="#">View details</a>
                         </td>
                     </tr>
                 {% endfor %}
@@ -150,11 +179,24 @@
             {% if tasks %}
                 
                 <table class="assignedTask">
+                <tr>
+                    <th>S/N</th>
+                    <th>Name</th>
+                    <th>Date</th>
+                    <th>%Completion</th>
+                    <th></th>
+                    <th>Status</th>
+                    <th></th>
+                    <th></th>
+                </tr>
                 {% for task in tasks %}
                     <tr >
                         <td>{{loop.index}}</td>
                         <td class="projectName" data-toggle="modal" data-target=".editTask">
                             {{ task.task.title }}
+                        </td>
+                        <td>
+                            12/12/2017
                         </td>
                         <td>
                             {{ task.task.percent }}% completed
@@ -170,7 +212,10 @@
                             {{ task.task.statusText }}
                         </td>
                         <td>
-                            <a href="">View details</a>
+                            <a href="#" data-toggle="modal" data-target=".editTask">Update</a>
+                        </td>
+                        <td>
+                            <a href="#">View details</a>
                         </td>
                     </tr>
                 {% endfor %}
