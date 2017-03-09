@@ -342,6 +342,47 @@ header{
 					}
 				}
 			}
+			&.left{
+				float: left;
+			}
+			&.right{
+				float: right;
+    			padding-right: 60px;
+    			li{
+    				color: #fff;
+    				&.withDropDown{
+    					cursor: pointer;
+    					position: relative;
+    					.dDrop{
+    						position: absolute;
+						    width: 200px;
+						    right: -6px;
+						    top: 17px;
+    						padding-top: 12px;
+						    display: none;
+							a{
+								display: block;
+								text-decoration: none;
+								outline: none;
+								color: #333;
+								font-weight: 600;
+								padding: 0 20px;
+								background-color: #fbfbfb;
+								border-bottom: 1px solid #f7f7f7;
+								&:hover{
+									background-color: #fbfbfb;
+								}
+								&:last-child{
+									border-bottom: none;
+								}
+							}
+    					}
+    					&:hover .dDrop{
+    						display: block;
+    					}
+    				}
+    			}
+			}
 		}
 	}
 	.secondLayer{
@@ -378,7 +419,7 @@ header{
     border-left: 7px solid transparent;
     border-right: 7px solid transparent;
     border-bottom: 7px solid #f4f4f4;
-    bottom: 0px;
+    bottom: -1px;
     left: 50%;
     margin-left: -7px;
 }
@@ -459,6 +500,13 @@ header{
 						cursor: pointer;
 						color: #005B9A;
 						// border: 1px solid @borderColor;
+					    text-decoration: none;
+					    border: 1px solid #c8c8c8;
+					    padding: 5px 10px;
+					    background-color: #005B9A;
+					    color: #fff!important;
+					    text-align: center;
+					    border-radius: 4px;
 						&:hover{
 							background-color: #deecf9;
 							border-color: #deecf9;
@@ -568,21 +616,21 @@ header{
 	}
 }
 .width8{
-	width: 9.5%;
+	width: 13%;
 }
 .width10{
 	width: 10%;
 }
 .width20{
-	width: 20% - 4%;
+	width: 20% - 6%;
 }
 .width25{
 	width: 25%;
 }
 .width30{
-	width: 25%;
+	width: 20%;
 	&.minus2{
-		width: 30% - 5%;
+		width: 30% - 10%;
 	}
 }
 .width40{
@@ -834,6 +882,9 @@ header{
 							color: #555!important;
 							text-align: center;
 							display: block;
+							&:focus{
+								outline: none;
+							}
 						}
 						&:hover{
 							background-color: #efefef;

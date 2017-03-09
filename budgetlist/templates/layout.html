@@ -53,7 +53,7 @@
             <header>
                 {% block firstLayer %}
                 <div class="firstLayer clearfix">
-                    <ul>
+                    <ul class="left">
                         <li>
                             <a class="projectName" href="{{ url_for('.home')}}">Budgeting App</a>
                         </li>
@@ -78,19 +78,10 @@
                             %} selected {% endif %}">
                             <a href="{{ url_for('.assigned_tasks')}}">Assigned</a>
                         </li>
-                        <!--
-                        <li class="
-                            {% if 
-                                request.path == '/users' or
-                                request.path == '/activeUsers' or
-                                request.path == '/create-user'
+                       
+                    </ul>
 
-
-                            %} selected {% endif %}">
-                            <a href="{{ url_for('.users')}}">Users</a>
-                        </li>
-                        -->
-
+                    <ul class="right">
                         <li class="
                             {% if 
                                 request.path == '/settings' or
@@ -101,6 +92,14 @@
 
                             %} selected {% endif %}">
                             <a href="{{ url_for('.settings')}}">Settings</a>
+                        </li> 
+                        <li class="withDropDown">
+                            <strong>{{ current_user.full_name }} &nbsp; <i class="fa fa-caret-down" aria-hidden="true"></i></strong>
+
+                            <div class="dDrop">
+                                <a href="{{ url_for('.logout')}}"><i class="fa fa-sign-out" aria-hidden="true"></i>&nbsp;  Logout</a>
+                                <a href="{{ url_for('.change_password')}}"><i class="fa fa-lock" aria-hidden="true"></i>&nbsp;  Change Password</a>
+                            </div>
                         </li>
                     </ul>
                 </div>
@@ -145,6 +144,7 @@
         <script type="text/javascript" src="{{ url_for('static', filename='js/bootstrap-datetimepicker.js') }}"></script>
         <script type="text/javascript" src="{{ url_for('static', filename='js/jquery.easing.min.js') }}"></script>
         <script type="text/javascript" src="{{ url_for('static', filename='js/jquery.easy-pie-chart.js') }}"></script>
+        <script type="text/javascript" src="{{ url_for('static', filename='js/jquery.maskMoney.min.js') }}"></script>
         <script src="{{ url_for('static', filename='js/tinymce.min.js') }}"></script>
         <script type="text/javascript" src="{{ url_for('static', filename='js/plugins.js') }}"></script>
         <script type="text/javascript" src="{{ url_for('static', filename='js/main.js') }}"></script>

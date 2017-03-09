@@ -185,6 +185,10 @@ def logout():
     flash('You have been logged out', 'error')
     return redirect(url_for('.login'))
 
+@main.route('/change-password', methods=['GET', 'POST'])
+def change_password():
+
+    return render_template('change_password.html')
 # user management
 @main.route('/users', methods=['GET'])
 def users():
