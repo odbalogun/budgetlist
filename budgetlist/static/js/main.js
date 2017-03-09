@@ -28,3 +28,14 @@ $(function() {
 $(document).ready( function() {
     $('.alert').delay(5000).fadeOut();
 });
+
+$("input.money").maskMoney();
+// $(".budgetForm").submit(function() {
+//     alert()
+//     $("input.money").maskMoney('destroy');
+    
+// });
+$("form").submit(function(){
+    $('input.money').maskMoney('unmasked')[0];
+    console.log($('#input-value-id').val(value))
+  });
