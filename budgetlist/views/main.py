@@ -1,10 +1,10 @@
 from flask import Blueprint, redirect, url_for, abort, render_template, flash
 from flask_login import login_user, logout_user, login_required, current_user
-from budgetlist.models import db, User, Project, Task, Company, Period, Department, Permissions, Budget
+from budgetlist.models import db, User, Project, Task, Company, Period, Department, Permissions, Budget, TaskHistory
 from functools import wraps
 from budgetlist import lm
 from budgetlist.forms import LoginForm, CompanyForm, PeriodForm, DepartmentForm, UserForm, BudgetForm, ProjectForm, \
-    TaskForm, SubTaskForm, EditUserForm
+    TaskForm, SubTaskForm, EditUserForm, UpdateTaskForm
 from budgetlist.helpers import list_budget_types, list_priority
 from datetime import date
 
@@ -48,10 +48,13 @@ def home():
 @main.route('/overview', methods=['GET'])
 @login_required
 def overview():
+    # get active period
+    period = Period.query.filter(Period.status==0).first()
+
     form = ProjectForm()
     form.owner_id.data = current_user.id
     form.priority.choices = [(list_priority.index(a), a) for a in list_priority]
-    form.budget_id.choices = [(a.id, a.name) for a in Budget.query.all()]
+    form.budget_id.choices = [(a.id, a.name) for a in Budget.query.filter(Budget.period_id==period.id).all()]
 
     # get all projects
     projects = Project.query.order_by(Project.date_created.desc()).limit(5).all()
@@ -121,11 +124,38 @@ def overdue_projects():
 
     return render_template('overdueProjects.html', projects=projects)
 
-@main.route('/assigned-tasks', methods=['GET'])
+@main.route('/assigned-tasks', methods=['GET', 'POST'])
 def assigned_tasks():
-    tasks = Permissions.query.filter(Permissions.user_id==current_user.id).all()
+    form = UpdateTaskForm()
 
-    return render_template('assigned.html', tasks=tasks)
+    if form.validate_on_submit():
+        history = TaskHistory()
+        history.percent = form.percent.data
+        history.task_id = form.task_id.data
+        history.owner_id = current_user.id
+        history.note = form.note.data
+        history.status = form.status.data
+
+        # contextual updates
+        if form.percent.data != 0 and form.percent.data != 100 and form.status.data in [0, 2, 3]:
+            history.status = 1
+        if form.percent.data == 100:
+            history.status = 2
+
+        if form.status.data == 2:
+            history.percent = 100
+
+        db.session.add(history)
+
+        # update task status
+        task = Task.query.get(history.task_id)
+        task.status = history.status
+        db.session.add(task)
+        db.session.commit()
+        flash('The task has been successfully updated', 'success')
+
+    tasks = Permissions.query.filter(Permissions.user_id==current_user.id).all()
+    return render_template('assigned.html', tasks=tasks, form=form)
 
 # login function
 @main.route('/', methods=['GET', 'POST'])
@@ -256,15 +286,21 @@ def settings():
 def periods():
     form = PeriodForm()
     if form.validate_on_submit():
+        # check if period already exists
+        check = Period.query.all()
+
         period = Period()
         period.name = form.name.data
         period.start_date = form.start_date.data
         period.end_date = form.end_date.data
-        period.status = 0
+        if len(check) > 0:
+            period.status = 1
+        else:
+            period.status = 0
         db.session.add(period)
         db.session.commit()
         flash('The period has been successfully created', 'success')
-    periods = Period.query.all()
+    periods = Period.query.order_by(Period.date_created.asc()).all()
     return render_template('periodSettings.html', form=form, periods=periods)
 
 @main.route('/activate-period/<int:id>', methods=['GET'])
@@ -275,7 +311,6 @@ def activate_period(id):
         db.session.add(period)
         db.session.commit()
 
-        # todo fix expression below
         db.session.query(Period).filter(Period.id != id).update({Period.status: 1})
         db.session.commit()
         flash('The period has been activated', 'success')

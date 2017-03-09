@@ -2,7 +2,7 @@ from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SelectField, DateField, HiddenField, \
     DecimalField, TextAreaField, IntegerField, RadioField, SubmitField
 from wtforms.validators import DataRequired, Email, EqualTo, Length, Optional
-from helpers import Unique, list_account_types, list_budget_types
+from helpers import Unique, list_account_types, list_budget_types, list_percentages, list_task_status
 from models import User
 
 class LoginForm(FlaskForm):
@@ -80,3 +80,9 @@ class SubTaskForm(FlaskForm):
     owner_id = HiddenField()
     parent_id = HiddenField()
     subtask_submit = SubmitField()
+
+class UpdateTaskForm(FlaskForm):
+    percent = SelectField('Percent Completed', coerce=int, choices=list_percentages)
+    note = TextAreaField('Description')
+    status = SelectField('Status', choices=[(list_task_status.index(a), a) for a in list_task_status], coerce=int)
+    task_id = HiddenField('Task ID')

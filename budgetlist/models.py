@@ -224,7 +224,7 @@ class Task(db.Model):
     @property
     def percent(self):
         if self.history:
-            return self.history[-1]
+            return self.history[-1].percent
         return 0
 
     @property
@@ -242,14 +242,29 @@ class Task(db.Model):
             'id': self.id,
             'title': self.title,
             'budget': self.budget,
+            'description': self.description,
             'project_id': self.project_id,
+            'percent': self.percent,
             'owner_id': self.owner_id,
+            'start_date': self.start_date,
+            'start_date_format': dump_datetime(self.start_date),
             'deadline': self.deadline,
+            'deadline_format': dump_datetime(self.deadline),
             'status': self.status,
+            'statusText': self.statusText,
             'date_created': dump_datetime(self.date_created),
             # This is an example how to deal with Many2Many relations
-            'owner': self.owner.serialize
+            'owner': self.owner.serialize,
+            'history': self.serialize_history
         }
+
+    @property
+    def serialize_history(self):
+        """
+        Return object's relations in easily serializeable format.
+        NB! Calls many2many's serialize property.
+        """
+        return [item.serialize for item in self.history]
 
 class TaskHistory(db.Model):
     __tablename__ = 'task_history'
@@ -264,6 +279,17 @@ class TaskHistory(db.Model):
     owner = relationship("User", uselist=False)
     task = relationship("Task", uselist=False, back_populates="history")
 
+    @property
+    def serialize(self):
+        """Return object data in easily serializeable format"""
+        return {
+            'id': self.id,
+            'note': self.note,
+            'percent': self.percent,
+            'date_created': dump_datetime(self.date_created),
+            'task_id': self.task_id,
+            'owner': self.owner.full_name
+        }
 
 class Permissions(db.Model):
     __tablename__ = 'permissions'
