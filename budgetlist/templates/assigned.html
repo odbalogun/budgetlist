@@ -29,42 +29,28 @@
   <div class="modal-dialog modal-lg" role="document">
     <div class="modal-content">
         <div class="title clearfix">
-            <span class="pull-left">Edit Task</span>
+            <span class="pull-left" data-bind="text: title"></span>
             <span data-dismiss="modal" aria-label="Close" class="pull-right"><i class="fa fa-times" aria-hidden="true"></i></span>
         </div>
-        <form action="">
+        <form method="post" id="updateTaskForm" action="{{ request.path }}">
+            {{ form.csrf_token }}
+            {{ form.task_id(**{'data-bind': 'value: task_id'}) }}
             <div class="content clearfix">
                 <div class="col-md-6">
                     <label for="">Percentage Completion</label>
-                    <select name="" id="">
-                        <option value="">10%</option>
-                        <option value="">20%</option>
-                        <option value="">30%</option>
-                        <option value="">40%</option>
-                        <option value="">50%</option>
-                        <option value="">60%</option>
-                        <option value="">70%</option>
-                        <option value="">80%</option>
-                        <option value="">90%</option>
-                        <option value="">100%</option>
-                        
-                    </select>
+                    {{ form.percent(**{'data-bind': 'value: percent'}) }}
                 </div>  
                 <div class="col-md-6">
                     <label for="">Status</label>
-                    <select name="" id="">
-                        <option value="">Pending</option>
-                        <option value="">Ongoing</option>
-                        <option value="">Completed</option>
-                    </select>
+                    {{ form.status(**{'data-bind': 'value: status'}) }}
                 </div>
                 <div class="col-md-12">
                     <label for="">Note</label>
-                    <textarea name="" id="" cols="30" rows="10"></textarea>
+                    <textarea name="note" id="" cols="30" rows="10"></textarea>
                 </div>  
             </div>
             <div class="buttonWrap">
-                <button type="submit" data-dismiss="modal" class="save"><i class="fa fa-floppy-o" aria-hidden="true"></i> Save &amp; close</button>
+                <button type="submit" onclick="form_submit()"  data-dismiss="modal" class="save"><i class="fa fa-floppy-o" aria-hidden="true"></i> Save &amp; close</button>
             </div>
         </form>
     </div>
@@ -76,7 +62,7 @@
   <div class="modal-dialog modal-lg" role="document">
     <div class="modal-content">
         <div class="title clearfix">
-            <span class="pull-left">Mama</span>
+            <span class="pull-left" data-bind="text: title"></span>
             <span data-dismiss="modal" aria-label="Close" class="pull-right"><i class="fa fa-times" aria-hidden="true"></i></span>
         </div>
         <div class="content clearfix">
@@ -86,48 +72,39 @@
                     <th>Task Description</th>
                 </tr>
                 <tr>
-                    <td>Mama</td>
-                    <td>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Vero, consectetur. Eum, ex dolorum quaerat repellat mollitia repellendus</td>
+                    <td data-bind="text: title"></td>
+                    <td data-bind="text: description"></td>
                 </tr>
             </table>
             <table class="moreDetailTable">
                 <tr>
                     <td>Current Status</td>
-                    <td>Pending</td>
+                    <td data-bind="text: statusText"></td>
                 </tr>
                 <tr>
                     <td>Start Date</td>
-                    <td>12/02/17</td>
+                    <td data-bind="text: start_date"></td>
                 </tr>
                 <tr>
                     <td>End Date</td>
-                    <td>12/02/17</td>
+                    <td data-bind="text: deadline"></td>
                 </tr>
                 <tr>
                     <td>Percentage Completion</td>
-                    <td>30%</td>
+                    <td data-bind="text: percent"></td>
                 </tr>
 
             </table>
             <label class="myLabel">History</label>
+            <!-- ko foreach: history -->
             <div class="bs-callout bs-callout-info" id="callout-pagination-label"> 
-                <h4>Odutola Dayo</h4> 
-                <small class="smallText">20/02/17 02:35pm</small>
+                <h4 data-bind="text: owner"></h4>
+                <small class="smallText" data-bind="text: date_created"></small>
                 <small class="smallText">Updated To: 
-                <strong>30%</strong></small>
-                <p>
-                    Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quisquam eligendi.
-                </p> 
+                <strong data-bind="text: percent"></strong></small>
+                <p data-bind="html: note"></p>
             </div>
-            <div class="bs-callout bs-callout-info" id="callout-pagination-label"> 
-                <h4>Babatunde</h4> 
-                <small class="smallText">20/02/17 02:35pm</small>
-                <small class="smallText">Updated To: 
-                <strong>50%</strong></small>
-                <p>
-                    Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quisquam eligendi molestiae, voluptas modi. Et obcaecati fuga dicta blanditiis eligendi pariatur nostrum eaque totam natus fugit delectus dolorem, asperiores, labore voluptas.
-                </p> 
-            </div>
+            <!-- /ko -->
         </div>
     </div>
   </div>
@@ -139,13 +116,11 @@
     <div class="tab-content">
         <div role="tabpanel" class="tab-pane active mt-30" id="recent">
             {% if tasks %}
-                
-                
                 <table class="assignedTask">
                 <tr>
                     <th>S/N</th>
                     <th>Name</th>
-                    <th>Date</th>
+                    <th>Due Date</th>
                     <th>%Completion</th>
                     <th></th>
                     <th>Status</th>
@@ -166,7 +141,7 @@
                         </td>
                         <td class="progressBar">
                             <div class="progress">
-                                <div class="progressBar" role="progressbar" aria-valuenow="70" aria-valuemin="0" aria-valuemax="{{ task.task.percent }}">
+                                <div class="progressBar" role="progressbar" aria-valuenow="{{ task.task.percent }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ task.task.percent }}%">
                                   <span class="sr-only">{{ task.task.percent }}% Complete</span>
                                 </div>
                             </div>
@@ -175,10 +150,10 @@
                             {{ task.task.statusText }}
                         </td>
                         <td>
-                            <a class="update" href="#" data-toggle="modal" data-target=".editTask">Update</a>
+                            <a class="update" href="#" data-bind="click: function(){ getTask({{ task.task.id }}); }">Update</a>
                         </td>
                         <td>
-                            <a class="details" href="#" data-toggle="modal" data-target=".taskDetails">View details</a>
+                            <a class="details" href="#" data-bind="click: function(){ getDetails({{ task.task.id }}); }">View details</a>
                         </td>
                     </tr>
                 {% endfor %}
@@ -195,7 +170,7 @@
                 <tr>
                     <th>S/N</th>
                     <th>Name</th>
-                    <th>Date</th>
+                    <th>Due Date</th>
                     <th>%Completion</th>
                     <th></th>
                     <th>Status</th>
@@ -203,13 +178,13 @@
                     <th></th>
                 </tr>
                 {% for task in tasks if task.task.status == 2 %}
-                    <tr >
+                    <tr>
                         <td>{{loop.index}}</td>
                         <td class="projectName">
                             {{ task.task.title }}
                         </td>
                         <td>
-                            12/12/2017
+                            {{ task.task.deadline.strftime('%d/%m/%Y') }}
                         </td>
                         <td>
                             {{ task.task.percent }}% completed
@@ -225,10 +200,10 @@
                             {{ task.task.statusText }}
                         </td>
                         <td>
-                            <a class="update" href="#" data-toggle="modal" data-target=".editTask">Update</a>
+                            <a class="update" href="#" data-bind="click: function(){ getTask({{ task.task.id }}); }">Update</a>
                         </td>
                         <td>
-                            <a class="details" href="#" data-toggle="modal" data-target=".taskDetails">View details</a>
+                            <a class="details" href="#" data-bind="click: function(){ getDetails({{ task.task.id }}); }">View details</a>
                         </td>
                     </tr>
                 {% endfor %}
@@ -244,7 +219,7 @@
                 <tr>
                     <th>S/N</th>
                     <th>Name</th>
-                    <th>Date</th>
+                    <th>Due Date</th>
                     <th>%Completion</th>
                     <th></th>
                     <th>Status</th>
@@ -258,7 +233,7 @@
                             {{ task.task.title }}
                         </td>
                         <td>
-                            12/12/2017
+                            {{ task.task.deadline.strftime('%d/%m/%Y') }}
                         </td>
                         <td>
                             {{ task.task.percent }}% completed
@@ -274,10 +249,10 @@
                             {{ task.task.statusText }}
                         </td>
                         <td>
-                            <a class="update" href="#" data-toggle="modal" data-target=".editTask">Update</a>
+                            <a class="update" href="#" data-bind="click: function(){ getTask({{ task.task.id }}); }">Update</a>
                         </td>
                         <td>
-                            <a class="details" href="#" data-toggle="modal" data-target=".taskDetails">View details</a>
+                            <a class="details" href="#" data-bind="click: function(){ getDetails({{ task.task.id }}); }">View details</a>
                         </td>
                     </tr>
                 {% endfor %}
@@ -290,56 +265,112 @@
     
     </div>
 </div>
+<script type="text/javascript">
+function ShowEditTaskModel(){
+    var self = this;
+    self.title = ko.observable();
+    self.percent = ko.observable();
+    self.task_id = ko.observable();
+    self.status = ko.observable();
+
+    self.update = function(task){
+        self.title(task.title);
+        self.percent(task.percent);
+        self.task_id(task.id);
+        self.status(task.status);
+        console.log(task.title);
+        /* show modal */
+        $('.editTask').modal('show');
+    }
+}
+
+function ShowTaskDetailsModel(){
+    var self = this;
+    self.title = ko.observable();
+    self.description = ko.observable();
+    self.statusText = ko.observable();
+    self.start_date = ko.observable();
+    self.deadline = ko.observable();
+    self.percent = ko.observable();
+    self.task_id = ko.observable();
+    self.status = ko.observable();
+    self.history = ko.observableArray();
+
+    self.details = function(task){
+        self.history([]);
+
+        self.title(task.title);
+        self.description(task.description);
+        self.statusText(task.statusText);
+        self.start_date(task.start_date_format.date);
+        self.deadline(task.deadline_format.date);
+        self.percent(task.percent + '%');
+        self.task_id(task.id);
+        self.status(task.status);
+
+        for (var i = 0; i < task.history.length; i++) {
+            self.history.push({
+                note: ko.observable(task.history[i].note),
+                percent: ko.observable(task.history[i].percent + '%'),
+                date_created: ko.observable(task.history[i].date_created.date),
+                owner: ko.observable(task.history[i].owner)
+            });
+        }
+
+        /* show modal */
+        $('.taskDetails').modal('show');
+    }
+}
+
+function FetchTaskModel() {
+    var self = this;
+
+    self.taskURI = 'http://localhost:9000/api/v1.0/tasks/get';
+
+    /* make ajax request */
+    self.ajax = function(uri, method, data){
+        var request = {
+            url: uri,
+            type: method,
+            contentType: "application/json",
+            accepts: "application/json",
+            cache: true,
+            dataType: 'json',
+            data: JSON.stringify(data),
+            error: function(jqXHR) {
+                console.log("ajax error " + jqXHR.status);
+            }
+        };
+        return $.ajax(request);
+    }
+
+    self.getTask = function(task_id){
+        var url = self.taskURI + '/' + task_id;
+        self.ajax(url, 'GET').done(function(data){
+              showEdit.update(data.task);
+            }
+        );
+    }
+
+    self.getDetails = function(task_id){
+        var url = self.taskURI + '/' + task_id;
+        self.ajax(url, 'GET').done(function(data){
+              showDetails.details(data.task);
+            }
+        );
+    }
+
+}
+var fetchTask = new FetchTaskModel();
+var showEdit = new ShowEditTaskModel();
+var showDetails = new ShowTaskDetailsModel();
+ko.applyBindings(fetchTask, $('.assignedTask')[0]);
+ko.applyBindings(showEdit, $('.editTask')[0]);
+ko.applyBindings(showDetails, $('.taskDetails')[0]);
+</script>
+<script type="text/javascript">
+    function form_submit() {
+        document.getElementById("updateTaskForm").submit();
+   }
+</script>
 {% endblock %}
-
-
-<div class="generalModal modal fade addTask" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" data-backdrop="static" data-keyboard="false">
-  <div class="modal-dialog modal-lg" role="document">
-    <div class="modal-content">
-    <form method="post" id="addTaskForm" action="{{ request.path }}">
-        {{ form.csrf_token }}
-        <div class="titleSection">
-            <div class="cancel clearfix">
-                <span class="title">Add new task</span>
-                <i data-dismiss="modal" class="fa fa-times" aria-hidden="true"></i>
-            </div>
-            {{ form.title(class_='title', placeholder='Enter Title') }}
-            <div class="assign clearfix">
-                {{ form.assigned_to(class_='assignTo', prompt='Assigned to') }}
-                {{ form.task_submit(value='True') }}
-                <button type="submit" onclick="form_submit()" data-dismiss="modal" class="save"><i class="fa fa-floppy-o" aria-hidden="true"></i> Save & close</button>
-            </div>
-        </div>
-        <div class="stateSection clearfix">
-            <div class="col-md-8">
-                <div class="form-wrap clearfix">
-                    <div class="col-md-1 p-0">
-                        <div class="title">Allocation</div>
-                    </div>
-                    <div class="col-md-11">
-                        {{ form.allocation(class_='stateForm', placeholder="Amount(₦)")}}
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="descritpionSection clearfix">
-            <div class="col-md-8">
-                <div class="title">Description</div>
-                {{ form.description() }}
-            </div>
-            <div class="col-md-4">
-                <div class="title">Planning</div>
-                <div class="planingForms">
-                   <div class="title">Priority</div> 
-                   {{ form.priority(class_='plan') }}
-                </div>
-                <div class="planingForms">
-                   <div class="title">End Date</div>
-                   {{ form.end_date(class_="datetimepicker plan") }}
-                </div>
-            </div>
-        </div>
-    </form>
-    </div>
-  </div>
-</div>

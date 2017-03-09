@@ -106,6 +106,14 @@ def get_project_tasks(projectid):
     return jsonify(tasks=[i.serialize for i in project.tasks])
 
 
+@api.route('/v1.0/tasks/get/<int:task_id>', methods=['GET'])
+def get_task(task_id):
+    task = Task.query.get(task_id)
+    if not task:
+        abort(404)
+    return jsonify(task=task.serialize)
+
+
 @api.route('/v1.0/tasks/create', methods=['POST'])
 def create_tasks():
     if not request.json or 'title' not in request.json or 'budget' not in request.json or 'project_id' not in \
