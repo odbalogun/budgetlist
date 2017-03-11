@@ -111,7 +111,7 @@ def get_task(task_id):
     task = Task.query.get(task_id)
     if not task:
         abort(404)
-    return jsonify(task=task.serialize)
+    return jsonify(project=task.serialize)
 
 
 @api.route('/v1.0/tasks/create', methods=['POST'])

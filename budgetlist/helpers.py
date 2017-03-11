@@ -8,7 +8,7 @@ list_task_status = ['Pending', 'Ongoing', 'Completed', 'Suspended']
 list_percentages = [(0, '0%'), (10, '10%'), (20, '20%'), (30, '30%'), (40, '40%'), (50, '50%'), (60, '60%'), (70, '70%'),
                     (80, '80%'), (90, '90%'), (100, '100%')]
 
-list_budget_types = ['Operations', 'Capital']
+list_budget_types = ['Operational Ex.', 'Capital Ex.', 'Moveables']
 list_priority = ['Normal', 'Medium', 'High']
 
 

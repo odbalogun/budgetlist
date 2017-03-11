@@ -332,7 +332,7 @@ class Period(db.Model):
     def string_date(self, value):
         return dump_datetime(value)
 
-    budgets = relationship("Budget")
+    budget = relationship("Budget", uselist=False, back_populates="period")
 
 class Department(db.Model):
     __tablename__ = 'departments'
@@ -353,12 +353,23 @@ class Budget(db.Model):
     id = Column(Integer, primary_key=True)
     name = Column(String(100))
     period_id = Column(Integer, ForeignKey('periods.id'))
-    budget_type = Column(Integer, default=0)
-    allocation = Column(Integer)
     date_created = Column(DateTime, default=func.now())
 
     period = relationship("Period", uselist=False)
+    main_subs = relationship("SubBudgets", foreign_keys="SubBudgets.budget_id", primaryjoin="and_(Budget.id==SubBudgets.budget_id, SubBudgets.parent_budget == None)")
 
-    @property
-    def budget_type_text(self):
-        return list_budget_types[self.budget_type]
+
+class SubBudgets(db.Model):
+    __tablename__ = 'sub_budgets'
+
+    id = Column(Integer, primary_key=True)
+    name = Column(String(100))
+    allocation =Column(Integer)
+    budget_id = Column(Integer, ForeignKey('budgets.id'))
+    parent_budget = Column(Integer, ForeignKey('sub_budgets.id'))
+    created_by = Column(Integer, ForeignKey('users.id'))
+    date_created = Column(DateTime, default=func.now())
+
+    creator = relationship("User", uselist=False)
+    budget = relationship("Budget", uselist=False)
+    child_budgets = relationship("SubBudgets", primaryjoin="SubBudgets.id == SubBudgets.parent_budget")

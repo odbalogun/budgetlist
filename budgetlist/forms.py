@@ -31,6 +31,7 @@ class UserForm(FlaskForm):
                                                           EqualTo('password', 'The passwords do not match')])
     department = SelectField('Department', validators=[DataRequired()], coerce=int)
     user_type = SelectField('Account Type', validators=[DataRequired()], choices=[(list_account_types.index(a), a) for a in list_account_types], coerce=int)
+    user_id = HiddenField()
 
 class EditUserForm(FlaskForm):
     full_name = StringField('Full Name', validators=[DataRequired(), Length(max=100)])
