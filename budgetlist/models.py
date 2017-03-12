@@ -332,7 +332,7 @@ class Period(db.Model):
     def string_date(self, value):
         return dump_datetime(value)
 
-    budgets = relationship("Budget")
+    budget = relationship("Budget", uselist=False, back_populates="period")
 
 class Department(db.Model):
     __tablename__ = 'departments'
@@ -353,12 +353,69 @@ class Budget(db.Model):
     id = Column(Integer, primary_key=True)
     name = Column(String(100))
     period_id = Column(Integer, ForeignKey('periods.id'))
-    budget_type = Column(Integer, default=0)
-    allocation = Column(Integer)
     date_created = Column(DateTime, default=func.now())
 
     period = relationship("Period", uselist=False)
+    main_subs = relationship("SubBudgets", foreign_keys="SubBudgets.budget_id", primaryjoin="and_(Budget.id==SubBudgets.budget_id, SubBudgets.parent_budget == None)")
+    subs = relationship("SubBudgets", foreign_keys="SubBudgets.budget_id")
 
     @property
-    def budget_type_text(self):
-        return list_budget_types[self.budget_type]
+    def title(self):
+        return self.name + " for " + self.period.name
+
+    @property
+    def amount_allocated(self):
+        return random.randint(200000, 5000000)
+
+    @property
+    def total_budget(self):
+        budget = 0
+        for item in self.subs:
+            budget = budget + item.get_allocation
+        return budget
+
+    @property
+    def budget_difference(self):
+        return self.total_budget - self.amount_allocated
+
+
+class SubBudgets(db.Model):
+    __tablename__ = 'sub_budgets'
+
+    id = Column(Integer, primary_key=True)
+    name = Column(String(100))
+    allocation =Column(Integer)
+    budget_id = Column(Integer, ForeignKey('budgets.id'))
+    parent_budget = Column(Integer, ForeignKey('sub_budgets.id'))
+    created_by = Column(Integer, ForeignKey('users.id'))
+    date_created = Column(DateTime, default=func.now())
+
+    creator = relationship("User", uselist=False)
+    budget = relationship("Budget", uselist=False)
+    child_budgets = relationship("SubBudgets", primaryjoin="SubBudgets.id == SubBudgets.parent_budget")
+
+    @property
+    def amount_allocated(self):
+        return random.randint(200000, 5000000)
+
+    @property
+    def get_allocation(self):
+        if self.allocation:
+            return self.allocation
+        return 0
+
+    @property
+    def is_editable(self):
+        if self.parent_budget:
+            return True
+        return False
+
+    @property
+    def serialize(self):
+        """Return object data in easily serializeable format"""
+        return {
+            'id': self.id,
+            'name': self.name,
+            'allocation': self.allocation,
+            'editable': self.is_editable
+        }

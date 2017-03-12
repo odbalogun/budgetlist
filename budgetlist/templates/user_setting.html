@@ -110,7 +110,7 @@
                                         <a class="activated" href="{{ url_for('.toggle_user_status', action=0, userid=user.id) }}">Activate</a>
                                     {% endif %}
                                 {% endif %}
-                                <a class="edited" href="{{ url_for('.edit_user', userid=user.id) }}">Edit</a>
+                                <a class="edited" href="#">Edit</a>
                             </td>
                         </tr>
                         {% endfor %}
@@ -120,4 +120,7 @@
         </div>
     </div>
 </div>
+<script type="text/javascript">
+
+</script>
 {% endblock %}

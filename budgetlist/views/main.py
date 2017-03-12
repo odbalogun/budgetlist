@@ -1,10 +1,10 @@
 from flask import Blueprint, redirect, url_for, abort, render_template, flash
 from flask_login import login_user, logout_user, login_required, current_user
-from budgetlist.models import db, User, Project, Task, Company, Period, Department, Permissions, Budget, TaskHistory
+from budgetlist.models import db, User, Project, Task, Company, Period, Department, Permissions, Budget, TaskHistory, SubBudgets
 from functools import wraps
 from budgetlist import lm
 from budgetlist.forms import LoginForm, CompanyForm, PeriodForm, DepartmentForm, UserForm, BudgetForm, ProjectForm, \
-    TaskForm, SubTaskForm, EditUserForm, UpdateTaskForm
+    TaskForm, SubTaskForm, EditUserForm, UpdateTaskForm, SubBudgetForm
 from budgetlist.helpers import list_budget_types, list_priority
 from datetime import date
 
@@ -182,13 +182,14 @@ def login():
 @login_required
 def logout():
     logout_user()
-    flash('You have been logged out', 'error')
+    flash('You have been logged out', 'success')
     return redirect(url_for('.login'))
 
 @main.route('/change-password', methods=['GET', 'POST'])
 def change_password():
 
     return render_template('change_password.html')
+
 # user management
 @main.route('/users', methods=['GET'])
 def users():
@@ -297,9 +298,28 @@ def periods():
             period.status = 1
         else:
             period.status = 0
+
+        # create budget for period
+        budget = Budget()
+        budget.name = 'Budget'
+
+        # add sub budgets
+        for i in list_budget_types:
+            sub_budget = SubBudgets()
+            sub_budget.name = i
+            sub_budget.created_by = current_user.id
+            sub_budget.parent_budget = None
+
+            budget.main_subs.append(sub_budget)
+
+        period.budget = budget
+
         db.session.add(period)
         db.session.commit()
         flash('The period has been successfully created', 'success')
+
+        if period.status == 0:
+            return redirect(url_for('.manage_budget'))
     periods = Period.query.order_by(Period.date_created.asc()).all()
     return render_template('periodSettings.html', form=form, periods=periods)
 
@@ -314,6 +334,7 @@ def activate_period(id):
         db.session.query(Period).filter(Period.id != id).update({Period.status: 1})
         db.session.commit()
         flash('The period has been activated', 'success')
+        return redirect(url_for('.manage_budget'))
     return redirect(url_for('.periods'))
 
 @main.route('/departments', methods=['GET', 'POST'])
@@ -389,6 +410,36 @@ def budgets():
         flash('The budget has been successfully created', 'success')
     budgets = Budget.query.all()
     return render_template('budgetSetting.html', form=form, budgets=budgets)
+
+@main.route('/manage-budget', methods=['GET', 'POST'])
+def manage_budget():
+    # get budget
+    period = Period.query.filter(Period.status==0).first()
+    budget = period.budget
+
+    form = SubBudgetForm()
+    if form.validate_on_submit():
+        if not form.sub_budget_id.data or form.sub_budget_id.data == '':
+            # new budget
+            sub = SubBudgets()
+            sub.name = form.name.data
+            sub.allocation = form.allocation.data
+            sub.parent_budget = form.parent_id.data
+            sub.budget_id = budget.id
+            sub.created_by = current_user.id
+            db.session.add(sub)
+            db.session.commit()
+            flash('The sub budget has been successfully created', 'success')
+        else:
+            # edit budget
+            sub = SubBudgets.query.get(form.sub_budget_id.data)
+            sub.name = form.name.data
+            sub.allocation = form.allocation.data
+            db.session.add(sub)
+            db.session.commit()
+            flash('The sub budget has been successfully updated', 'success')
+
+    return render_template('manage_budget.html', budget=budget, form=form)
 
 # error handling
 @main.app_errorhandler(404)

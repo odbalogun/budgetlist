@@ -31,6 +31,7 @@ class UserForm(FlaskForm):
                                                           EqualTo('password', 'The passwords do not match')])
     department = SelectField('Department', validators=[DataRequired()], coerce=int)
     user_type = SelectField('Account Type', validators=[DataRequired()], choices=[(list_account_types.index(a), a) for a in list_account_types], coerce=int)
+    user_id = HiddenField()
 
 class EditUserForm(FlaskForm):
     full_name = StringField('Full Name', validators=[DataRequired(), Length(max=100)])
@@ -47,6 +48,12 @@ class BudgetForm(FlaskForm):
     allocation = IntegerField('Allocation', validators=[DataRequired()])
     period = SelectField('Fiscal Period', validators=[DataRequired()], coerce=int)
     budget_type = SelectField('Budget Type', coerce=int)
+
+class SubBudgetForm(FlaskForm):
+    name = StringField('Name', validators=[DataRequired(), Length(max=100)])
+    allocation = IntegerField('Allocation', validators=[DataRequired()])
+    parent_id = HiddenField()
+    sub_budget_id = HiddenField()
 
 class ProjectForm(FlaskForm):
     title = StringField('Name', validators=[DataRequired(), Length(max=100)])

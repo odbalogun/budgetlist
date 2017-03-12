@@ -194,7 +194,7 @@
         <div class="descritpionSection clearfix">
             <div class="col-md-8">
                 <div class="title">Description</div>
-                <textarea data-bind="value: description" name="description"></textarea>
+                <textarea data-bind="value: description" id="richtxt" name="description"></textarea>
             </div>
             <div class="col-md-4">
                 <div class="title">Planning</div>
@@ -263,6 +263,9 @@ function CreateProjectModel() {
     self.end_date = ko.observable();
 
     self.addProject = function() {
+        tinymce.triggerSave();
+        var txt = tinymce.get('richtxt').getContent();
+
         console.log('title: ' + self.title());
         console.log('owner_id: ' + self.owner_id());
         console.log('priority: ' + self.priority());
@@ -278,7 +281,7 @@ function CreateProjectModel() {
             priority: self.priority(),
             budget_id: self.budget_id(),
             budget_limit: self.allocation(),
-            description: self.description(),
+            description: txt,
             start_date: self.start_date(),
             end_date: self.end_date()
         });
