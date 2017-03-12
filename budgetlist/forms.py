@@ -49,6 +49,12 @@ class BudgetForm(FlaskForm):
     period = SelectField('Fiscal Period', validators=[DataRequired()], coerce=int)
     budget_type = SelectField('Budget Type', coerce=int)
 
+class SubBudgetForm(FlaskForm):
+    name = StringField('Name', validators=[DataRequired(), Length(max=100)])
+    allocation = IntegerField('Allocation', validators=[DataRequired()])
+    parent_id = HiddenField()
+    sub_budget_id = HiddenField()
+
 class ProjectForm(FlaskForm):
     title = StringField('Name', validators=[DataRequired(), Length(max=100)])
     description = TextAreaField('Description')

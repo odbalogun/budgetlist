@@ -4,7 +4,7 @@ from budgetlist.models import db, User, Project, Task, Company, Period, Departme
 from functools import wraps
 from budgetlist import lm
 from budgetlist.forms import LoginForm, CompanyForm, PeriodForm, DepartmentForm, UserForm, BudgetForm, ProjectForm, \
-    TaskForm, SubTaskForm, EditUserForm, UpdateTaskForm
+    TaskForm, SubTaskForm, EditUserForm, UpdateTaskForm, SubBudgetForm
 from budgetlist.helpers import list_budget_types, list_priority
 from datetime import date
 
@@ -413,7 +413,33 @@ def budgets():
 
 @main.route('/manage-budget', methods=['GET', 'POST'])
 def manage_budget():
-    pass
+    # get budget
+    period = Period.query.filter(Period.status==0).first()
+    budget = period.budget
+
+    form = SubBudgetForm()
+    if form.validate_on_submit():
+        if not form.sub_budget_id.data or form.sub_budget_id.data == '':
+            # new budget
+            sub = SubBudgets()
+            sub.name = form.name.data
+            sub.allocation = form.allocation.data
+            sub.parent_budget = form.parent_id.data
+            sub.budget_id = budget.id
+            sub.created_by = current_user.id
+            db.session.add(sub)
+            db.session.commit()
+            flash('The sub budget has been successfully created', 'success')
+        else:
+            # edit budget
+            sub = SubBudgets.query.get(form.sub_budget_id.data)
+            sub.name = form.name.data
+            sub.allocation = form.allocation.data
+            db.session.add(sub)
+            db.session.commit()
+            flash('The sub budget has been successfully updated', 'success')
+
+    return render_template('manage_budget.html', budget=budget, form=form)
 
 # error handling
 @main.app_errorhandler(404)

@@ -357,6 +357,26 @@ class Budget(db.Model):
 
     period = relationship("Period", uselist=False)
     main_subs = relationship("SubBudgets", foreign_keys="SubBudgets.budget_id", primaryjoin="and_(Budget.id==SubBudgets.budget_id, SubBudgets.parent_budget == None)")
+    subs = relationship("SubBudgets", foreign_keys="SubBudgets.budget_id")
+
+    @property
+    def title(self):
+        return self.name + " for " + self.period.name
+
+    @property
+    def amount_allocated(self):
+        return random.randint(200000, 5000000)
+
+    @property
+    def total_budget(self):
+        budget = 0
+        for item in self.subs:
+            budget = budget + item.get_allocation
+        return budget
+
+    @property
+    def budget_difference(self):
+        return self.total_budget - self.amount_allocated
 
 
 class SubBudgets(db.Model):
@@ -373,3 +393,29 @@ class SubBudgets(db.Model):
     creator = relationship("User", uselist=False)
     budget = relationship("Budget", uselist=False)
     child_budgets = relationship("SubBudgets", primaryjoin="SubBudgets.id == SubBudgets.parent_budget")
+
+    @property
+    def amount_allocated(self):
+        return random.randint(200000, 5000000)
+
+    @property
+    def get_allocation(self):
+        if self.allocation:
+            return self.allocation
+        return 0
+
+    @property
+    def is_editable(self):
+        if self.parent_budget:
+            return True
+        return False
+
+    @property
+    def serialize(self):
+        """Return object data in easily serializeable format"""
+        return {
+            'id': self.id,
+            'name': self.name,
+            'allocation': self.allocation,
+            'editable': self.is_editable
+        }
