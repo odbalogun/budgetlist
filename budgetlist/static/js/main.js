@@ -20,9 +20,10 @@ $(document).ready(function(){
 });
 
 $(function() {              
-   $('.datetimepicker').datetimepicker({
-         format: 'DD/MM/YYYY'
-   });
+   // $('.datetimepicker').datetimepicker({
+   //       format: 'DD/MM/YYYY'
+   // });
+   // $('.datetimepicker').pickadate()
 });
 
 $(document).ready( function() {
