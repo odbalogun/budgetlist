@@ -50,7 +50,7 @@
                 </div>
             </div>
             <div class="buttonSection">
-                <a class="add" href="#" data-toggle="modal" data-target=".addTask" data-id="{{ sub.id }}"> Add Budget</a>
+                <a class="add" href="#" data-toggle="modal" data-target=".addTask" data-id=""> Add Budget</a>
             </div>
             <!-- <table class="taskTable">
                 <thead>
@@ -117,7 +117,7 @@
                             <div class="tableData width30 withBar" data-toggle="modal" data-target=".updateProject">{{ sub.name }}</div>
                             <div class="tableData width30">₦{{ sub.get_allocation }}</div>
                             <div class="tableData width20">₦{{ sub.amount_allocated }}</div>
-                            <div class="tableData width8 task" data-toggle="modal" data-target=".addTask" data-id="{{ sub.id }}"> Add Sub Budget</div>
+                            <div class="tableData width8 task" data-toggle="modal" data-target=".addTask" data-id=""> Add Sub Budget</div>
                             {% if sub.child_budgets %}
                                 <!-- add trigger for child tasks -->
                                 <div class="tableData width8 task" data-toggle="collapse" data-target=".innertable">View Sub Budgets <i class="fa fa-angle-down" aria-hidden="true"></i></div>
