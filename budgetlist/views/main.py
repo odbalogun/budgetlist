@@ -430,16 +430,18 @@ def manage_budget():
             db.session.add(sub)
             db.session.commit()
             flash('The sub budget has been successfully created', 'success')
-        else:
-            # edit budget
-            sub = SubBudgets.query.get(form.sub_budget_id.data)
-            sub.name = form.name.data
-            sub.allocation = form.allocation.data
-            db.session.add(sub)
-            db.session.commit()
-            flash('The sub budget has been successfully updated', 'success')
 
-    return render_template('manage_budget.html', budget=budget, form=form)
+    editform = SubBudgetForm()
+    if editform.validate_on_submit():
+        # edit budget
+        sub = SubBudgets.query.get(editform.sub_budget_id.data)
+        sub.name = editform.name.data
+        sub.allocation = editform.allocation.data
+        db.session.add(sub)
+        db.session.commit()
+        flash('The sub budget has been successfully updated', 'success')
+
+    return render_template('manage_budget.html', budget=budget, form=form, editform=editform)
 
 # error handling
 @main.app_errorhandler(404)
