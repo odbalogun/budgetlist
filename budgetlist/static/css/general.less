@@ -1643,3 +1643,160 @@ table.assignedTask{
 	    }
 	}
 }
+.dashboardWrap{
+	padding: 20px 0;
+	.barSection{
+		width: 100%;
+		height: 35em;
+		box-shadow: 0 1px 1px rgba(0, 0, 0, .15), -1px 0 0 rgba(0, 0, 0, .03), 1px 0 0 rgba(0, 0, 0, .03), 0 1px 0 rgba(0, 0, 0, .12);
+		background-color: #fbfbfb;
+		.title{
+			font-weight: 600;
+			height: 30px;
+			line-height: 30px;
+			padding: 0 10px;
+		}
+		.barContent{
+			height: 100%;
+			padding: 10px;
+		}
+	}
+	.pieSection{
+		width: 100%;
+		height: 35em;
+		box-shadow: 0 1px 1px rgba(0, 0, 0, .15), -1px 0 0 rgba(0, 0, 0, .03), 1px 0 0 rgba(0, 0, 0, .03), 0 1px 0 rgba(0, 0, 0, .12);
+		background-color: #fbfbfb;
+		.title{
+			font-weight: 600;
+			height: 30px;
+			line-height: 30px;
+			padding: 0 10px;
+		}
+		.pieContent{
+			height: 100%;
+			padding: 10px;
+		}
+	}
+}
+.budgetSectionWrap{
+	.topInfoSec{
+		height: 5em;
+		border-bottom: 1px solid #f7f7f7;
+		padding: 10px 0px;
+		.title{
+			display: inline-block;
+			margin-right: 30px;
+			&:last-child{
+				margin-right: 0;
+			}
+			.progress{
+				margin-bottom: 0;
+				margin-bottom: 0;
+    			width: 200px;
+    			height: 19px;
+			}
+			.caption{
+				display: block;
+				color: #000;
+				padding-top: 10px;
+			    text-transform: uppercase;
+			    font-size: 10px;
+			    font-weight: 600;
+			    &.withBar{
+			    	padding-bottom: 3px;
+    				padding-top: 7px;
+			    }
+			}
+			.dTitle{
+				display: block;
+			    font-size: 18px;
+			    color: #000;
+			    font-weight: 600;
+			    &.blue{
+			    	color: #005B9A;
+			    }
+			    &.pupple{
+			    	color: #8E48AE;
+			    }
+			    &.red{
+			    	color: red;
+			    }
+			}
+		}
+	}
+	.buttonSection{
+		text-align: right;
+		a.add{
+			display: inline-block;
+		    color: #333;
+		    text-decoration: none;
+		    padding: 5px 10px;
+		    margin-top: 20px;
+		    margin-bottom: 20px;
+		    background-color: #286090;
+		    color: #fff;
+		    margin-right: 10px;
+		}
+	}
+}
+.right-text{
+	text-align: right;
+}
+table.taskTable{
+	width: 100%;
+	border-collapse: collapse;
+	thead{
+		border-top: 1px solid #f7f7f7;
+    	border-bottom: 1px solid #f7f7f7;
+	}
+	tr{
+		border-top: 1px dashed #f7f7f7;
+		&:first-child{
+			border: none;
+		}
+		&:nth-child(even){
+			background-color: #fbfbfb;
+		}
+		th{
+			padding: 8px 10px;
+			&:hover{
+				background-color: #deecf9;
+			}
+			&:last-child{
+				background-color: transparent;
+			}
+		}
+		td{
+			padding: 10px;
+			&.withBar{
+				&:before{
+					content: " ";
+				    border: 2px solid #ff7b00;
+				    margin-right: 3px;
+				}
+			}
+			&.ongoing{
+				&:before{
+					font-size: 7px;
+				    content: "\f111";
+				    font-family: FontAwesome;
+				    color: #ff7b00;
+				    margin-right: 3px;
+				}
+			}
+			button.task{
+				border: none;
+				color: #fff;
+				background-color: #005B9A;
+			    padding: 5px 15px;
+			    border-radius: 3px;
+			    &.sub{
+			    	background-color: #019680;
+			    }
+			}
+			&.actionBtn{
+				width: 160px;
+			}
+		}
+	}
+}

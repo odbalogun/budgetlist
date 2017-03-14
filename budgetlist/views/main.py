@@ -443,6 +443,36 @@ def manage_budget():
 
     return render_template('manage_budget.html', budget=budget, form=form, editform=editform)
 
+@main.route('/dashboard', methods=['GET', 'POST'])
+def budget_overview():
+    # get budget
+    period = Period.query.filter(Period.status==0).first()
+    budget = period.budget
+
+    form = SubBudgetForm()
+    if form.validate_on_submit():
+        if not form.sub_budget_id.data or form.sub_budget_id.data == '':
+            # new budget
+            sub = SubBudgets()
+            sub.name = form.name.data
+            sub.allocation = form.allocation.data
+            sub.parent_budget = form.parent_id.data
+            sub.budget_id = budget.id
+            sub.created_by = current_user.id
+            db.session.add(sub)
+            db.session.commit()
+            flash('The sub budget has been successfully created', 'success')
+        else:
+            # edit budget
+            sub = SubBudgets.query.get(form.sub_budget_id.data)
+            sub.name = form.name.data
+            sub.allocation = form.allocation.data
+            db.session.add(sub)
+            db.session.commit()
+            flash('The sub budget has been successfully updated', 'success')
+
+    return render_template('budgets.html', budget=budget, form=form)
+
 # error handling
 @main.app_errorhandler(404)
 def error_not_found(e):

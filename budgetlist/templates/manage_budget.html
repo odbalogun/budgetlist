@@ -1,12 +1,58 @@
 {% extends "layout.html" %}
 
+{% block secondLayer %}
+<div class="secondLayer">
+    <div class="wrapper">
+        <ul>
+            <li>
+                <a class="{% if request.path == '/dashboard'%} active {% endif %}" href="{{ url_for('.budget_overview')}}">Overview</a>
+            </li>
+            <li>
+                <a class="{% if request.path == '/manage-budget'%} active {% endif %}" href="{{ url_for('.manage_budget')}}">Budgets</a>
+            </li>
+        </ul>
+    </div>
+</div>
+{% endblock %}
+
 {% block body %}
 <div class="backlogs">
     <div class="wrapper clearfix">
-        <div class="tableSection">
-            <div class="titleWrap clearfix">
-                <div class="title pull-left">{{ budget.title }}</div>
+        <div class="budgetSectionWrap">
+            <div class="topInfoSec">
+                <div class="col-md-4 pl-0">
+                    <div class="title">
+                        <span class="caption">Budget Title</span>
+                        <span class="dTitle blue">{{ budget.title }}</span>
+                    </div>
+                </div>
+                <div class="col-md-8 right-text">
+                    <div class="title">
+                        <span class="caption withBar">23% Completion</span>
+                        <div class="progress">
+                          <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="45" aria-valuemin="0" aria-valuemax="100" style="width: 45%">
+                            <span class="sr-only">45% Complete</span>
+                          </div>
+                        </div>
+                    </div>
+                    <div class="title">
+                        <span class="caption">Budgeted Amount</span>
+                        <span class="dTitle blue"> ₦{{ budget.total_budget }}</span>
+                    </div>
+                    <div class="title">
+                        <span class="caption">Amount Allocated</span>
+                        <span class="dTitle pupple">₦{{ budget.amount_allocated }}</span>
+                    </div>
+                    <div class="title">
+                        <span class="caption">Difference</span>
+                        <span class="dTitle red">₦{{ budget.budget_difference }}</span>
+                    </div>
+                </div>
             </div>
+            <div class="buttonSection">
+                <a class="add" href="#" data-toggle="modal" data-target=".addTask" data-id=""> Add Budget</a>
+            </div>
+            <div class="tableSection" style="width: 100%; border-right: none;">
             <div class="tableSec">
                 <div class="tablerow header">
                     <div class="withHover tableData width30 minus2">Title</div>
@@ -84,31 +130,11 @@
                 {% endif %}
 
             </div>
-        </div>
-        <div class="infoSectionWrap">
-            <div class="infoSection">
-                <div class="infoSec">
-                    <div class="title">Budgeted Amount</div>
-                    <div class="content price blue">
-                        ₦{{ budget.total_budget }}
-                    </div>
-                </div>
-                <div class="infoSec">
-                    <div class="title">Amount Allocated</div>
-                    <div class="content smallPrice pupple">
-                        ₦{{ budget.amount_allocated }}
-                    </div>
-                </div>
-                <div class="infoSec">
-                    <div class="title">Difference</div>
-                    <div class="content smallPrice red">
-                        ₦{{ budget.budget_difference }}
-                    </div>
-                </div>
-            </div>  
+            </div>
         </div>
     </div>
 </div>
+
 
 <!-- Add Task -->
 <div class="generalModal modal fade addTask" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" data-backdrop="static" data-keyboard="false">
