@@ -1,0 +1,123 @@
+{% extends "layout.html" %}
+
+{% block secondLayer %}
+<div class="secondLayer">
+    <div class="wrapper">
+        <ul>
+            <li>
+                <a class="{% if request.path == '/dashboard'%} active {% endif %}" href="{{ url_for('.budget_overview')}}">Overview</a>
+            </li>
+            <li>
+                <a class="{% if request.path == '/manage-budget'%} active {% endif %}" href="{{ url_for('.manage_budget')}}">Budgets</a>
+            </li>
+        </ul>
+    </div>
+</div>
+{% endblock %}
+{% block body %}
+<div class="backlogs">
+    <div class="wrapper clearfix">
+        <div class="dashboardWrap">
+            <div class="col-md-8">
+                <div class="barSection">
+                    <div class="barContent">
+                        <div id="chartContainer" style="width: 100%; height: 400px;"></div>
+                    </div>
+                </div>
+            </div>    
+            <div class="col-md-4">
+                <div class="pieSection">
+                    <div class="pieContent">
+                        <div id="pieContainer" style="width: 100%; height: 400px;"></div>
+                    </div>
+                </div>
+            </div>    
+        </div>
+    </div>
+</div>
+
+
+
+<script>
+    $(function ()  
+    {
+        var dataSource = [
+         { budget: "Consulting", budgeted: 500300, performed: 600300 },
+         { budget: "Opex", budgeted: 178719, performed: 195769 },
+         { budget: "Capex", budgeted: 308845, performed: 335793 },
+         { budget: "Movables", budgeted: 348555, performed: 374771 },
+        ];
+
+        $("#chartContainer").dxChart({
+            dataSource: dataSource,
+            commonSeriesSettings: {
+                argumentField: "budget",
+                type: "bar",
+                hoverMode: "allArgumentPoints",
+                selectionMode: "allArgumentPoints",
+                label: {
+                    visible: true,
+                    format: "fixedPoint",
+                    precision: 0
+                }
+            },
+            series: [
+                { valueField: "budgeted", name: "budgeted" },
+                { valueField: "performed", name: "performed" }
+            ],
+            title: "Budget and Performance For 2017",
+            legend: {
+                verticalAlignment: "bottom",
+                horizontalAlignment: "center"
+            },
+            pointClick: function (point) {
+                this.select();
+            }
+        });
+    }
+
+    );
+</script>
+
+<script>
+    $(function ()  
+    {
+        var dataSource = [
+            { country: "Consulting", area: 500300 },
+            { country: "Opex", area: 178719 },
+            { country: "Capex", area: 808845 },
+            { country: "Movable", area: 348555 },
+        ];
+
+        $("#pieContainer").dxPieChart({
+            size:{ 
+                width: 400
+            },
+            dataSource: dataSource,
+            series: [
+                {
+                    argumentField: "country",
+                    valueField: "area",
+                    label:{
+                        visible: true,
+                        format: "fixedPoint",
+                        connector:{
+                            visible:true,           
+                            width: 1
+                        }
+                    }
+                }
+            ],
+            title: "Total Budget",
+            legend: {
+                verticalAlignment: "bottom",
+                horizontalAlignment: "center"
+            },
+        });
+    }
+
+    );
+</script>
+
+
+{% endblock %}

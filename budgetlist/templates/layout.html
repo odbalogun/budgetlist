@@ -58,6 +58,16 @@
                             <a class="projectName" href="{{ url_for('.home')}}">Budgeting App</a>
                         </li>
                         <li class="
+                            
+                            {% if 
+                                request.path == '/manage-budget' or
+                                request.path == '/dashboard'
+
+
+                            %} selected {% endif %}">
+                            <a href="{{ url_for('.manage_budget')}}">Budget</a>
+                        </li>
+                        <li class="
                             {% if 
                                 request.path == '/' or 
                                 request.path == '/overview' or
@@ -144,6 +154,9 @@
         <script type="text/javascript" src="{{ url_for('static', filename='js/legacy.js') }}"></script>
         <script type="text/javascript" src="{{ url_for('static', filename='js/jquery.easy-pie-chart.js') }}"></script>
         <script type="text/javascript" src="{{ url_for('static', filename='js/jquery.maskMoney.min.js') }}"></script>
+        <script src="{{ url_for('static', filename='js/knockout.js') }}"></script>
+        <script src="{{ url_for('static', filename='js/globalize.min.js') }}"></script>
+        <script src="{{ url_for('static', filename='js/dx.chartjs.js') }}"></script>
         <script src="{{ url_for('static', filename='js/tinymce.min.js') }}"></script>
         <script type="text/javascript" src="{{ url_for('static', filename='js/plugins.js') }}"></script>
         <script type="text/javascript" src="{{ url_for('static', filename='js/main.js') }}"></script>
