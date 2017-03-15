@@ -7,8 +7,8 @@
             <div class="titleWrap clearfix">
                 <div class="title pull-left">{{ project.title }}</div>
                 <a href="#" class="addUser pull-right" data-toggle="modal" data-target=".addTask">Add Task</a>
-            </div>
-            <div class="tableSec">
+            </div><br><br>
+            <!-- <div class="tableSec">
                 <div class="tablerow header">
                     <div class="withHover tableData width30 minus2">Title</div>
                     <div class="withHover tableData width30">Allocation</div>
@@ -44,12 +44,12 @@
                                 <div class="tableData width8 task" data-toggle="modal" data-target=".addSubTask" data-id="{{ task.id }}"> Add Subtask</div>
                             {% endif %}
                             {% if task.child_tasks %}
-                                <!-- add trigger for child tasks -->
+
                                 <div class="tableData width8 task" data-toggle="collapse" data-target=".innertable">View Task <i class="fa fa-angle-down" aria-hidden="true"></i></div>
                             {% endif %}
                         </div>
                         {% if task.child_tasks %}
-                            <!-- add class for collapsible tasks -->
+
                             {% for child in task.child_tasks %}
                             <div class="innertable collapse" style="padding: 0 0 0 10px;">
                                 <div class="tablerow content">
@@ -66,7 +66,7 @@
                                         <div class="tableData width8 task" data-toggle="modal" data-target=".addSubTask" data-id="{{ child.id }}"><i class="fa fa-plus" aria-hidden="true"></i> Add Subtask</div>
                                     {% endif %}
                                     {% if child.child_tasks %}
-                                        <!-- add trigger for child tasks -->
+
                                         <div class="tableData width8 task" data-toggle="collapse" data-target=".innerinnertable">View Task <i class="fa fa-angle-down" aria-hidden="true"></i></div>
                                     {% endif %}
                                 </div>
@@ -95,7 +95,79 @@
                     {% endfor %}
                 {% endif %}
 
-            </div>
+            </div> -->
+            <table class="taskTable collaptable">
+                <thead>
+                    <tr>
+                        <th>S/N</th>
+                        <th>Title</th>
+                        <th>Allocation</th>
+                        <th>Status</th>
+                        <th>Start Date</th>
+                        <th>Deadline</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr data-id="1" data-parent="">
+                        <td>1</td>
+                        <td class="withBar">Buy Milk</td>
+                        <td>₦2000</td>
+                        <td class="ongoing">Pending</td>
+                        <td>12/12/12</td>
+                        <td>07 Mar 2017</td>
+                        <td class="actionBtn">
+                            <button class="task" data-toggle="modal" data-target=".subTask"><i class="fa fa-plus" aria-hidden="true"></i> Add Subtask</button>
+                        </td>
+                        <!-- <td class="actionBtn">
+                            <button class="task sub act-more act-collapsed"><i class="fa fa-eye" aria-hidden="true"></i> View Subtask</button>
+                        </td> -->
+                    </tr>
+
+                    <tr data-id="2" data-parent="1">
+                        <td>1</td>
+                        <td class="withBar">Buy Milk</td>
+                        <td>₦2000</td>
+                        <td class="ongoing">Pending</td>
+                        <td>12/12/12</td>
+                        <td>07 Mar 2017</td>
+                        <td class="actionBtn">
+                            <button class="task"><i class="fa fa-plus" aria-hidden="true"></i> Add Subtask</button>
+                        </td>
+                        <!-- <td class="actionBtn">
+                            <button class="task sub"><i class="fa fa-eye" aria-hidden="true"></i> View Subtask</button>
+                        </td> -->
+                    </tr>
+                    <tr data-id="3" data-parent="">
+                        <td>1</td>
+                        <td class="withBar">Buy Milk</td>
+                        <td>₦2000</td>
+                        <td class="ongoing">Pending</td>
+                        <td>12/12/12</td>
+                        <td>07 Mar 2017</td>
+                        <td class="actionBtn">
+                            <button class="task" data-toggle="modal" data-target=".subTask"><i class="fa fa-plus" aria-hidden="true"></i> Add Subtask</button>
+                        </td>
+                        <!-- <td class="actionBtn">
+                            <button class="task sub"><i class="fa fa-eye" aria-hidden="true"></i> View Subtask</button>
+                        </td> -->
+                    </tr>
+                    <tr data-id="4" data-parent="3">
+                        <td>1</td>
+                        <td class="withBar">Buy Milk</td>
+                        <td>₦2000</td>
+                        <td class="ongoing">Pending</td>
+                        <td>12/12/12</td>
+                        <td>07 Mar 2017</td>
+                        <td class="actionBtn">
+                            <button class="task" data-toggle="modal" data-target=".subTask"><i class="fa fa-plus" aria-hidden="true"></i> Add Subtask</button>
+                        </td>
+                        <!-- <td class="actionBtn">
+                            <button class="task sub"><i class="fa fa-eye" aria-hidden="true"></i> View Subtask</button>
+                        </td> -->
+                    </tr>
+                </tbody>
+            </table>
         </div>
         <div class="infoSectionWrap">
             <div class="infoSection">
@@ -185,7 +257,7 @@
 </div>
 
 <!-- Add Task -->
-<div class="generalModal modal fade addTask" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" data-backdrop="static" data-keyboard="false">
+<!-- <div class="generalModal modal fade addTask" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" data-backdrop="static" data-keyboard="false">
   <div class="modal-dialog modal-lg" role="document">
     <div class="modal-content">
     <form method="post" id="addTaskForm" action="{{ request.path }}">
@@ -238,7 +310,118 @@
     </form>
     </div>
   </div>
+</div> -->
+
+
+<!-- Add Task -->
+<div class="modal fade editTask addTask" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+        <div class="title clearfix">
+            <span class="pull-left"> Add New Task</span>
+            <span data-dismiss="modal" aria-label="Close" class="pull-right"><i class="fa fa-times" aria-hidden="true"></i></span>
+        </div>
+        <form method="post" id="updateTaskForm" action="{{ request.path }}">
+            <div class="content clearfix">
+                <div class="col-md-12">
+                    <label for="">Enter Title</label>
+                    {{ form.title(class_='title', placeholder='Enter Title') }}
+                </div>  
+                <div class="col-md-12">
+                    <label for="">Assign To</label>
+                    
+                    <select class="" name="" id="">
+                        <option value="">-- Select One --</option>
+                        <option value="">Babatunde Adegbite</option>
+                        <option value="">Oduntan Balogu</option>
+                        <option value="">Oluwasegun Afolahan</option>
+                    </select>
+                </div>
+                <div class="col-md-6">
+                    <label for="">Allocation</label>
+                    {{ form.allocation(class_='stateForm', placeholder="Amount(₦)")}}
+                </div> 
+                <div class="col-md-6">
+                    <label for="">Budget</label>
+                    <select name="" id="">
+                        <option value=""></option>
+                    </select>
+                </div>
+                <div class="col-md-6">
+                    <label for="">Sub Budget</label>
+                    <select name="" id="">
+                        <option value=""></option>
+                    </select>
+                </div>
+                <div class="col-md-6">
+                    <label for="">Sub Budget</label>
+                    <select name="" id="">
+                        <option value=""></option>
+                    </select>
+                </div>
+                <div class="col-md-6">
+                    <label for="">Sub Budget</label>
+                    <select name="" id="">
+                        <option value=""></option>
+                    </select>
+                </div>
+                <div class="col-md-6">
+                    <label for="">Priority</label>
+                    {{ form.priority(class_='plan') }}
+                </div> 
+                <div class="col-md-6">
+                    <label for="">Start Date</label>
+                    {{ form.start_date(class_="datetimepicker plan") }}
+                </div> 
+                <div class="col-md-6">
+                    <label for="">End Date</label>
+                    {{ form.end_date(class_="datetimepicker plan") }}
+                </div> 
+                <div class="col-md-12">
+                    <label for="">Description</label>
+                    <textarea name="note" id="" cols="30" rows="10"></textarea>
+                </div>  
+            </div>
+            <div class="buttonWrap">
+                <button type="submit" onclick="form_submit()"  data-dismiss="modal" class="save"><i class="fa fa-floppy-o" aria-hidden="true"></i> Save &amp; close</button>
+            </div>
+        </form>
+    </div>
+  </div>
 </div>
+
+<!-- Add Sub Task -->
+<div class="modal fade editTask subTask" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+        <div class="title clearfix">
+            <span class="pull-left"> Add Subtask</span>
+            <span data-dismiss="modal" aria-label="Close" class="pull-right"><i class="fa fa-times" aria-hidden="true"></i></span>
+        </div>
+        <form method="post" id="updateTaskForm" action="{{ request.path }}">
+            <div class="content clearfix">
+                <div class="col-md-6">
+                    <label for="">Name</label>
+                    <input type="text" placeholder="Name">
+                </div>  
+                <div class="col-md-6">
+                    <label for="">Status</label>
+                    <input type="text" placeholder="Status">
+                </div>
+                <div class="col-md-12">
+                    <label for="">Note</label>
+                    <textarea name="note" id="" cols="30" rows="10"></textarea>
+                </div>  
+            </div>
+            <div class="buttonWrap">
+                <button type="submit" onclick="form_submit()"  data-dismiss="modal" class="save"><i class="fa fa-floppy-o" aria-hidden="true"></i> Save &amp; close</button>
+            </div>
+        </form>
+    </div>
+  </div>
+</div>
+
+
 <script type="text/javascript">
 $(document).on("click", ".task", function(){
     var parent_id = $(this).data('id');

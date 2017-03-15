@@ -16,6 +16,37 @@
 {% endblock %}
 
 {% block body %}
+
+<!-- Edit SubTask modal -->
+<div class="modal fade editTask subTask" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+        <div class="title clearfix">
+            <span class="pull-left"> Add Subtask</span>
+            <span data-dismiss="modal" aria-label="Close" class="pull-right"><i class="fa fa-times" aria-hidden="true"></i></span>
+        </div>
+        <form method="post" id="updateTaskForm" action="{{ request.path }}">
+            <div class="content clearfix">
+                <div class="col-md-6">
+                    <label for="">Name</label>
+                    <input type="text" placeholder="Name">
+                </div>  
+                <div class="col-md-6">
+                    <label for="">Status</label>
+                    <input type="text" placeholder="Status">
+                </div>
+                <div class="col-md-12">
+                    <label for="">Note</label>
+                    <textarea name="note" id="" cols="30" rows="10"></textarea>
+                </div>  
+            </div>
+            <div class="buttonWrap">
+                <button type="submit" onclick="form_submit()"  data-dismiss="modal" class="save"><i class="fa fa-floppy-o" aria-hidden="true"></i> Save &amp; close</button>
+            </div>
+        </form>
+    </div>
+  </div>
+</div>
 <div class="backlogs">
     <div class="wrapper clearfix">
         <div class="budgetSectionWrap">
@@ -23,7 +54,7 @@
                 <div class="col-md-4 pl-0">
                     <div class="title">
                         <span class="caption">Budget Title</span>
-                        <span class="dTitle blue">{{ budget.title }}</span>
+                        <span class="dTitle blue">Bulding The Wall</span>
                     </div>
                 </div>
                 <div class="col-md-8 right-text">
@@ -36,23 +67,23 @@
                         </div>
                     </div>
                     <div class="title">
-                        <span class="caption">Budgeted Amount</span>
-                        <span class="dTitle blue"> ₦{{ budget.total_budget }}</span>
+                        <span class="caption">Budget</span>
+                        <span class="dTitle blue">₦100000</span>
                     </div>
                     <div class="title">
-                        <span class="caption">Amount Allocated</span>
-                        <span class="dTitle pupple">₦{{ budget.amount_allocated }}</span>
+                        <span class="caption">Amount Assigned</span>
+                        <span class="dTitle pupple">₦27100</span>
                     </div>
                     <div class="title">
-                        <span class="caption">Difference</span>
-                        <span class="dTitle red">₦{{ budget.budget_difference }}</span>
+                        <span class="caption">Amount Unassigned</span>
+                        <span class="dTitle red">₦72900</span>
                     </div>
                 </div>
             </div>
-            <div class="buttonSection">
-                <a class="add" href="#" data-toggle="modal" data-target=".addTask" data-id=""> Add Budget</a>
-            </div>
-            <!-- <table class="taskTable">
+            <!-- <div class="buttonSection">
+                <a class="add" href="#"> Add Budget</a>
+            </div> -->
+            <table class="taskTable collaptable">
                 <thead>
                     <tr>
                         <th>S/N</th>
@@ -61,11 +92,26 @@
                         <th>Status</th>
                         <th>Start Date</th>
                         <th>Deadline</th>
-                        <th colspan="2"></th>
+                        <th></th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
+                    <tr data-id="1" data-parent="">
+                        <td>1</td>
+                        <td class="withBar">Buy Milk</td>
+                        <td>₦2000</td>
+                        <td class="ongoing">Pending</td>
+                        <td>12/12/12</td>
+                        <td>07 Mar 2017</td>
+                        <td class="actionBtn">
+                            <button class="task" data-toggle="modal" data-target=".subTask"><i class="fa fa-plus" aria-hidden="true"></i> Add Subtask</button>
+                        </td>
+                        <!-- <td class="actionBtn">
+                            <button class="task sub act-more act-collapsed"><i class="fa fa-eye" aria-hidden="true"></i> View Subtask</button>
+                        </td> -->
+                    </tr>
+
+                    <tr data-id="2" data-parent="1">
                         <td>1</td>
                         <td class="withBar">Buy Milk</td>
                         <td>₦2000</td>
@@ -75,12 +121,11 @@
                         <td class="actionBtn">
                             <button class="task"><i class="fa fa-plus" aria-hidden="true"></i> Add Subtask</button>
                         </td>
-                        <td class="actionBtn">
+                        <!-- <td class="actionBtn">
                             <button class="task sub"><i class="fa fa-eye" aria-hidden="true"></i> View Subtask</button>
-                        </td>
+                        </td> -->
                     </tr>
-
-                    <tr>
+                    <tr data-id="3" data-parent="">
                         <td>1</td>
                         <td class="withBar">Buy Milk</td>
                         <td>₦2000</td>
@@ -88,142 +133,31 @@
                         <td>12/12/12</td>
                         <td>07 Mar 2017</td>
                         <td class="actionBtn">
-                            <button class="task"><i class="fa fa-plus" aria-hidden="true"></i> Add Subtask</button>
+                            <button class="task" data-toggle="modal" data-target=".subTask"><i class="fa fa-plus" aria-hidden="true"></i> Add Subtask</button>
                         </td>
-                        <td class="actionBtn">
-                            <button class="task sub" data-toggle="collapse" data-target="#Subtask"><i class="fa fa-eye" aria-hidden="true"></i> View Subtask </button>
-                        </td>
-
+                        <!-- <td class="actionBtn">
+                            <button class="task sub"><i class="fa fa-eye" aria-hidden="true"></i> View Subtask</button>
+                        </td> -->
                     </tr>
-
+                    <tr data-id="4" data-parent="3">
+                        <td>1</td>
+                        <td class="withBar">Buy Milk</td>
+                        <td>₦2000</td>
+                        <td class="ongoing">Pending</td>
+                        <td>12/12/12</td>
+                        <td>07 Mar 2017</td>
+                        <td class="actionBtn">
+                            <button class="task" data-toggle="modal" data-target=".subTask"><i class="fa fa-plus" aria-hidden="true"></i> Add Subtask</button>
+                        </td>
+                        <!-- <td class="actionBtn">
+                            <button class="task sub"><i class="fa fa-eye" aria-hidden="true"></i> View Subtask</button>
+                        </td> -->
+                    </tr>
                 </tbody>
-            </table> -->
-            <div class="tableSection" style="width: 100%; border-right: none;">
-            <div class="tableSec">
-                <div class="tablerow header">
-                    <div class="withHover tableData width30 minus2">Title</div>
-                    <div class="withHover tableData width30">Budgeted Amount</div>
-                    <div class="withHover tableData width20">Amount Allocated</div>
-                    <div class="tableData width2"></div>
-                    <div class="tableData width2"></div>
-                </div>
-                {% if not budget.main_subs %}
-                    <div>
-                        There are no budgets to display...
-                    </div>
-                {% else %}
-                    {% for sub in budget.main_subs %}
-                        <div class="tablerow content">
-                            <div class="tableData width30 withBar" data-toggle="modal" data-target=".updateProject">{{ sub.name }}</div>
-                            <div class="tableData width30">₦{{ sub.get_allocation }}</div>
-                            <div class="tableData width20">₦{{ sub.amount_allocated }}</div>
-                            <div class="tableData width8 task" data-toggle="modal" data-target=".addTask" data-id=""> Add Sub Budget</div>
-                            {% if sub.child_budgets %}
-                                <!-- add trigger for child tasks -->
-                                <div class="tableData width8 task" data-toggle="collapse" data-target=".innertable">View Sub Budgets <i class="fa fa-angle-down" aria-hidden="true"></i></div>
-                            {% endif %}
-                        </div>
-                        {% if sub.child_budgets %}
-                            <!-- add class for collapsible tasks -->
-                            {% for child in sub.child_budgets %}
-                            <div class="innertable collapse" style="padding: 0 0 0 10px;">
-                                <div class="tablerow content">
-                                    <div class="tableData width30 withInnerBar" data-toggle="modal" data-target=".updateProject">{{ child.name }}</div>
-                                    <div class="tableData width30">₦{{ child.get_allocation }}</div>
-                                    <div class="tableData width20">₦{{ child.amount_allocated }}</div>
-                                    <div class="tableData width8 task" data-toggle="modal" data-target=".addTask" data-id="{{ child.id }}"> Add Sub Budget</div>
-                                    {% if child.child_budgets %}
-                                        <!-- add trigger for child tasks -->
-                                        <div class="tableData width8 task" data-toggle="collapse" data-target=".innerinnertable">View Sub Budgets <i class="fa fa-angle-down" aria-hidden="true"></i></div>
-                                    {% endif %}
-                                </div>
-                                {% if child.child_budgets %}
-                                    <div>
-                                        {% for grandkid in child.child_budgets %}
-                                        <div class="innerinnertable collapse" style="padding: 0 0 0 10px;">
-                                            <div class="tablerow content">
-                                                <div class="tableData width30 withInnerBar" data-toggle="modal" data-target=".updateProject">{{ grandkid.name }}</div>
-                                                <div class="tableData width30">₦{{ grandkid.get_allocation }}</div>
-                                                <div class="tableData width20">₦{{ grandkid.amount_allocated }}</div>
-                                                <div class="tableData width8 task" data-toggle="modal" data-target=".addTask" data-id="{{ grandkid.id }}"> Add Sub Budget</div>
-                                                {% if grandkid.child_budgets %}
-                                                    <!-- add trigger for child tasks -->
-                                                    <div class="tableData width8 task" data-toggle="collapse" data-target=".innerinnerinnertable">View Sub Budgets <i class="fa fa-angle-down" aria-hidden="true"></i></div>
-                                                {% endif %}
-                                            </div>
-                                            {% if grandkid.child_budgets %}
-                                                {% for great in grandkid.child_budgets %}
-                                                    <div class="innerinnerinnertable collapse" style="padding: 0 0 0 10px;">
-                                                        <div class="tableData width30 withInnerBar" data-toggle="modal" data-target=".updateProject">{{ great.name }}</div>
-                                                        <div class="tableData width30">₦{{ great.get_allocation }}</div>
-                                                        <div class="tableData width20">₦{{ great.amount_allocated }}</div>
-                                                    </div>
-                                                {% endfor %}
-                                            {% endif %}
-                                        </div>
-                                        {% endfor %}
-                                    </div>
-                                {% endif %}
-                            </div>
-                            {% endfor %}
-                        {% endif %}
-                    {% endfor %}
-                {% endif %}
-
-            </div>
-            </div>
+            </table>
         </div>
     </div>
 </div>
 
-
-<!-- Add Task -->
-<div class="generalModal modal fade addTask" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" data-backdrop="static" data-keyboard="false">
-  <div class="modal-dialog modal-lg" role="document">
-    <div class="modal-content">
-    <form method="post" id="addTaskForm" action="{{ request.path }}">
-        {{ form.csrf_token }}
-        {{ form.parent_id(id='parent_id') }}
-        <div class="titleSection">
-            <div class="cancel clearfix">
-                <span class="title">Add new Sub Budget</span>
-                <i data-dismiss="modal" class="fa fa-times" aria-hidden="true"></i>
-            </div>
-            {{ form.name(class_='title', placeholder='Enter Name') }}
-            <div class="assign clearfix">
-                <button type="submit" onclick="form_submit()" data-dismiss="modal" class="save"><i class="fa fa-floppy-o" aria-hidden="true"></i> Save & close</button>
-            </div>
-        </div>
-        <div class="stateSection clearfix">
-            <div class="col-md-8">
-                <div class="form-wrap clearfix">
-                    <div class="col-md-1 p-0">
-                        <div class="title">Allocation</div>
-                    </div>
-                    <div class="col-md-11">
-                        {{ form.allocation(class_='stateForm', placeholder="Amount(₦)")}}
-                    </div>
-                </div>
-            </div>
-        </div>
-    </form>
-    </div>
-  </div>
-</div>
-<script type="text/javascript">
-$(document).on("click", ".task", function(){
-    var parent_id = $(this).data('id');
-
-    $("#parent_id").val(parent_id);
-});
-
-function form_submit() {
-    document.getElementById("addTaskForm").submit();
-   }
-
-function subform_submit() {
-    document.getElementById("addSubTaskForm").submit();
-   }
-</script>
 
 {% endblock %}
