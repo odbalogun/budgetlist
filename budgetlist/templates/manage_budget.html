@@ -81,83 +81,206 @@
                 </div>
             </div>
             <!-- <div class="buttonSection">
-                <a class="add" href="#"> Add Budget</a>
+                <a class="add" href="#" data-toggle="modal" data-target=".addTask" data-id=""> Add Budget</a>
             </div> -->
-            <table class="taskTable collaptable">
-                <thead>
-                    <tr>
-                        <th>S/N</th>
-                        <th>Title</th>
-                        <th>Allocation</th>
-                        <th>Status</th>
-                        <th>Start Date</th>
-                        <th>Deadline</th>
-                        <th></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr data-id="1" data-parent="">
-                        <td>1</td>
-                        <td class="withBar">Buy Milk</td>
-                        <td>₦2000</td>
-                        <td class="ongoing">Pending</td>
-                        <td>12/12/12</td>
-                        <td>07 Mar 2017</td>
-                        <td class="actionBtn">
-                            <button class="task" data-toggle="modal" data-target=".subTask"><i class="fa fa-plus" aria-hidden="true"></i> Add Subtask</button>
-                        </td>
-                        <!-- <td class="actionBtn">
-                            <button class="task sub act-more act-collapsed"><i class="fa fa-eye" aria-hidden="true"></i> View Subtask</button>
-                        </td> -->
-                    </tr>
+             <table class="taskTable collaptable">
+    <thead>
+        <tr>
+            <th>S/N</th>
+            <th>Title</th>
+            <th>Allocation</th>
+            <th>Status</th>
+            <th>Start Date</th>
+            <th>Deadline</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr data-id="1" data-parent="">
+            <td>1</td>
+            <td class="withBar">Buy Milk</td>
+            <td>₦2000</td>
+            <td class="ongoing">Pending</td>
+            <td>12/12/12</td>
+            <td>07 Mar 2017</td>
+            <td class="actionBtn">
+                <button class="task" data-toggle="modal" data-target=".subTask"><i class="fa fa-plus" aria-hidden="true"></i> Add Subtask</button>
+            </td>
+            <!-- <td class="actionBtn">
+                <button class="task sub act-more act-collapsed"><i class="fa fa-eye" aria-hidden="true"></i> View Subtask</button>
+            </td> -->
+        </tr>
 
-                    <tr data-id="2" data-parent="1">
-                        <td>1</td>
-                        <td class="withBar">Buy Milk</td>
-                        <td>₦2000</td>
-                        <td class="ongoing">Pending</td>
-                        <td>12/12/12</td>
-                        <td>07 Mar 2017</td>
-                        <td class="actionBtn">
-                            <button class="task"><i class="fa fa-plus" aria-hidden="true"></i> Add Subtask</button>
-                        </td>
-                        <!-- <td class="actionBtn">
-                            <button class="task sub"><i class="fa fa-eye" aria-hidden="true"></i> View Subtask</button>
-                        </td> -->
-                    </tr>
-                    <tr data-id="3" data-parent="">
-                        <td>1</td>
-                        <td class="withBar">Buy Milk</td>
-                        <td>₦2000</td>
-                        <td class="ongoing">Pending</td>
-                        <td>12/12/12</td>
-                        <td>07 Mar 2017</td>
-                        <td class="actionBtn">
-                            <button class="task" data-toggle="modal" data-target=".subTask"><i class="fa fa-plus" aria-hidden="true"></i> Add Subtask</button>
-                        </td>
-                        <!-- <td class="actionBtn">
-                            <button class="task sub"><i class="fa fa-eye" aria-hidden="true"></i> View Subtask</button>
-                        </td> -->
-                    </tr>
-                    <tr data-id="4" data-parent="3">
-                        <td>1</td>
-                        <td class="withBar">Buy Milk</td>
-                        <td>₦2000</td>
-                        <td class="ongoing">Pending</td>
-                        <td>12/12/12</td>
-                        <td>07 Mar 2017</td>
-                        <td class="actionBtn">
-                            <button class="task" data-toggle="modal" data-target=".subTask"><i class="fa fa-plus" aria-hidden="true"></i> Add Subtask</button>
-                        </td>
-                        <!-- <td class="actionBtn">
-                            <button class="task sub"><i class="fa fa-eye" aria-hidden="true"></i> View Subtask</button>
-                        </td> -->
-                    </tr>
-                </tbody>
-            </table>
+        <tr data-id="2" data-parent="1">
+            <td>1</td>
+            <td class="withBar">Buy Milk</td>
+            <td>₦2000</td>
+            <td class="ongoing">Pending</td>
+            <td>12/12/12</td>
+            <td>07 Mar 2017</td>
+            <td class="actionBtn">
+                <button class="task"><i class="fa fa-plus" aria-hidden="true"></i> Add Subtask</button>
+            </td>
+            <!-- <td class="actionBtn">
+                <button class="task sub"><i class="fa fa-eye" aria-hidden="true"></i> View Subtask</button>
+            </td> -->
+        </tr>
+        <tr data-id="3" data-parent="">
+            <td>1</td>
+            <td class="withBar">Buy Milk</td>
+            <td>₦2000</td>
+            <td class="ongoing">Pending</td>
+            <td>12/12/12</td>
+            <td>07 Mar 2017</td>
+            <td class="actionBtn">
+                <button class="task" data-toggle="modal" data-target=".subTask"><i class="fa fa-plus" aria-hidden="true"></i> Add Subtask</button>
+            </td>
+            <!-- <td class="actionBtn">
+                <button class="task sub"><i class="fa fa-eye" aria-hidden="true"></i> View Subtask</button>
+            </td> -->
+        </tr>
+        <tr data-id="4" data-parent="3">
+            <td>1</td>
+            <td class="withBar">Buy Milk</td>
+            <td>₦2000</td>
+            <td class="ongoing">Pending</td>
+            <td>12/12/12</td>
+            <td>07 Mar 2017</td>
+            <td class="actionBtn">
+                <button class="task" data-toggle="modal" data-target=".subTask"><i class="fa fa-plus" aria-hidden="true"></i> Add Subtask</button>
+            </td>
+            <!-- <td class="actionBtn">
+                <button class="task sub"><i class="fa fa-eye" aria-hidden="true"></i> View Subtask</button>
+            </td> -->
+        </tr>
+    </tbody>
+</table>
         </div>
     </div>
 </div>
 
 
+<!-- Add Task -->
+<div class="generalModal modal fade addTask" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" data-backdrop="static" data-keyboard="false">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+    <form method="post" id="addTaskForm" action="{{ request.path }}">
+        {{ form.csrf_token }}
+        {{ form.parent_id(id='parent_id') }}
+        <div class="titleSection">
+            <div class="cancel clearfix">
+                <span class="title">Add new Sub Budget</span>
+                <i data-dismiss="modal" class="fa fa-times" aria-hidden="true"></i>
+            </div>
+            {{ form.name(class_='title', placeholder='Enter Name') }}
+            <div class="assign clearfix">
+                <button type="submit" onclick="form_submit()" data-dismiss="modal" class="save"><i class="fa fa-floppy-o" aria-hidden="true"></i> Save & close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Edit Task -->
+<div class="generalModal modal fade editTask" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" data-backdrop="static" data-keyboard="false">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+    <form method="post" id="editTaskForm" action="{{ request.path }}">
+        {{ editform.csrf_token }}
+        {{ editform.parent_id(**{'data-bind': 'value: parent_id'}) }}
+        {{ editform.sub_budget_id(**{'data-bind': 'value: sub_budget_id'}) }}
+        <div class="titleSection">
+            <div class="cancel clearfix">
+                <span class="title">Edit </span>
+                <i data-dismiss="modal" class="fa fa-times" aria-hidden="true"></i>
+            </div>
+            {{ form.name(class_='title', **{'data-bind': 'value: title'}) }}
+            <div class="assign clearfix">
+                <button type="submit" onclick="form_submit()" data-dismiss="modal" class="save"><i class="fa fa-floppy-o" aria-hidden="true"></i> Save & close</button>
+            </div>
+        </div>
+        <div class="stateSection clearfix">
+            <div class="col-md-8">
+                <div class="form-wrap clearfix">
+                    <div class="col-md-1 p-0">
+                        <div class="title">Allocation</div>
+                    </div>
+                    <div class="col-md-11">
+                        {{ form.allocation(class_='stateForm', **{'data-bind': 'value: allocation'})}}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+    </div>
+  </div>
+</div>
+<script type="text/javascript">
+$(document).on("click", ".task", function(){
+    var parent_id = $(this).data('id');
+
+    $("#parent_id").val(parent_id);
+});
+
+/* for form submission */
+function form_submit() {
+    document.getElementById("addTaskForm").submit();
+   }
+
+<script type="text/javascript">
+/* knockoutjs view models */
+function ShowEditBudgetModel(){
+    var self = this;
+    self.title = ko.observable();
+    self.allocation = ko.observable();
+    self.task_id = ko.observable();
+    self.status = ko.observable();
+
+    self.update = function(task){
+        self.title(task.title);
+        self.percent(task.percent);
+        self.task_id(task.id);
+        self.status(task.status);
+        console.log(task.title);
+        /* show modal */
+        $('.editTask').modal('show');
+    }
+}
+
+function FetchBudgetModel() {
+    var self = this;
+
+    self.budgetURI = 'http://localhost:9000/api/v1.0/budgets/get';
+
+    /* make ajax request */
+    self.ajax = function(uri, method, data){
+        var request = {
+            url: uri,
+            type: method,
+            contentType: "application/json",
+            accepts: "application/json",
+            cache: true,
+            dataType: 'json',
+            data: JSON.stringify(data),
+            error: function(jqXHR) {
+                console.log("ajax error " + jqXHR.status);
+            }
+        };
+        return $.ajax(request);
+    }
+
+    self.getBudget = function(budget_id){
+        var url = self.budgetURI + '/' + budget_id;
+        self.ajax(url, 'GET').done(function(data){
+              showEdit.update(data.task);
+            }
+        );
+    }
+
+}
+
+var fetchTask = new FetchBudgetModel();
+var showEdit = new ShowEditBudgetModel();
+ko.applyBindings(fetchTask, $('.assignedTask')[0]);
+ko.applyBindings(showEdit, $('.editTask')[0]);
+</script>
 {% endblock %}
