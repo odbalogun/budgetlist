@@ -57,4 +57,6 @@ $('.collaptable').aCollapTable({
   
 });
 
-$(".multiSelect").chosen();
+$(document).ready(function() {
+  $(".multiselect").select2();
+});

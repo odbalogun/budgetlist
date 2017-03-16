@@ -257,9 +257,9 @@
 </div>
 
 <!-- Add Task -->
-<!-- <div class="generalModal modal fade addTask" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" data-backdrop="static" data-keyboard="false">
+<div class="generalModal modal fade addTask" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" data-backdrop="static" data-keyboard="false">
   <div class="modal-dialog modal-lg" role="document">
-    <div class="modal-content">
+    <div class="modal-content clearfix">
     <form method="post" id="addTaskForm" action="{{ request.path }}">
         {{ form.csrf_token }}
         <div class="titleSection">
@@ -269,9 +269,8 @@
             </div>
             {{ form.title(class_='title', placeholder='Enter Title') }}
             <div class="assign clearfix">
-                {{ form.assigned_to(class_='assignTo', prompt='Assigned to') }}
-                {{ form.task_submit(value='True') }}
-                <button type="submit" onclick="form_submit()" data-dismiss="modal" class="save"><i class="fa fa-floppy-o" aria-hidden="true"></i> Save & close</button>
+                {{ form.assigned_to(class_='assignTo multiselect', multiple="multiple", prompt='Assigned to') }}
+                
             </div>
         </div>
         <div class="stateSection clearfix">
@@ -307,14 +306,16 @@
                 </div>
             </div>
         </div>
+        {{ form.task_submit(value='True') }}
+                <button type="submit" onclick="form_submit()" data-dismiss="modal" class="save"><i class="fa fa-floppy-o" aria-hidden="true"></i> Save & close</button>
     </form>
     </div>
   </div>
-</div> -->
+</div>
 
 
 <!-- Add Task -->
-<div class="modal fade editTask addTask" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel">
+<!-- <div class="modal fade editTask addTask" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel">
   <div class="modal-dialog modal-lg" role="document">
     <div class="modal-content">
         <div class="title clearfix">
@@ -388,7 +389,7 @@
         </form>
     </div>
   </div>
-</div>
+</div> -->
 
 <!-- Add Sub Task -->
 <div class="modal fade editTask subTask" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel">

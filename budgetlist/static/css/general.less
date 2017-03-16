@@ -1179,22 +1179,29 @@ header{
 				.assign{
 					padding-top: 10px;
 					select.assignTo{
-						float: left;
-						width: 35%;
-						border: 1px solid @borderColor;
-						height: 2.3em;
-						outline: none;
+						// float: left;
+						// width: 35%!important;
+						// border: 1px solid @borderColor!important;
+						// height: 2.3em!important;
+						// outline: none!important;
+					}
+					.select2-container{
+						width: 100%!important;
 					}
 			
-					button.save{
-						float: right;
-						border: none;
-						background-color: @BrandColor;
-						color: #fff;
-						padding: 6px 25px;
-						outline: none;
-					}
+					
 				}
+			}
+			button.save{
+				float: right;
+				border: none;
+				background-color: @BrandColor;
+				color: #fff;
+				padding: 6px 25px;
+				outline: none;
+				margin-bottom: 30px;
+			    margin-top: 10px;
+			    margin-right: 25px;
 			}
 			.stateSection{
 				background-color: #f8f8f8;
@@ -1810,4 +1817,26 @@ table.taskTable{
 }
 table.taskTable tr td:first-child{
 	width: 50px;
+}
+.select2-container--default .select2-selection--multiple{
+	border-radius: 0;
+    height: 40px;
+    font-size: 14px;
+}
+.select2-container--default .select2-selection--single .select2-selection__rendered{
+	line-height: 40px;
+}
+.select2-container--default .select2-selection--single .select2-selection__arrow{
+	height: 38px;
+}
+.select2-container--default .select2-selection--multiple .select2-selection__choice{
+	background-color: @BrandColor;
+	color: #fff;
+	margin-top: 8px;
+}
+.select2-container--default .select2-selection--multiple .select2-selection__choice__remove{
+	color: #fff;
+}
+.select2-container--default .select2-selection--multiple .select2-selection__rendered li{
+	border: 1px solid transparent;
 }
