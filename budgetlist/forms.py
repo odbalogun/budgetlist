@@ -56,6 +56,12 @@ class SubBudgetForm(FlaskForm):
     parent_id = HiddenField()
     sub_budget_id = HiddenField(default=0)
 
+class EditSubBudgetForm(FlaskForm):
+    name = StringField('Name', validators=[DataRequired(), Length(max=100)])
+    allocation = IntegerField('Allocation', validators=[DataRequired()])
+    parent_id = HiddenField()
+    sub_budget_id = HiddenField(default=0)
+
 class ProjectForm(FlaskForm):
     title = StringField('Name', validators=[DataRequired(), Length(max=100)])
     description = TextAreaField('Description')

@@ -4,7 +4,7 @@ from budgetlist.models import db, User, Project, Task, Company, Period, Departme
 from functools import wraps
 from budgetlist import lm
 from budgetlist.forms import LoginForm, CompanyForm, PeriodForm, DepartmentForm, UserForm, BudgetForm, ProjectForm, \
-    TaskForm, SubTaskForm, EditUserForm, UpdateTaskForm, SubBudgetForm
+    TaskForm, SubTaskForm, EditUserForm, UpdateTaskForm, SubBudgetForm, EditSubBudgetForm
 from budgetlist.helpers import list_budget_types, list_priority
 from datetime import date
 
@@ -478,7 +478,7 @@ def manage_budget():
     budget = period.budget
 
     form = SubBudgetForm()
-    if form.validate_on_submit() and form.sub_budget_id.data == 0:
+    if form.validate_on_submit() and form.sub_budget_id.data == '0':
         # new budget
         sub = SubBudgets()
         sub.name = form.name.data
@@ -490,8 +490,8 @@ def manage_budget():
         db.session.commit()
         flash('The sub budget has been successfully created', 'success')
 
-    editform = SubBudgetForm()
-    if editform.validate_on_submit() and editform.sub_budget_id.data != 0:
+    editform = EditSubBudgetForm()
+    if editform.validate_on_submit() and editform.sub_budget_id.data != '0':
         # edit budget
         sub = SubBudgets.query.get(editform.sub_budget_id.data)
         sub.name = editform.name.data

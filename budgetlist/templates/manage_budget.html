@@ -24,7 +24,7 @@
                 <div class="col-md-4 pl-0">
                     <div class="title">
                         <span class="caption">Budget Title</span>
-                        <span class="dTitle blue">Bulding The Wall</span>
+                        <span class="dTitle blue">{{ budget.title }}</span>
                     </div>
                 </div>
                 <div class="col-md-8 right-text">
@@ -54,11 +54,11 @@
         </tr>
     </thead>
     <tbody class="budgetlist">
-        {% for sub in budget.main_subs %}
+        {% for sub in budget.subs %}
         {% if sub.parent_budget %}
             <tr data-id="{{ sub.id }}" data-parent="{{ sub.parent_budget }}">
         {% else %}
-            <tr data-id="{{ sub.id }}">
+            <tr data-id="{{ sub.id }}" data-parent="">
         {% endif %}
             <td>{{ loop.index }}</td>
             <td class="withBar">{{ sub.name }}</td>
@@ -167,12 +167,17 @@ function AddBudgetModel(){
     self.form_title = ko.observable();
 
     self.loadForm = function(budget){
+        // reset edit form
+        showEdit.clear_fields();
         self.parent_id(budget.id);
         self.form_title("Add budget under "+ budget.name);
         $('.addBudget').modal('show');
     }
-}
 
+    self.clear_fields = function(){
+        self.parent_id(null);
+    }
+}
 
 function ShowEditBudgetModel(){
     var self = this;
@@ -181,11 +186,18 @@ function ShowEditBudgetModel(){
     self.sub_budget_id = ko.observable(0);
 
     self.update = function(budget){
+        addNewBudget.clear_fields();
         self.name(budget.name);
         self.allocation(budget.allocation);
         self.sub_budget_id(budget.id);
         /* show modal */
         $('.editBudget').modal('show');
+    }
+
+    self.clear_fields = function(){
+        self.name(null);
+        self.allocation(null);
+        self.sub_budget_id(0);
     }
 }
 
