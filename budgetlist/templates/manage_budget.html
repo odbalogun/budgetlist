@@ -50,15 +50,15 @@
             <th>Allocation</th>
             <th>Amount Performed</th>
             <th>Date Created</th>
-            <th></th>
+            <!-- <th colspan="2"></th> -->
         </tr>
     </thead>
     <tbody class="budgetlist">
         {% for sub in budget.main_subs %}
         {% if sub.parent_budget %}
-            <tr data-id="{{ sub.id }}" data-parent="{{ sub.parent_budget }}">
+            <tr data-id="{{ sub.id }}" data-parent="">
         {% else %}
-            <tr data-id="{{ sub.id }}">
+            <tr data-id="{{ sub.id }}" data-parent="">
         {% endif %}
             <td>{{ loop.index }}</td>
             <td class="withBar">{{ sub.name }}</td>
@@ -67,10 +67,11 @@
             <td>{{ sub.date_created }}</td>
             <td class="actionBtn">
                 <button class="task edit" data-bind="click: function(){ editBudget({{ sub.id }}); }"><i class="fa fa-edit" aria-hidden="true"></i> Edit</button>
-            </td>
-            <td class="actionBtn">
                 <button class="task" data-bind="click: function(){ addBudget({{ sub.id }}); }"><i class="fa fa-plus" aria-hidden="true"></i> Add Budget</button>
             </td>
+            <!-- <td class="actionBtn">
+                <button class="task" data-bind="click: function(){ addBudget({{ sub.id }}); }"><i class="fa fa-plus" aria-hidden="true"></i> Add Budget</button>
+            </td> -->
             <!-- <td class="actionBtn">
                 <button class="task sub act-more act-collapsed"><i class="fa fa-eye" aria-hidden="true"></i> View Subtask</button>
             </td> -->
