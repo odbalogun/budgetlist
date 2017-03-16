@@ -20,18 +20,19 @@ class PeriodForm(FlaskForm):
     end_date = DateField('End Date', validators=[DataRequired()], format='%d/%m/%Y')
 
 class DepartmentForm(FlaskForm):
+    depart_id = HiddenField()
     name = StringField('Department Name', validators=[DataRequired()])
 
 class UserForm(FlaskForm):
+    user_id = HiddenField()
     full_name = StringField('Full Name', validators=[DataRequired(), Length(max=100)])
-    username = StringField('Username', validators=[DataRequired(), Length(min=2, max=50), Unique(User, User.username, 'This username already exists')])
-    email = StringField('Email Address', validators=[DataRequired(), Length(min=6, max=120), Email(), Unique(User, User.email, 'This email already exists')])
-    password = PasswordField('Password', validators=[DataRequired()])
-    confirm_password = PasswordField('Confirm Password', [DataRequired(),
+    username = StringField('Username', validators=[DataRequired(), Length(min=2, max=50)])
+    email = StringField('Email Address', validators=[DataRequired(), Length(min=6, max=120), Email()])
+    password = PasswordField('Password', validators=[Optional()])
+    confirm_password = PasswordField('Confirm Password', [Optional(),
                                                           EqualTo('password', 'The passwords do not match')])
     department = SelectField('Department', validators=[DataRequired()], coerce=int)
-    user_type = SelectField('Account Type', validators=[DataRequired()], choices=[(list_account_types.index(a), a) for a in list_account_types], coerce=int)
-    user_id = HiddenField()
+    user_type = SelectField('Account Type', choices=[(list_account_types.index(a), a) for a in list_account_types], coerce=int)
 
 class EditUserForm(FlaskForm):
     full_name = StringField('Full Name', validators=[DataRequired(), Length(max=100)])
@@ -59,7 +60,9 @@ class ProjectForm(FlaskForm):
     title = StringField('Name', validators=[DataRequired(), Length(max=100)])
     description = TextAreaField('Description')
     budget_limit = IntegerField('Allocation')
-    budget_id = SelectField('Budget Type', coerce=int)
+    budget_1 = SelectField('Budget Type', coerce=int)
+    budget_2 = SelectField('Budget Type', coerce=int)
+    budget_3 = SelectField('Budget Type', coerce=int)
     start_date = DateField('Start Date', validators=[DataRequired()], format='%d/%m/%Y')
     end_date = DateField('End Date', validators=[DataRequired()], format='%d/%m/%Y')
     priority = SelectField('Priority', coerce=int)
@@ -92,4 +95,5 @@ class UpdateTaskForm(FlaskForm):
     percent = SelectField('Percent Completed', coerce=int, choices=list_percentages)
     note = TextAreaField('Description')
     status = SelectField('Status', choices=[(list_task_status.index(a), a) for a in list_task_status], coerce=int)
+    amount_spent = IntegerField('Amount Spent')
     task_id = HiddenField('Task ID')

@@ -43,18 +43,21 @@ def home():
     if current_user.is_basic:
         return redirect(url_for('.assigned_tasks'))
     else:
-        return redirect(url_for('.overview'))
+        return redirect(url_for('.budget_overview'))
 
 @main.route('/overview', methods=['GET'])
 @login_required
 def overview():
     # get active period
     period = Period.query.filter(Period.status==0).first()
+    b = Budget.query.filter(Budget.period_id==period.id).first()
+
+    # get budgets
+    budget_types = SubBudgets.query.filter(SubBudgets.budget_id==b.id, SubBudgets.parent_budget==None).all()
 
     form = ProjectForm()
     form.owner_id.data = current_user.id
     form.priority.choices = [(list_priority.index(a), a) for a in list_priority]
-    form.budget_id.choices = [(a.id, a.name) for a in Budget.query.filter(Budget.period_id==period.id).all()]
 
     # get all projects
     projects = Project.query.order_by(Project.date_created.desc()).limit(5).all()
@@ -68,7 +71,7 @@ def overview():
     overdue_count = len(overdue)
 
     return render_template('overview.html', projects=projects, overdue=overdue, ongoing=ongoing, form=form, completed_count=completed_count,
-                           deficit_count=deficit_count, overdue_count=overdue_count)
+                           deficit_count=deficit_count, overdue_count=overdue_count, budget_types=budget_types)
 
 @main.route('/all-projects', methods=['GET'])
 def all_projects():
@@ -135,6 +138,9 @@ def assigned_tasks():
         history.owner_id = current_user.id
         history.note = form.note.data
         history.status = form.status.data
+
+        if form.amount_spent.data:
+            history.amount_spent = form.amount_spent.data
 
         # contextual updates
         if form.percent.data != 0 and form.percent.data != 100 and form.status.data in [0, 2, 3]:
@@ -318,8 +324,8 @@ def periods():
         db.session.commit()
         flash('The period has been successfully created', 'success')
 
-        if period.status == 0:
-            return redirect(url_for('.manage_budget'))
+        # if period.status == 0:
+        #    return redirect(url_for('.manage_budget'))
     periods = Period.query.order_by(Period.date_created.asc()).all()
     return render_template('periodSettings.html', form=form, periods=periods)
 
@@ -342,12 +348,30 @@ def departments():
     form = DepartmentForm()
 
     if form.validate_on_submit():
-        dep = Department()
-        dep.name = form.name.data
+        if form.depart_id.data:
+            # check if department already exists
+            chk = Department.query.filter(Department.name == form.name.data, Department.id != form.depart_id.data).first()
+            if chk:
+                flash('This department already exists', 'error')
+            else:
+                dep = Department.query.get(form.depart_id.data)
+                dep.name = form.name.data
 
-        db.session.add(dep)
-        db.session.commit()
-        flash('The department has been successfully created', 'success')
+                db.session.add(dep)
+                db.session.commit()
+                flash('The department has been successfully updated', 'success')
+        else:
+            # check if department already exists
+            chk = Department.query.filter(Department.name == form.name.data).first()
+            if chk:
+                flash('This department already exists', 'error')
+            else:
+                dep = Department()
+                dep.name = form.name.data
+
+                db.session.add(dep)
+                db.session.commit()
+                flash('The department has been successfully created', 'success')
     departments = Department.query.all()
     return render_template('departmentSetting.html', form=form, departments=departments)
 
@@ -385,11 +409,47 @@ def user_settings():
     form.department.choices = [(a.id, a.name) for a in Department.query.all()]
 
     if form.validate_on_submit():
-        user = User(form.full_name.data, form.username.data, form.email.data, form.password.data, form.department.data,
-                form.user_type.data)
-        db.session.add(user)
-        db.session.commit()
-        flash('The user has been successfully created', 'success')
+        if form.user_id.data:
+            # check if username or email already exists
+            chk = User.query.filter(User.username == form.username.data, User.id != form.user_id.data).first()
+            chk2 = User.query.filter(User.email == form.email.data, User.id != form.user_id.data).first()
+
+            if chk or chk2:
+                if chk:
+                    flash('This username already exists', 'error')
+                if chk2:
+                    flash('This email already exists', 'error')
+            else:
+                user = User.query.get(form.user_id.data)
+                # assign values
+                user.username = form.username.data
+                user.full_name = form.full_name.data
+                user.email = form.email.data
+                user.department_id = form.department.data
+                user.account_type = form.user_type.data
+
+                if form.password.data:
+                    user.set_password(form.password.data)
+
+                db.session.add(user)
+                db.session.commit()
+                flash('The user\'s account has been successfully updated', 'success')
+        else:
+            # check if username or email already exists
+            chk = User.query.filter(User.username == form.username.data).first()
+            chk2 = User.query.filter(User.email == form.email.data).first()
+
+            if chk or chk2:
+                if chk:
+                    flash('This username already exists', 'error')
+                if chk2:
+                    flash('This email already exists', 'error')
+            else:
+                user = User(form.full_name.data, form.username.data, form.email.data, form.password.data, form.department.data,
+                        form.user_type.data)
+                db.session.add(user)
+                db.session.commit()
+                flash('The user has been successfully created', 'success')
     users = User.query.order_by(User.date_created.asc()).all()
     return render_template('user_setting.html', form=form, users=users)
 

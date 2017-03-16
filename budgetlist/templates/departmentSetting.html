@@ -28,19 +28,20 @@
             <span class="pull-left">Department Settings</span>
             <span data-dismiss="modal" aria-label="Close" class="pull-right"><i class="fa fa-times" aria-hidden="true"></i></span>
         </div>
-        <form method="post"  class="clearfix">
+        <form method="post" id="departForm" class="clearfix">
             {{ form.csrf_token }}
+            {{ form.depart_id(**{'data-bind': 'value: depart_id'}) }}
             <div class="content clearfix">
                 <div class="col-md-12">
                     <label for="">Department Name</label>
-                    <input type="text" name="name" class="form-control" placeholder="Department Name" required>
+                    <input type="text" name="name" class="form-control" placeholder="Department Name" data-bind="value: depart_name" required>
                 </div>  
                 
             </div>
             <div class="buttonWrap">
                 <button type="submit" data-dismiss="modal" class="cancel"><i class="fa fa-times" aria-hidden="true"></i> Close</button>
 
-                <button type="submit" class="save"><i class="fa fa-floppy-o" aria-hidden="true"></i>  Save</button>
+                <button type="submit" onclick="form_submit()" class="save"><i class="fa fa-floppy-o" aria-hidden="true"></i>  Save</button>
                 
             </div>
         </form>
@@ -52,7 +53,7 @@
         <div class="settings">
             <div class="dHeading clearfix">
                 <div class="title pull-left">Department Settings</div>
-                <a href="#" class="adding pull-right" data-toggle="modal" data-target=".departmentSettings">Add Department</a>
+                <a href="#" class="adding pull-right"  data-bind="click: function(){ addDepart(); }">Add Department</a>
             </div>
             <div class="col-md-12">
                 <table class="assignedTask full dotted mt-30">
@@ -64,7 +65,7 @@
                             <th style="width: 15%;"></th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody class="tableBody">
                         {% for d in departments %}
                         <tr>
                             <td>{{ loop.index }}</td>
@@ -72,7 +73,7 @@
                             <td>{{ d.member_count }}</td>
                             <td style="width: 15%;">
                                 
-                                <a class="update" href="#"><i class="fa fa-check" aria-hidden="true"></i> Edit</a>
+                                <a class="update" href="#" data-bind="click: function(){ getDepart({{ d.id }}); }"><i class="fa fa-check" aria-hidden="true"></i> Edit</a>
                             </td>
                         </tr>
                         {% endfor %}
@@ -82,4 +83,74 @@
         </div>
     </div>
 </div>
+<script type="text/javascript">
+function EditDepartModel(){
+    var self = this;
+    self.depart_id = ko.observable();
+    self.depart_name = ko.observable();
+
+    self.update = function(depart){
+        self.depart_id(depart.id);
+        self.depart_name(depart.name);
+        /* show modal */
+        $('.editTask').modal('show');
+    }
+
+    self.add = function(){
+        self.depart_id(null);
+        self.depart_name(null);
+        /* show modal */
+        $('.editTask').modal('show');
+    }
+}
+
+function DepartModel(){
+    var self = this;
+    self.departURI = 'http://localhost:9000/api/v1.0/departments/get';
+
+    self.ajax = function(uri, method, data){
+        var request = {
+            url: uri,
+            type: method,
+            contentType: "application/json",
+            accepts: "application/json",
+            cache: false,
+            dataType: 'json',
+            data: JSON.stringify(data),
+            error: function(jqXHR) {
+                console.log("ajax error " + jqXHR.status);
+            }
+        };
+        return $.ajax(request);
+    }
+
+    self.getDepart = function(depart_id){
+        var url = self.departURI + '/' + depart_id;
+        self.ajax(url, 'GET').done(function(data){
+              editObject.update(data);
+            }
+        );
+    }
+
+}
+
+function AddDepartModel(){
+    var self = this;
+
+    self.addDepart = function(){
+        editObject.add();
+    }
+}
+var userObject = new DepartModel();
+var editObject = new EditDepartModel();
+var addObject = new AddDepartModel();
+ko.applyBindings(userObject, $('.tableBody')[0]);
+ko.applyBindings(editObject, $('.departmentSettings')[0]);
+ko.applyBindings(addObject, $('.dHeading')[0]);
+</script>
+<script type="text/javascript">
+    function form_submit() {
+        document.getElementById("departForm").submit();
+   }
+</script>
 {% endblock %}

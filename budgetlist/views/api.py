@@ -1,5 +1,5 @@
 from flask import Blueprint, jsonify, abort, make_response, request
-from budgetlist.models import db, User, Project, Task, SubBudgets
+from budgetlist.models import db, User, Project, Task, SubBudgets, Department
 
 api = Blueprint('api', __name__)
 
@@ -8,8 +8,14 @@ def get_budget(budget_id):
     budget = SubBudgets.query.get(budget_id)
     if not budget:
         abort(404)
-    return jsonify(project=budget.serialize)
+    return jsonify(sub=budget.serialize)
 
+@api.route('/v1.0/budgets/children/<int:budget_id>', methods=['GET'])
+def get_budget_children(budget_id):
+    budget = SubBudgets.query.get(budget_id)
+    if not budget:
+        abort(404)
+    return jsonify(subs=budget.sub_budgets)
 
 @api.route('/v1.0/users/get/<int:userid>', methods=['GET'])
 def get_user(userid):
@@ -18,6 +24,12 @@ def get_user(userid):
         abort(404)
     return jsonify(user.serialize)
 
+@api.route('/v1.0/departments/get/<int:department_id>', methods=['GET'])
+def get_department(department_id):
+    depart = Department.query.get(department_id)
+    if not depart:
+        abort(404)
+    return jsonify(depart.serialize)
 
 @api.route('/v1.0/users', methods=['GET'])
 @api.route('/v1.0/users/<int:limit>', methods=['GET'])
@@ -118,7 +130,7 @@ def get_task(task_id):
     task = Task.query.get(task_id)
     if not task:
         abort(404)
-    return jsonify(project=task.serialize)
+    return jsonify(task=task.serialize)
 
 @api.route('/v1.0/tasks/create', methods=['POST'])
 def create_tasks():

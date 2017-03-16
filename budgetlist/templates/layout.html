@@ -58,16 +58,6 @@
                             <a class="projectName" href="{{ url_for('.home')}}">Budgeting App</a>
                         </li>
                         <li class="
-                            
-                            {% if 
-                                request.path == '/manage-budget' or
-                                request.path == '/dashboard'
-
-
-                            %} selected {% endif %}">
-                            <a href="{{ url_for('.manage_budget')}}">Budget</a>
-                        </li>
-                        <li class="
                             {% if 
                                 request.path == '/' or 
                                 request.path == '/overview' or
@@ -79,6 +69,16 @@
 
                             %} selected {% endif %}">
                             <a href="{{ url_for('.overview')}}">Projects</a>
+                        </li>
+                        <li class="
+
+                            {% if
+                                request.path == '/manage-budget' or
+                                request.path == '/dashboard'
+
+
+                            %} selected {% endif %}">
+                            <a href="{{ url_for('.budget_overview')}}">Budget</a>
                         </li>
 
                         <li class="
