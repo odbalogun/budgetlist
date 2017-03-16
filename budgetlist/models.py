@@ -201,6 +201,7 @@ class Task(db.Model):
     start_date = Column(Date)
     deadline = Column(Date)
     status = Column(Integer, default=0)
+    amount_spent = Column(Integer)
     # 0 for open: 1 for done
 
     owner = relationship("User", uselist=False, back_populates="ownTasks")
@@ -275,6 +276,7 @@ class TaskHistory(db.Model):
     task_id = Column(Integer, ForeignKey('tasks.id'))
     owner_id = Column(Integer, ForeignKey('users.id'))
     date_created = Column(DateTime, default=func.now())
+    amount_spent = Column(Integer)
 
     owner = relationship("User", uselist=False)
     task = relationship("Task", uselist=False, back_populates="history")
@@ -345,6 +347,14 @@ class Department(db.Model):
     @property
     def member_count(self):
         return len(self.members)
+
+    @property
+    def serialize(self):
+        """Return object data in easily serializeable format"""
+        return {
+            'id': self.id,
+            'name': self.name
+        }
 
 
 class Budget(db.Model):
@@ -419,3 +429,16 @@ class SubBudgets(db.Model):
             'allocation': self.allocation,
             'editable': self.is_editable
         }
+
+    @property
+    def sub_budgets(self):
+        """Return object data in easily serializeable format"""
+        subs = []
+        for i in self.child_budgets:
+            subs.append({
+                'id': i.id,
+                'name': i.name,
+                'allocation': i.allocation,
+                'editable': i.is_editable
+            })
+        return subs

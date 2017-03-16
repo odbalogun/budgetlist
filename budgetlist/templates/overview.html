@@ -11,11 +11,11 @@
                     <!-- ko foreach: projects -->
                     <li class="projectTab">
                         <a data-bind='attr: { "href": "/project-detail/" + id() }'>
-                            <span class="project" data-bind="text: title">
+                            <span class="project" data-bind="text: title()">
                             </span>
-                            <span class="date" data-bind="text: end_date">
+                            <span class="date" data-bind="text: end_date()">
                             </span>
-                            <div class="completion" data-bind="text: complete_string"></div>
+                            <div class="completion" data-bind="text: complete_string()"></div>
                             <div class="progress">
                               <div class="progress-bar progress-bar-success progress-bar-striped" role="progressbar"
                               data-bind='attr: { "aria-valuenow": complete(), "style": "width: "+complete()+"%" }' aria-valuemin="0" aria-valuemax="100">
@@ -175,8 +175,20 @@
                     <div class="col-md-2 p-0">
                         <div class="title">Budget</div>
                     </div>
-                    <div class="col-md-10">
-                        {{ form.budget_id(class_='stateForm', **{'data-bind': 'value: budget_id'}) }}
+                    <div class="col-md-10" id="budgetList">
+                        <select name="budget_1" id="budget_1" data-bind="value: budget_id">
+                            <option disabled selected>Select a Budget</option>
+                            {% for b in budget_types %}
+                                <option value="{{ b.id }}" data-id="{{ b.is_editable }}">{{ b.name }}</option>
+                            {% endfor %}
+                        </select><br/>
+                        <!--
+                        data-bind="click: function(){ getSecondLevel(); }"
+                        <select name="budget_2" id="budget_2" data-bind='click: function(){ getThirdLevel(); }, options: $root.secondLevel, optionsValue: "id", optionsText: "name", optionsCaption: "..."'>
+
+                        </select><br/>
+                        <select name="budget_3"  data-bind='options: $root.thirdLevel, optionsCaption: "..."'>
+                        </select><br/>-->
                     </div>
                 </div>
             </div>
@@ -217,6 +229,50 @@
   </div>
 </div>
 <script type="text/javascript">
+function BudgetsModel(){
+    var self = this;
+    self.budgetsURI = 'http://localhost:9000/api/v1.0/budgets/children';
+    self.secondLevel = ko.observableArray();
+    self.thirdLevel = ko.observableArray();
+
+     self.ajax = function(uri, method, data){
+        var request = {
+            url: uri,
+            type: method,
+            contentType: "application/json",
+            accepts: "application/json",
+            cache: false,
+            dataType: 'json',
+            data: JSON.stringify(data),
+            error: function(jqXHR) {
+                console.log("ajax error " + jqXHR.status);
+            }
+        };
+        return $.ajax(request);
+    }
+
+    self.getSecondLevel = function(){
+        // get variable
+        var e = document.getElementById("budget_1");
+        var strEditable = e.options[e.selectedIndex].data('id');
+        var strId = e.options[e.selectedIndex].value;
+
+        if(strEditable == 'True'){
+            var url = self.budgetsURI + '/' + strId;
+            self.ajax(url, 'GET').done(function(data){
+                  for (var i = 0; i < data.subs.length; i++) {
+                    self.secondLevel.push({
+                        id: ko.observable(data.subs[i].id),
+                        name: ko.observable(data.subs[i].name)
+                        //owner: ko.observable(data.history[i].owner)
+                    });
+                  }
+                }
+            );
+        }
+    }
+}
+
 function ProjectsModel(){
     var self = this;
     self.projectsURI = 'http://localhost:9000/api/v1.0/projects/create';
@@ -297,8 +353,10 @@ function CreateProjectModel() {
 }
 var projectView = new ProjectsModel();
 var createView = new CreateProjectModel();
+var budgetsView = new BudgetsModel();
 ko.applyBindings(projectView, $('#projectGrid')[0]);
 ko.applyBindings(createView, $('#addProject')[0]);
+//ko.applyBindings(budgetsView, $('#budgetList')[0]);
 </script>
 {% endblock %}
 

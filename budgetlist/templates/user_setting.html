@@ -27,43 +27,44 @@
             <span class="pull-left">User Settings</span>
             <span data-dismiss="modal" aria-label="Close" class="pull-right"><i class="fa fa-times" aria-hidden="true"></i></span>
         </div>
-        <form method="post"  class="clearfix">
+        <form method="post" id="userForm" class="clearfix">
             {{ form.csrf_token }}
+            {{ form.user_id(**{'data-bind': 'value: user_id'}) }}
             <div class="content clearfix">
                 <div class="col-md-12">
                     <label for="">User Name</label>
-                    <input name="username" class="form-control" placeholder="User Name" required>
+                    <input name="username" class="form-control" placeholder="User Name" data-bind="value: username" required>
                 </div>  
                 <div class="col-md-6">
                     <label for="">Full Name</label>
-                    <input name="full_name" class="form-control" placeholder="Full Name" required>
+                    <input name="full_name" class="form-control" placeholder="Full Name" data-bind="value: full_name" required>
                 </div>  
                 <div class="col-md-6">
                     <label for="">Email</label>
-                     <input type="email" name="email" class="form-control" placeholder="Email" required>
+                     <input type="email" name="email" class="form-control" placeholder="Email" data-bind="value: email" required>
                 </div> 
                 <div class="col-md-6">
                     <label for="">Password</label>
-                    <input type="password" name="password" class="form-control" placeholder="Password" required>
+                    <input type="password" name="password" class="form-control" placeholder="Password" id="password">
                 </div>  
                 <div class="col-md-6">
                     <label for="">Confirm Password</label>
-                     <input type="password" name="confirm_password" class="form-control" placeholder="Confirm Password">
+                     <input type="password" name="confirm_password" class="form-control" placeholder="Confirm Password" id="cpassword">
                 </div>
                 <div class="col-md-6">
                     <label for="">Department</label>
-                    {{ form.department(class_="form-control") }}
+                    {{ form.department(class_="form-control", **{'data-bind': 'value: department_id'}) }}
                 </div>  
                 <div class="col-md-6">
                     <label for="">User Type</label>
-                     {{ form.user_type(class_="form-control") }}
+                     {{ form.user_type(class_="form-control", **{'data-bind': 'value: account_type'}) }}
                 </div> 
                   
             </div>
             <div class="buttonWrap">
                 <button type="submit" data-dismiss="modal" class="cancel"><i class="fa fa-times" aria-hidden="true"></i> Close</button>
 
-                <button type="submit" class="save"><i class="fa fa-floppy-o" aria-hidden="true"></i>  Save</button>
+                <button type="submit" onclick="form_submit()" class="save"><i class="fa fa-floppy-o" aria-hidden="true"></i>  Save</button>
                 
             </div>
         </form>
@@ -76,9 +77,8 @@
         <div class="settings">
             <div class="dHeading clearfix">
                 <div class="title pull-left">User Settings</div>
-                <a href="#" class="adding pull-right" data-toggle="modal" data-target=".editTask">Add User</a>
+                <a href="#" class="adding pull-right" data-bind="click: function(){ addUser(); }">Add User</a>
             </div>
-            
              <div class="col-md-12">
                 <table class="assignedTask full">
                     <thead>
@@ -91,7 +91,7 @@
                             <th style="width: 15%"></th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody class="tableBody">
                         {% for user in users %}
                         <tr>
                             <td>{{ loop.index }}</td>
@@ -100,6 +100,7 @@
                             <td>{{ user.department.name }}</td>
                             <td>{{ user.user_type }}</td>
                             <td style="width: 15%">
+                                <a class="edited" href="#" data-bind="click: function(){ getUser({{ user.id }}); }">Edit</a>
                                 {% if user.id != current_user.id %}
                                     {% if user.status == 0 %}
                                         <a class="deactivated" href="{{ url_for('.toggle_user_status', action=1, userid=user.id) }}">Deactivate</a>
@@ -107,7 +108,6 @@
                                         <a class="activated" href="{{ url_for('.toggle_user_status', action=0, userid=user.id) }}">Activate</a>
                                     {% endif %}
                                 {% endif %}
-                                <a class="edited" href="#">Edit</a>
                             </td>
                         </tr>
                         {% endfor %}
@@ -118,6 +118,92 @@
     </div>
 </div>
 <script type="text/javascript">
+function EditUserModel(){
+    var self = this;
+    self.username = ko.observable();
+    self.full_name = ko.observable();
+    self.email = ko.observable();
+    self.account_type = ko.observable(0);
+    self.department_id = ko.observable(1);
+    self.user_id = ko.observable();
 
+    self.update = function(user){
+        self.user_id(user.id);
+        self.username(user.username);
+        self.full_name(user.full_name);
+        self.email(user.email);
+        self.account_type(user.account_type);
+        self.department_id(user.department_id);
+        console.log(user.username);
+        /* make password optional */
+        $("#password").prop('required',false);
+        $("#cpassword").prop('required',false);
+        /* show modal */
+        $('.editTask').modal('show');
+    }
+
+    self.add = function(){
+        self.user_id(null);
+        self.username(null);
+        self.full_name(null);
+        self.email(null);
+        self.account_type(0);
+        self.department_id(1);
+        /* make password required */
+        $("#password").prop('required',true);
+        $("#cpassword").prop('required',true);
+        /* show modal */
+        $('.editTask').modal('show');
+    }
+}
+
+function UserModel(){
+    var self = this;
+    self.userURI = 'http://localhost:9000/api/v1.0/users/get';
+
+    self.ajax = function(uri, method, data){
+        var request = {
+            url: uri,
+            type: method,
+            contentType: "application/json",
+            accepts: "application/json",
+            cache: false,
+            dataType: 'json',
+            data: JSON.stringify(data),
+            error: function(jqXHR) {
+                console.log("ajax error " + jqXHR.status);
+            }
+        };
+        return $.ajax(request);
+    }
+
+    self.getUser = function(user_id){
+        var url = self.userURI + '/' + user_id;
+        self.ajax(url, 'GET').done(function(data){
+              editObject.update(data);
+            }
+        );
+    }
+
+}
+
+function AddUserModel(){
+    var self = this;
+
+    self.addUser = function(){
+        editObject.add();
+    }
+}
+var userObject = new UserModel();
+var editObject = new EditUserModel();
+var addObject = new AddUserModel();
+ko.applyBindings(userObject, $('.tableBody')[0]);
+ko.applyBindings(editObject, $('.userSettings')[0]);
+ko.applyBindings(addObject, $('.dHeading')[0]);
+</script>
+<script type="text/javascript">
+    function form_submit() {
+        document.getElementById("userForm").submit();
+   }
 </script>
 {% endblock %}

@@ -44,10 +44,15 @@
                     <label for="">Status</label>
                     {{ form.status(**{'data-bind': 'value: status'}) }}
                 </div>
+
+                <div class="col-md-12">
+                    <label for="">Amount Spent</label>
+                    {{ form.amount_spent() }}
+                </div>
                 <div class="col-md-12">
                     <label for="">Note</label>
                     <textarea name="note" id="" cols="30" rows="10"></textarea>
-                </div>  
+                </div>
             </div>
             <div class="buttonWrap">
                 <button type="submit" onclick="form_submit()"  data-dismiss="modal" class="save"><i class="fa fa-floppy-o" aria-hidden="true"></i> Save &amp; close</button>
@@ -73,7 +78,7 @@
                 </tr>
                 <tr>
                     <td data-bind="text: title"></td>
-                    <td data-bind="text: description"></td>
+                    <td data-bind="html: description"></td>
                 </tr>
             </table>
             <table class="moreDetailTable">
@@ -98,11 +103,11 @@
             <label class="myLabel">History</label>
             <!-- ko foreach: history -->
             <div class="bs-callout bs-callout-info" id="callout-pagination-label"> 
-                <h4 data-bind="text: owner"></h4>
-                <small class="smallText" data-bind="text: date_created"></small>
+                <h4 data-bind="text: owner()"></h4>
+                <small class="smallText" data-bind="text: date_created()"></small>
                 <small class="smallText">Updated To: 
-                <strong data-bind="text: percent"></strong></small>
-                <p data-bind="html: note"></p>
+                <strong data-bind="text: percent()"></strong></small>
+                <p data-bind="html: note()"></p>
             </div>
             <!-- /ko -->
         </div>
