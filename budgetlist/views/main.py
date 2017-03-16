@@ -478,21 +478,20 @@ def manage_budget():
     budget = period.budget
 
     form = SubBudgetForm()
-    if form.validate_on_submit():
-        if not form.sub_budget_id.data or form.sub_budget_id.data == '':
-            # new budget
-            sub = SubBudgets()
-            sub.name = form.name.data
-            sub.allocation = form.allocation.data
-            sub.parent_budget = form.parent_id.data
-            sub.budget_id = budget.id
-            sub.created_by = current_user.id
-            db.session.add(sub)
-            db.session.commit()
-            flash('The sub budget has been successfully created', 'success')
+    if form.validate_on_submit() and form.sub_budget_id.data == 0:
+        # new budget
+        sub = SubBudgets()
+        sub.name = form.name.data
+        sub.allocation = form.allocation.data
+        sub.parent_budget = form.parent_id.data
+        sub.budget_id = budget.id
+        sub.created_by = current_user.id
+        db.session.add(sub)
+        db.session.commit()
+        flash('The sub budget has been successfully created', 'success')
 
     editform = SubBudgetForm()
-    if editform.validate_on_submit():
+    if editform.validate_on_submit() and editform.sub_budget_id.data != 0:
         # edit budget
         sub = SubBudgets.query.get(editform.sub_budget_id.data)
         sub.name = editform.name.data

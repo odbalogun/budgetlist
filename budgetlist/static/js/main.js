@@ -40,3 +40,21 @@ $("form").submit(function(){
     $('input.money').maskMoney('unmasked')[0];
     console.log($('#input-value-id').val(value))
   });
+
+$('.collaptable').aCollapTable({ 
+
+    // the table is collapased at start
+    startCollapsed: true,
+
+    // the plus/minus button will be added like a column
+    addColumn: true, 
+
+    // The expand button ("plus" +)
+    plusButton: "<button title='Show Subtask' class='viewBtn'><i class='fa fa-chevron-right' aria-hidden='true'></i></button>", 
+
+    // The collapse button ("minus" -)
+    minusButton: "<button title='Hide Subtask' class='viewBtn'><i class='fa fa-chevron-up' aria-hidden='true'></i></button>" 
+  
+});
+
+$(".multiSelect").chosen();
