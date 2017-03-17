@@ -1145,9 +1145,11 @@ header{
 	.modal-dialog{
 		.modal-content{
 			border-radius: 0;
+			// height: 47em;
+   //  		overflow: auto;
 			.titleSection{
 				padding: 10px;
-				border-left: 8px solid @BrandColor;
+				border-left: 4px solid @BrandColor;
 				min-height: 7em;
 				.cancel{
 					height: 2em;
@@ -1213,7 +1215,7 @@ header{
 			    padding: 10px 5px;
 			    .form-wrap{
 			    	.title{
-						font-size: 12px;
+						font-size: 14px;
 						line-height: 29px;
 			    	}
 			    	.stateForm{
@@ -1229,11 +1231,10 @@ header{
 				min-height: 10em;
 				padding: 10px;
 				.title{
-					border-bottom: 1px solid #ddd;
-				    font-size: 18px;
-				    color: #555;
-				    margin-bottom: 10px;
-				    padding-bottom: 5px;
+				    font-size: 14px!important;
+				    color: #333;
+				    margin-bottom: 5px;
+				    font-weight: 600;
 				}
 				textarea{
 					padding: 5px;
@@ -1250,7 +1251,7 @@ header{
 					}
 					.plan{
 						border: 1px solid @borderColor;
-						height: 2.3em;
+						height: 2.6em;
 						width: 100%;
 						padding: 0 5px;
 					}
@@ -1795,15 +1796,17 @@ table.taskTable{
 			button.task{
 				border: none;
 				color: #fff;
-				background-color: #005B9A;
+				background-color: rgba(68, 157, 68, 1);
 			    padding: 5px 15px;
 			    border-radius: 3px;
-			    margin-right: 10%;
+			    margin-right: 10px;
 			    &.sub{
 			    	background-color: #019680;
 			    }
 			    &.edit{
 			    	background-color: #449D44;
+			    	background-color: #efefef;
+    				color: #333;
 			    }
 			}
 			&.actionBtn{
@@ -1814,17 +1817,26 @@ table.taskTable{
 }
 .viewBtn{
 	border: none;
-    background-color: #005B9A;
+    background-color: #efefef;
     padding: 3px 8px;
-    color: #fff;
+    color: #999;
     border-radius: 3px;
 }
 table.taskTable tr td:first-child{
 	width: 50px;
 }
+.select2-container{
+	width: 100%!important;
+}
+input.select2-search__field{
+	margin-top: 0!important;
+}
+.select2-container--default.select2-container--focus .select2-selection--multiple{
+	border-color: #c8c8c8!important;
+}
 .select2-container--default .select2-selection--multiple{
 	border-radius: 0;
-    height: 40px;
+    min-height: 2.3em;
     font-size: 14px;
 }
 .select2-container--default .select2-selection--single .select2-selection__rendered{
@@ -1843,4 +1855,5 @@ table.taskTable tr td:first-child{
 }
 .select2-container--default .select2-selection--multiple .select2-selection__rendered li{
 	border: 1px solid transparent;
+	margin-top: 4px;
 }
