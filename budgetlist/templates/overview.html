@@ -5,12 +5,12 @@
     <div class="wrapper">
         <div class="col-md-6 p-0">
             <div class="information">
-                <div class="title">Create and manage Projects</div>
+                <div class="title">Create and manage Activities</div>
                 <div class="projectTabWrap clearfix">
                 <ul id="projectGrid">
                     <!-- ko foreach: projects -->
                     <li class="projectTab">
-                        <a data-bind='attr: { "href": "/project-detail/" + id() }'>
+                        <a data-bind='attr: { "href": "/activity-detail/" + id() }'>
                             <span class="project" data-bind="text: title()">
                             </span>
                             <span class="date" data-bind="text: end_date()">
@@ -55,7 +55,7 @@
                         <a href="#" data-toggle="modal" data-target=".addProject">
                             <div >
                                <div class="icon"><i class="fa fa-plus" aria-hidden="true"></i></div>
-                               <div class="text">Add Project</div>
+                               <div class="text">Add Activity</div>
                             </div>
                         </a>
                     </li>
@@ -64,7 +64,7 @@
                 <div class="updateWrap clearfix">
                     <div class="col-md-6 pl-0">
                         <div class="leftUpdate">
-                            <div class="title">Overdue projects</div>
+                            <div class="title">Overdue activities</div>
                             {% if overdue %}
                             <ul class="list">
                                 {% for project in overdue %}
@@ -89,7 +89,7 @@
                     </div>
                     <div class="col-md-6 ">
                         <div class="rightUpdate">
-                            <div class="title">Ongoing projects</div>
+                            <div class="title">Ongoing activities</div>
                             {% if ongoing %}
                             <ul class="list">
                                 {% for project in ongoing %}
@@ -123,7 +123,7 @@
                         <div class="icon"><i class="fa fa-calendar-check-o" aria-hidden="true"></i></div>
                         <div class="data">
                             <span>{{ completed_count }}</span>
-                            <span>Completed Projects</span>
+                            <span>Completed Activities</span>
                         </div>
                     </div>
                     <div class="analytics green">
@@ -132,14 +132,14 @@
                         </div>
                         <div class="data">
                             <span>{{ overdue_count }}</span>
-                            <span>Delayed Projects</span>
+                            <span>Delayed Activities</span>
                         </div>
                     </div>
                     <div class="analytics pupple">
                         <div class="icon"><i class="fa fa-money" aria-hidden="true"></i></i></div>
                         <div class="data">
                             <span>{{ deficit_count }}</span>
-                            <span>Deficit project</span>
+                            <span>Deficit activities</span>
                         </div>
                     </div>
                 </div>
@@ -161,7 +161,7 @@
         {{ form.owner_id(**{'data-bind': 'value: owner_id'}) }}
         <div class="titleSection">
             <div class="cancel clearfix">
-                <span class="title">Add new project</span>
+                <span class="title">Add new activity</span>
                 <i data-dismiss="modal" class="fa fa-times" aria-hidden="true"></i>
             </div>
             <input type="text" name="title" class="title" data-bind="value: title" placeholder="Enter Title">

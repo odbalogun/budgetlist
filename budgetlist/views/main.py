@@ -73,13 +73,13 @@ def overview():
     return render_template('overview.html', projects=projects, overdue=overdue, ongoing=ongoing, form=form, completed_count=completed_count,
                            deficit_count=deficit_count, overdue_count=overdue_count, budget_types=budget_types)
 
-@main.route('/all-projects', methods=['GET'])
+@main.route('/all-activities', methods=['GET'])
 def all_projects():
     projects = Project.query.order_by(Project.date_created.desc()).all()
 
     return render_template('allProjects.html', projects=projects)
 
-@main.route('/project-detail/<int:id>', methods=['GET', 'POST'])
+@main.route('/activity-detail/<int:id>', methods=['GET', 'POST'])
 def project_detail(id):
     project = Project.query.get(id)
     form = TaskForm()
@@ -117,13 +117,13 @@ def project_detail(id):
 
     return render_template('backlogs.html', project=project, form=form, subform=subform)
 
-@main.route('/completed-projects', methods=['GET'])
+@main.route('/completed-activities', methods=['GET'])
 def completed_projects():
     projects = Project.query.filter(Project.status==2).order_by(Project.date_created.desc()).all()
 
     return render_template('completedProjects.html', projects=projects)
 
-@main.route('/overdue-projects', methods=['GET'])
+@main.route('/overdue-activities', methods=['GET'])
 def overdue_projects():
     projects = Project.query.filter(date.today() > Project.end_date, Project.status != 2).order_by(Project.date_created.desc()).all()
 
@@ -512,6 +512,10 @@ def budget_overview():
     budget = period.budget
 
     return render_template('budgets.html', budget=budget)
+
+@main.route('/audit', methods=['GET', 'POST'])
+def audit():
+    return render_template('audit.html')
 
 # error handling
 @main.app_errorhandler(404)

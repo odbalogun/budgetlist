@@ -455,9 +455,24 @@ header{
 				text-decoration: none;
 				border: 1px solid @borderColor;
 				padding: 5px 10px;
+				background-color: #deecf9;
+				border-color: #deecf9;
 				&:hover{
 					background-color: #deecf9;
 					border-color: #deecf9;
+				}
+			}
+			.closeActivity{
+				display: block;
+				margin-right: 10px;
+				color: #fff;
+				text-decoration: none;
+				border: 1px solid rgba(255, 0, 0, 0.8);
+				padding: 5px 10px;
+				background-color: rgba(255, 0, 0, 0.8);
+				&:hover{
+					background-color: rgba(255, 0, 0, 1);
+					border-color: rgba(255, 0, 0, 1);
 				}
 			}
 		}
@@ -1145,9 +1160,11 @@ header{
 	.modal-dialog{
 		.modal-content{
 			border-radius: 0;
+			// height: 47em;
+   //  		overflow: auto;
 			.titleSection{
 				padding: 10px;
-				border-left: 8px solid @BrandColor;
+				border-left: 4px solid @BrandColor;
 				min-height: 7em;
 				.cancel{
 					height: 2em;
@@ -1213,7 +1230,7 @@ header{
 			    padding: 10px 5px;
 			    .form-wrap{
 			    	.title{
-						font-size: 12px;
+						font-size: 14px;
 						line-height: 29px;
 			    	}
 			    	.stateForm{
@@ -1229,11 +1246,10 @@ header{
 				min-height: 10em;
 				padding: 10px;
 				.title{
-					border-bottom: 1px solid #ddd;
-				    font-size: 18px;
-				    color: #555;
-				    margin-bottom: 10px;
-				    padding-bottom: 5px;
+				    font-size: 14px!important;
+				    color: #333;
+				    margin-bottom: 5px;
+				    font-weight: 600;
 				}
 				textarea{
 					padding: 5px;
@@ -1250,7 +1266,7 @@ header{
 					}
 					.plan{
 						border: 1px solid @borderColor;
-						height: 2.3em;
+						height: 2.6em;
 						width: 100%;
 						padding: 0 5px;
 					}
@@ -1601,30 +1617,46 @@ table.assignedTask{
     label.myLabel{
     	padding-bottom: 5px;
     }
-    .bs-callout {
-	    padding: 20px;
-	    margin: 5px 0 20px 0;
-	    border: 1px solid #eee;
-	    border-left-width: 5px;
-	    border-radius: 3px;
-	    h4{
-	    	margin-top: 0;
-    		margin-bottom: 5px;
-	    }
-	    .smallText{
-	    	display: block;
-	    	font-size: 12px;
-	    	color: #777;
-	    }
-	    p:last-child {
-		    margin-bottom: 0;
-		}
-	    &.bs-callout-info h4{
-			color: #1b809e;
-	    }
-	    &.bs-callout-info {
-		    border-left-color: #1b809e;
-		}
+    
+}
+.bs-callout {
+    padding: 20px;
+    margin: 5px 0 20px 0;
+    border: 1px solid #efefef;
+    border-left-width: 5px;
+    border-radius: 3px;
+    h4{
+    	margin-top: 0;
+		margin-bottom: 5px;
+    }
+    .smallText{
+    	display: block;
+    	font-size: 12px;
+    	color: #777;
+    }
+    p:last-child {
+	    margin-bottom: 0;
+	}
+    &.bs-callout-info h4{
+		color: #1b809e;
+		font-weight: 600;
+    }
+    &.bs-callout-info {
+	    border-left-color: #1b809e;
+	}
+	&.bs-callout-danger h4{
+	    color: #ce4844;
+	    font-weight: 600;
+	}
+	&.bs-callout-danger {
+	    border-left-color: #ce4844;
+	}
+	&.bs-callout-warning h4{
+	    color: #aa6708;
+	    font-weight: 600;
+	}
+	&.bs-callout-warning {
+	    border-left-color: #aa6708;
 	}
 }
 .dHeading{
@@ -1795,15 +1827,17 @@ table.taskTable{
 			button.task{
 				border: none;
 				color: #fff;
-				background-color: #005B9A;
+				background-color: rgba(68, 157, 68, 1);
 			    padding: 5px 15px;
 			    border-radius: 3px;
-			    margin-right: 10%;
+			    margin-right: 10px;
 			    &.sub{
 			    	background-color: #019680;
 			    }
 			    &.edit{
 			    	background-color: #449D44;
+			    	background-color: #efefef;
+    				color: #333;
 			    }
 			}
 			&.actionBtn{
@@ -1814,17 +1848,26 @@ table.taskTable{
 }
 .viewBtn{
 	border: none;
-    background-color: #005B9A;
+    background-color: #efefef;
     padding: 3px 8px;
-    color: #fff;
+    color: #999;
     border-radius: 3px;
 }
 table.taskTable tr td:first-child{
 	width: 50px;
 }
+.select2-container{
+	width: 100%!important;
+}
+input.select2-search__field{
+	margin-top: 0!important;
+}
+.select2-container--default.select2-container--focus .select2-selection--multiple{
+	border-color: #c8c8c8!important;
+}
 .select2-container--default .select2-selection--multiple{
 	border-radius: 0;
-    height: 40px;
+    min-height: 2.3em;
     font-size: 14px;
 }
 .select2-container--default .select2-selection--single .select2-selection__rendered{
@@ -1843,4 +1886,24 @@ table.taskTable tr td:first-child{
 }
 .select2-container--default .select2-selection--multiple .select2-selection__rendered li{
 	border: 1px solid transparent;
+	margin-top: 4px;
+}
+.sub1, .sub2, .sub3, .sub4{
+	display: none;
+}
+.filterWrap{
+	.filter{
+		label{
+			display: block;
+		}
+		select{
+			border: 1px solid #c8c8c8;
+		    height: 2.6em;
+		    width: 100%;
+		    padding: 0 5px;
+		}
+	}
+}
+.infoWrap{
+	margin-top: 50px;
 }

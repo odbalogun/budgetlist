@@ -72,10 +72,10 @@
                             {% if 
                                 request.path == '/' or 
                                 request.path == '/overview' or
-                                request.path == '/all-projects' or
-                                request.path == '/completed-projects' or
-                                request.path == '/overdue-projects' or
-                                request.path == '/project-detail'
+                                request.path == '/all-activities' or
+                                request.path == '/completed-activities' or
+                                request.path == '/overdue-activities' or
+                                request.path == '/activity-detail'
 
 
                             %} selected {% endif %}">
@@ -88,6 +88,14 @@
 
                             %} selected {% endif %}">
                             <a href="{{ url_for('.assigned_tasks')}}">Assigned</a>
+                        </li>
+
+                        <li class="
+                            {% if 
+                                request.path == '/audit'
+
+                            %} selected {% endif %}">
+                            <a href="{{ url_for('.audit')}}">Audit Log</a>
                         </li>
                        
                     </ul>
@@ -124,13 +132,13 @@
                                 <a class="{% if request.path == '/' or request.path == '/overview' %} active {% endif %}" href="{{ url_for('.overview')}}">Overview</a>
                             </li>
                             <li>
-                                <a class="{% if request.path == '/all-projects'%} active {% endif %}" href="{{ url_for('.all_projects')}}">All Projects</a>
+                                <a class="{% if request.path == '/all-activities'%} active {% endif %}" href="{{ url_for('.all_projects')}}">All Activities</a>
                             </li>
                             <li>
-                                <a class="{% if request.path == '/completed-projects'%} active {% endif %}" href="{{ url_for('.completed_projects')}}">Completed Projects</a>
+                                <a class="{% if request.path == '/completed-activities'%} active {% endif %}" href="{{ url_for('.completed_projects')}}">Completed Activities</a>
                             </li>
                             <li>
-                                <a class="{% if request.path == '/overdue-projects'%} active {% endif %}" href="{{ url_for('.overdue_projects')}}">Overdue Projects</a>
+                                <a class="{% if request.path == '/overdue-activities'%} active {% endif %}" href="{{ url_for('.overdue_projects')}}">Overdue Activities</a>
                             </li>
                         </ul>
                     </div>

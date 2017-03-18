@@ -114,7 +114,7 @@
 
 
 <!-- Add Task -->
-<div class="generalModal modal fade addBudget" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" data-backdrop="static" data-keyboard="false">
+<!-- <div class="generalModal modal fade addBudget" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" data-backdrop="static" data-keyboard="false">
   <div class="modal-dialog modal-lg" role="document">
     <div class="modal-content">
     <form method="post" id="addBudgetForm" action="{{ request.path }}">
@@ -156,27 +156,67 @@
         </form>
     </div>
   </div>
-</div>
+</div> -->
 
-<!-- Edit Task -->
-<div class="generalModal modal fade editBudget" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" data-backdrop="static" data-keyboard="false">
+<!-- Edit Budget modal -->
+<div class="modal fade editTask addBudget" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel">
   <div class="modal-dialog modal-lg" role="document">
     <div class="modal-content">
-    <form method="post" id="editBudgetForm" action="{{ request.path }}">
-        {{ editform.csrf_token }}
-        {{ editform.sub_budget_id(**{'data-bind': 'value: sub_budget_id'}) }}
-        <div class="titleSection">
-            <div class="cancel clearfix">
-                <span class="title">Edit </span>
-                <i data-dismiss="modal" class="fa fa-times" aria-hidden="true"></i>
-            </div>
-            {{ form.name(class_='title', **{'data-bind': 'value: name, enable: isEditable'}) }}
-            {{ form.allocation(class_='title', **{'data-bind': 'value: allocation'})}}
-            <div class="assign clearfix">
-                <button type="submit" onclick="editform_submit()" data-dismiss="modal" class="save"><i class="fa fa-floppy-o" aria-hidden="true"></i> Save & close</button>
-            </div>
+        <div class="title clearfix">
+            <span class="pull-left" >Add Budget</span>
+            <span data-dismiss="modal" aria-label="Close" class="pull-right"><i class="fa fa-times" aria-hidden="true"></i></span>
         </div>
-    </form>
+        <form method="post" id="addBudgetForm" action="{{ request.path }}">
+            {{ form.csrf_token }}
+            {{ form.parent_id(id='parent_id', **{'data-bind': 'value: parent_id'}) }}
+            <div class="content clearfix">
+                <div class="col-md-6">
+                    <label for="">Name</label>
+                    {{ form.name(class_='title', placeholder='Enter Name') }}
+            
+                </div>  
+                <div class="col-md-6">
+                    <label for="">Allocation</label>
+                    {{ form.allocation(class_='title', placeholder='Enter Allocation') }}
+                </div>
+
+            </div>
+            <div class="buttonWrap">
+                 <button type="submit" onclick="form_submit()" data-dismiss="modal" class="save"><i class="fa fa-floppy-o" aria-hidden="true"></i> Save & close</button>
+            </div>
+        </form>
+    </div>
+  </div>
+</div>
+
+
+<!-- Edit Task modal -->
+<div class="modal fade editTask editBudget" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+        <div class="title clearfix">
+            <span class="pull-left" >Edit</span>
+            <span data-dismiss="modal" aria-label="Close" class="pull-right"><i class="fa fa-times" aria-hidden="true"></i></span>
+        </div>
+        <form method="post" id="editBudgetForm" action="{{ request.path }}">
+            {{ editform.csrf_token }}
+            {{ editform.sub_budget_id(**{'data-bind': 'value: sub_budget_id'}) }}
+            <div class="content clearfix">
+                <div class="col-md-6">
+                    <label for="">Name</label>
+                    {{ form.name(class_='title', **{'data-bind': 'value: name, enable: isEditable'}) }}
+            
+                </div>  
+                <div class="col-md-6">
+                    <label for="">Allocation</label>
+                    {{ form.allocation(class_='title', **{'data-bind': 'value: allocation'})}}
+                </div>
+
+            </div>
+            <div class="buttonWrap">
+                 <button type="submit" onclick="editform_submit()" data-dismiss="modal" class="save"><i class="fa fa-floppy-o" aria-hidden="true"></i> Save & close</button>
+            </div>
+        </form>
     </div>
   </div>
 </div>
