@@ -532,6 +532,10 @@ def budget_overview():
 
     return render_template('budgets.html', budget=budget, form=form)
 
+@main.route('/audit', methods=['GET', 'POST'])
+def audit():
+    return render_template('audit.html')
+
 # error handling
 @main.app_errorhandler(404)
 def error_not_found(e):

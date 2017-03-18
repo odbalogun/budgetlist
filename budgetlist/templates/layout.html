@@ -89,6 +89,14 @@
                             %} selected {% endif %}">
                             <a href="{{ url_for('.assigned_tasks')}}">Assigned</a>
                         </li>
+
+                        <li class="
+                            {% if 
+                                request.path == '/audit'
+
+                            %} selected {% endif %}">
+                            <a href="{{ url_for('.audit')}}">Audit Log</a>
+                        </li>
                        
                     </ul>
 

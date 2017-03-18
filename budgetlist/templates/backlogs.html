@@ -7,6 +7,8 @@
             <div class="titleWrap clearfix">
                 <div class="title pull-left">{{ project.title }}</div>
                 <a href="#" class="addUser pull-right" data-toggle="modal" data-target=".addTask">Add Task</a>
+                <a href="#" class="closeActivity pull-right" data-toggle="modal" data-target=".closeActivity"> <i class="fa fa-warning" aria-hidden="true"></i> Close Activity</a>
+                
             </div><br><br>
             
             <table class="taskTable collaptable">
@@ -114,6 +116,22 @@
 </div>
 
 <!-- Add new sub task -->
+<div class="generalModal modal closeActivity" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" data-backdrop="static" data-keyboard="false">
+  <div class="modal-dialog modal-sm" role="document">
+    <div class="modal-content">
+        <div style="padding: 20px; font-size: 15px;">
+            Are you sure you want to close this activity? This action can not be reversed!
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-default btn-sm" data-dismiss="modal" id="closebg">Close</button>
+            <button type="button" class="btn btn-danger btn-sm" data-dismiss="modal" id="closebg2"> <i class="fa fa-warning" aria-hidden="true"></i> Close Activity</button>
+        </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- Add new sub task -->
 <div class="generalModal modal fade addSubTask" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" data-backdrop="static" data-keyboard="false">
   <div class="modal-dialog modal-lg" role="document">
     <div class="modal-content">
@@ -198,6 +216,66 @@
         </div>
         <div class="descritpionSection clearfix">
             <div class="col-md-12 p-0">
+                <div class="col-md-6 sub0">
+                    <div class="planingForms">
+                        <div class="title">Budget</div> 
+                        <select class="plan">
+                            <option value="">--Select Budget--</option>
+                            <option value="Operational">Operational Ex.</option>
+                            <option value="Capital">Capital Ex.</option>
+                            <option value="Consultancy">Consultancy</option>
+                            <option value="Moveables">Moveables</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-6 sub1">
+                    <div class="planingForms">
+                        <div class="title">Budget</div> 
+                        <select class="plan">
+                            <option value="">--Select SubBudget--</option>
+                            <option value="Operational">Operational Ex.</option>
+                            <option value="Capital">Capital Ex.</option>
+                            <option value="Consultancy">Consultancy</option>
+                            <option value="Moveables">Moveables</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-6 sub2">
+                    <div class="planingForms">
+                        <div class="title">Budget</div> 
+                        <select class="plan">
+                            <option value="">--Select SubBudget--</option>
+                            <option value="Operational">Operational Ex.</option>
+                            <option value="Capital">Capital Ex.</option>
+                            <option value="Consultancy">Consultancy</option>
+                            <option value="Moveables">Moveables</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-6 sub3">
+                    <div class="planingForms">
+                        <div class="title">Budget</div> 
+                        <select class="plan">
+                            <option value="">--Select SubBudget--</option>
+                            <option value="Operational">Operational Ex.</option>
+                            <option value="Capital">Capital Ex.</option>
+                            <option value="Consultancy">Consultancy</option>
+                            <option value="Moveables">Moveables</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-6 sub4">
+                    <div class="planingForms">
+                        <div class="title">Budget</div> 
+                        <select class="plan">
+                            <option value="">--Select SubBudget--</option>
+                            <option value="Operational">Operational Ex.</option>
+                            <option value="Capital">Capital Ex.</option>
+                            <option value="Consultancy">Consultancy</option>
+                            <option value="Moveables">Moveables</option>
+                        </select>
+                    </div>
+                </div>
                 <div class="col-md-6">
                     <div class="planingForms">
                         <div class="title">Allocation</div> 
@@ -238,84 +316,6 @@
     </div>
   </div>
 </div>
-
-
-<!-- Add Task -->
-<!-- <div class="modal fade editTask addTask" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel">
-  <div class="modal-dialog modal-lg" role="document">
-    <div class="modal-content">
-        <div class="title clearfix">
-            <span class="pull-left"> Add New Task</span>
-            <span data-dismiss="modal" aria-label="Close" class="pull-right"><i class="fa fa-times" aria-hidden="true"></i></span>
-        </div>
-        <form method="post" id="updateTaskForm" action="{{ request.path }}">
-            <div class="content clearfix">
-                <div class="col-md-12">
-                    <label for="">Enter Title</label>
-                    {{ form.title(class_='title', placeholder='Enter Title') }}
-                </div>  
-                <div class="col-md-12">
-                    <label for="">Assign To</label>
-                    
-                    <select class="" name="" id="">
-                        <option value="">-- Select One --</option>
-                        <option value="">Babatunde Adegbite</option>
-                        <option value="">Oduntan Balogu</option>
-                        <option value="">Oluwasegun Afolahan</option>
-                    </select>
-                </div>
-                <div class="col-md-6">
-                    <label for="">Allocation</label>
-                    {{ form.allocation(class_='stateForm', placeholder="Amount(₦)")}}
-                </div> 
-                <div class="col-md-6">
-                    <label for="">Budget</label>
-                    <select name="" id="">
-                        <option value=""></option>
-                    </select>
-                </div>
-                <div class="col-md-6">
-                    <label for="">Sub Budget</label>
-                    <select name="" id="">
-                        <option value=""></option>
-                    </select>
-                </div>
-                <div class="col-md-6">
-                    <label for="">Sub Budget</label>
-                    <select name="" id="">
-                        <option value=""></option>
-                    </select>
-                </div>
-                <div class="col-md-6">
-                    <label for="">Sub Budget</label>
-                    <select name="" id="">
-                        <option value=""></option>
-                    </select>
-                </div>
-                <div class="col-md-6">
-                    <label for="">Priority</label>
-                    {{ form.priority(class_='plan') }}
-                </div> 
-                <div class="col-md-6">
-                    <label for="">Start Date</label>
-                    {{ form.start_date(class_="datetimepicker plan") }}
-                </div> 
-                <div class="col-md-6">
-                    <label for="">End Date</label>
-                    {{ form.end_date(class_="datetimepicker plan") }}
-                </div> 
-                <div class="col-md-12">
-                    <label for="">Description</label>
-                    <textarea name="note" id="" cols="30" rows="10"></textarea>
-                </div>  
-            </div>
-            <div class="buttonWrap">
-                <button type="submit" onclick="form_submit()"  data-dismiss="modal" class="save"><i class="fa fa-floppy-o" aria-hidden="true"></i> Save &amp; close</button>
-            </div>
-        </form>
-    </div>
-  </div>
-</div> -->
 
 <!-- Add Sub Task -->
 <div class="modal fade editTask subTask" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel">
@@ -363,5 +363,60 @@ function form_submit() {
 function subform_submit() {
     document.getElementById("addSubTaskForm").submit();
    }
+
+    $('#closebg, #closebg2').click(function(){
+        $('#closebg').modal('hide');
+        $('body').removeClass('modal-open');
+        $('.modal-backdrop').remove();
+    })
+
+    $('.planingForms .plan').on('change',function(){
+        if( $(this).val()==="Operational"){
+        $(".sub1").show()
+        }
+        else{
+        $(".sub1").hide()
+        }
+    });
+
+    $('.sub0 .plan').on('change',function(){
+        if( $(this).val()==="Operational"){
+        $(".sub1").show()
+        }
+        else{
+        $(".sub1").hide()
+        }
+    });
+    $('.sub1 .plan').on('change',function(){
+        if( $(this).val()==="Capital"){
+        $(".sub2").show()
+        $(".sub1").show()
+        }
+        else{
+        $(".sub2").hide()
+        }
+    });
+    $('.sub2 .plan').on('change',function(){
+        if( $(this).val()==="Consultancy"){
+        $(".sub3").show()
+        $(".sub1").show()
+        $(".sub2").show()
+        }
+        else{
+        $(".sub3").hide()
+        }
+    });
+    $('.sub3 .plan').on('change',function(){
+        if( $(this).val()==="Moveables"){
+        $(".sub4").show()
+        $(".sub3").show()
+        $(".sub2").show()
+        $(".sub1").show()
+        }
+        else{
+        $(".sub4").hide()
+        }
+    });
+
 </script>
 {% endblock %}

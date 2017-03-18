@@ -455,9 +455,24 @@ header{
 				text-decoration: none;
 				border: 1px solid @borderColor;
 				padding: 5px 10px;
+				background-color: #deecf9;
+				border-color: #deecf9;
 				&:hover{
 					background-color: #deecf9;
 					border-color: #deecf9;
+				}
+			}
+			.closeActivity{
+				display: block;
+				margin-right: 10px;
+				color: #fff;
+				text-decoration: none;
+				border: 1px solid rgba(255, 0, 0, 0.8);
+				padding: 5px 10px;
+				background-color: rgba(255, 0, 0, 0.8);
+				&:hover{
+					background-color: rgba(255, 0, 0, 1);
+					border-color: rgba(255, 0, 0, 1);
 				}
 			}
 		}
@@ -1602,30 +1617,46 @@ table.assignedTask{
     label.myLabel{
     	padding-bottom: 5px;
     }
-    .bs-callout {
-	    padding: 20px;
-	    margin: 5px 0 20px 0;
-	    border: 1px solid #eee;
-	    border-left-width: 5px;
-	    border-radius: 3px;
-	    h4{
-	    	margin-top: 0;
-    		margin-bottom: 5px;
-	    }
-	    .smallText{
-	    	display: block;
-	    	font-size: 12px;
-	    	color: #777;
-	    }
-	    p:last-child {
-		    margin-bottom: 0;
-		}
-	    &.bs-callout-info h4{
-			color: #1b809e;
-	    }
-	    &.bs-callout-info {
-		    border-left-color: #1b809e;
-		}
+    
+}
+.bs-callout {
+    padding: 20px;
+    margin: 5px 0 20px 0;
+    border: 1px solid #efefef;
+    border-left-width: 5px;
+    border-radius: 3px;
+    h4{
+    	margin-top: 0;
+		margin-bottom: 5px;
+    }
+    .smallText{
+    	display: block;
+    	font-size: 12px;
+    	color: #777;
+    }
+    p:last-child {
+	    margin-bottom: 0;
+	}
+    &.bs-callout-info h4{
+		color: #1b809e;
+		font-weight: 600;
+    }
+    &.bs-callout-info {
+	    border-left-color: #1b809e;
+	}
+	&.bs-callout-danger h4{
+	    color: #ce4844;
+	    font-weight: 600;
+	}
+	&.bs-callout-danger {
+	    border-left-color: #ce4844;
+	}
+	&.bs-callout-warning h4{
+	    color: #aa6708;
+	    font-weight: 600;
+	}
+	&.bs-callout-warning {
+	    border-left-color: #aa6708;
 	}
 }
 .dHeading{
@@ -1856,4 +1887,23 @@ input.select2-search__field{
 .select2-container--default .select2-selection--multiple .select2-selection__rendered li{
 	border: 1px solid transparent;
 	margin-top: 4px;
+}
+.sub1, .sub2, .sub3, .sub4{
+	display: none;
+}
+.filterWrap{
+	.filter{
+		label{
+			display: block;
+		}
+		select{
+			border: 1px solid #c8c8c8;
+		    height: 2.6em;
+		    width: 100%;
+		    padding: 0 5px;
+		}
+	}
+}
+.infoWrap{
+	margin-top: 50px;
 }
