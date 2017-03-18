@@ -96,9 +96,10 @@ def project_detail(id):
                         form.priority.data, form.start_date.data, form.end_date.data)
             db.session.add(task)
             db.session.commit()
-            permission = Permissions(current_user.id, task.id, 0)
-            db.session.add(permission)
-            db.session.commit()
+            for userid in form.assigned_to.data:
+                permission = Permissions(userid, task.id, 0)
+                db.session.add(permission)
+                db.session.commit()
             flash('Task has been successfully created', 'success')
     elif subform.parent_id.data:
         if subform.validate_on_submit():
@@ -107,9 +108,10 @@ def project_detail(id):
             task.parent_task = subform.parent_id.data
             db.session.add(task)
             db.session.commit()
-            permission = Permissions(current_user.id, task.id, 0)
-            db.session.add(permission)
-            db.session.commit()
+            for userid in form.assigned_to.data:
+                permission = Permissions(userid, task.id, 0)
+                db.session.add(permission)
+                db.session.commit()
             flash('Task has been successfully created', 'success')
     
 
@@ -137,25 +139,23 @@ def assigned_tasks():
         history.task_id = form.task_id.data
         history.owner_id = current_user.id
         history.note = form.note.data
-        history.status = form.status.data
+
+        task = Task.query.get(form.task_id.data)
+        task.status = form.status.data
 
         if form.amount_spent.data:
             history.amount_spent = form.amount_spent.data
 
         # contextual updates
         if form.percent.data != 0 and form.percent.data != 100 and form.status.data in [0, 2, 3]:
-            history.status = 1
+            task.status = 1
         if form.percent.data == 100:
-            history.status = 2
+            task.status = 2
 
         if form.status.data == 2:
             history.percent = 100
 
         db.session.add(history)
-
-        # update task status
-        task = Task.query.get(history.task_id)
-        task.status = history.status
         db.session.add(task)
         db.session.commit()
         flash('The task has been successfully updated', 'success')
@@ -478,6 +478,9 @@ def manage_budget():
     budget = period.budget
 
     form = SubBudgetForm()
+    editform = EditSubBudgetForm()
+    print('test')
+    print(editform.sub_budget_id.data)
     if form.validate_on_submit() and form.sub_budget_id.data == '0':
         # new budget
         sub = SubBudgets()
@@ -489,9 +492,8 @@ def manage_budget():
         db.session.add(sub)
         db.session.commit()
         flash('The sub budget has been successfully created', 'success')
-
-    editform = EditSubBudgetForm()
-    if editform.validate_on_submit() and editform.sub_budget_id.data != '0':
+        return redirect(url_for('.manage_budget'))
+    elif editform.validate_on_submit() and editform.sub_budget_id.data != '0' and editform.sub_budget_id.data != "":
         # edit budget
         sub = SubBudgets.query.get(editform.sub_budget_id.data)
         sub.name = editform.name.data
@@ -499,6 +501,7 @@ def manage_budget():
         db.session.add(sub)
         db.session.commit()
         flash('The sub budget has been successfully updated', 'success')
+        return redirect(url_for('.manage_budget'))
 
     return render_template('manage_budget.html', budget=budget, form=form, editform=editform)
 
@@ -508,29 +511,7 @@ def budget_overview():
     period = Period.query.filter(Period.status==0).first()
     budget = period.budget
 
-    form = SubBudgetForm()
-    if form.validate_on_submit():
-        if not form.sub_budget_id.data or form.sub_budget_id.data == '':
-            # new budget
-            sub = SubBudgets()
-            sub.name = form.name.data
-            sub.allocation = form.allocation.data
-            sub.parent_budget = form.parent_id.data
-            sub.budget_id = budget.id
-            sub.created_by = current_user.id
-            db.session.add(sub)
-            db.session.commit()
-            flash('The sub budget has been successfully created', 'success')
-        else:
-            # edit budget
-            sub = SubBudgets.query.get(form.sub_budget_id.data)
-            sub.name = form.name.data
-            sub.allocation = form.allocation.data
-            db.session.add(sub)
-            db.session.commit()
-            flash('The sub budget has been successfully updated', 'success')
-
-    return render_template('budgets.html', budget=budget, form=form)
+    return render_template('budgets.html', budget=budget)
 
 # error handling
 @main.app_errorhandler(404)

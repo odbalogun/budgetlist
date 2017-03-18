@@ -39,14 +39,16 @@
 
 
 <script>
+
     $(function ()  
     {
-        var dataSource = [
-         { budget: "Consulting", budgeted: 500300, performed: 600300 },
-         { budget: "Opex", budgeted: 178719, performed: 195769 },
-         { budget: "Capex", budgeted: 308845, performed: 335793 },
-         { budget: "Movables", budgeted: 348555, performed: 374771 },
-        ];
+        var dataSource = [];
+
+        {% for b in budget.main_subs %}
+            dataSource.push({ budget: "{{ b.name }}", budgeted: {{ b.get_allocation }}, performed: {{ b.amount_allocated }} });
+        {% endfor %}
+
+
 
         $("#chartContainer").dxChart({
             dataSource: dataSource,
@@ -65,7 +67,7 @@
                 { valueField: "budgeted", name: "budgeted" },
                 { valueField: "performed", name: "performed" }
             ],
-            title: "Budget and Performance For 2017",
+            title: "{{ budget.name }}",
             legend: {
                 verticalAlignment: "bottom",
                 horizontalAlignment: "center"
@@ -82,12 +84,11 @@
 <script>
     $(function ()  
     {
-        var dataSource = [
-            { country: "Consulting", area: 500300 },
-            { country: "Opex", area: 178719 },
-            { country: "Capex", area: 808845 },
-            { country: "Movable", area: 348555 },
-        ];
+        var dataSource = [];
+
+        {% for b in budget.main_subs %}
+            dataSource.push({ country: "{{ b.name }}", area: {{b.get_allocation}} });
+        {% endfor %}
 
         $("#pieContainer").dxPieChart({
             size:{ 

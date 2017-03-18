@@ -45,7 +45,6 @@
     <table class="taskTable collaptable">
     <thead>
         <tr>
-            <th>S/N</th>
             <th>Title</th>
             <th>Allocation</th>
             <th>Amount Performed</th>
@@ -54,28 +53,58 @@
         </tr>
     </thead>
     <tbody class="budgetlist">
-        {% for sub in budget.subs %}
-        {% if sub.parent_budget %}
+        {% for sub in budget.main_subs %}
             <tr data-id="{{ sub.id }}" data-parent="">
-        {% else %}
-            <tr data-id="{{ sub.id }}" data-parent="">
-        {% endif %}
-            <td>{{ loop.index }}</td>
-            <td class="withBar">{{ sub.name }}</td>
-            <td>₦{{ sub.get_allocation }}</td>
-            <td>₦{{ sub.amount_allocated }}</td>
-            <td>{{ sub.date_created }}</td>
-            <td class="actionBtn">
-                <button class="task edit" data-bind="click: function(){ editBudget({{ sub.id }}); }"><i class="fa fa-edit" aria-hidden="true"></i> Edit</button>
-                <button class="task" data-bind="click: function(){ addBudget({{ sub.id }}); }"><i class="fa fa-plus" aria-hidden="true"></i> Add Budget</button>
-            </td>
-            <!-- <td class="actionBtn">
-                <button class="task" data-bind="click: function(){ addBudget({{ sub.id }}); }"><i class="fa fa-plus" aria-hidden="true"></i> Add Budget</button>
-            </td> -->
-            <!-- <td class="actionBtn">
-                <button class="task sub act-more act-collapsed"><i class="fa fa-eye" aria-hidden="true"></i> View Subtask</button>
-            </td> -->
-        </tr>
+                <td class="withBar">{{ sub.name }}</td>
+                <td>₦{{ sub.get_allocation }}</td>
+                <td>₦{{ sub.amount_allocated }}</td>
+                <td>{{ sub.date_created }}</td>
+                <td class="actionBtn">
+                    <button class="task edit" data-bind="click: function(){ editBudget({{ sub.id }}); }"><i class="fa fa-edit" aria-hidden="true"></i> Edit</button>
+                    <button class="task" data-bind="click: function(){ addBudget({{ sub.id }}); }"><i class="fa fa-plus" aria-hidden="true"></i> Add Budget</button>
+                </td>
+            </tr>
+            {% if sub.child_budgets %}
+                {% for kid in sub.child_budgets %}
+                    <tr data-id="{{ kid.id }}" data-parent="{{ kid.parent_budget }}">
+                        <td class="withBar">{{ kid.name }}</td>
+                        <td>₦{{ kid.get_allocation }}</td>
+                        <td>₦{{ kid.amount_allocated }}</td>
+                        <td>{{ kid.date_created }}</td>
+                        <td class="actionBtn">
+                            <button class="task edit" data-bind="click: function(){ editBudget({{ kid.id }}); }"><i class="fa fa-edit" aria-hidden="true"></i> Edit</button>
+                            <button class="task" data-bind="click: function(){ addBudget({{ kid.id }}); }"><i class="fa fa-plus" aria-hidden="true"></i> Add Budget</button>
+                        </td>
+                    </tr>
+                    {% if kid.child_budgets %}
+                        {% for grand in kid.child_budgets %}
+                            <tr data-id="{{ grand.id }}" data-parent="{{ grand.parent_budget }}">
+                                <td class="withBar">{{ grand.name }}</td>
+                                <td>₦{{ grand.get_allocation }}</td>
+                                <td>₦{{ grand.amount_allocated }}</td>
+                                <td>{{ grand.date_created }}</td>
+                                <td class="actionBtn">
+                                    <button class="task edit" data-bind="click: function(){ editBudget({{ grand.id }}); }"><i class="fa fa-edit" aria-hidden="true"></i> Edit</button>
+                                    <button class="task" data-bind="click: function(){ addBudget({{ grand.id }}); }"><i class="fa fa-plus" aria-hidden="true"></i> Add Budget</button>
+                                </td>
+                            </tr>
+                            {% if grand.child_budgets %}
+                                {% for great in grand.child_budgets %}
+                                    <tr data-id="{{ great.id }}" data-parent="{{ great.parent_budget }}">
+                                        <td class="withBar">{{ great.name }}</td>
+                                        <td>₦{{ great.get_allocation }}</td>
+                                        <td>₦{{ great.amount_allocated }}</td>
+                                        <td>{{ great.date_created }}</td>
+                                        <td class="actionBtn">
+                                            <button class="task edit" data-bind="click: function(){ editBudget({{ great.id }}); }"><i class="fa fa-edit" aria-hidden="true"></i> Edit</button>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            {% endif %}
+                        {% endfor %}
+                    {% endif %}
+                {% endfor %}
+            {% endif %}
         {% endfor %}
     </tbody>
 </table>
@@ -124,6 +153,7 @@
                 <button type="submit" onclick="form_submit()" data-dismiss="modal" class="save"><i class="fa fa-floppy-o" aria-hidden="true"></i> Save & close</button>
             </div>
         </div>
+        </form>
     </div>
   </div>
 </div>
@@ -140,7 +170,7 @@
                 <span class="title">Edit </span>
                 <i data-dismiss="modal" class="fa fa-times" aria-hidden="true"></i>
             </div>
-            {{ form.name(class_='title', **{'data-bind': 'value: name'}) }}
+            {{ form.name(class_='title', **{'data-bind': 'value: name, enable: isEditable'}) }}
             {{ form.allocation(class_='title', **{'data-bind': 'value: allocation'})}}
             <div class="assign clearfix">
                 <button type="submit" onclick="editform_submit()" data-dismiss="modal" class="save"><i class="fa fa-floppy-o" aria-hidden="true"></i> Save & close</button>
@@ -150,18 +180,10 @@
     </div>
   </div>
 </div>
-<script type="text/javascript">
-/* for form submission */
-function form_submit() {
-    document.getElementById("addBudgetForm").submit();
-   }
-function editform_submit() {
-    document.getElementById("editBudgetForm").submit();
-   }
-</script>
+
+
 <script type="text/javascript">
 /* knockoutjs view models */
-
 function AddBudgetModel(){
     var self = this;
     self.parent_id = ko.observable();
@@ -185,12 +207,21 @@ function ShowEditBudgetModel(){
     self.name = ko.observable();
     self.allocation = ko.observable();
     self.sub_budget_id = ko.observable(0);
+    self.isEditable = ko.observable(true);
 
     self.update = function(budget){
         addNewBudget.clear_fields();
         self.name(budget.name);
         self.allocation(budget.allocation);
         self.sub_budget_id(budget.id);
+        console.log(budget.editable);
+
+        if(budget.editable == "False"){
+            self.isEditable(false);
+        }else{
+            self.isEditable(true);
+        }
+
         /* show modal */
         $('.editBudget').modal('show');
     }
@@ -248,5 +279,15 @@ var addNewBudget = new AddBudgetModel();
 ko.applyBindings(fetchTask, $('.budgetlist')[0]);
 ko.applyBindings(showEdit, $('.editBudget')[0]);
 ko.applyBindings(addNewBudget, $('.addBudget')[0]);
+</script>
+
+<script type="text/javascript">
+/* for form submission */
+function form_submit() {
+    document.getElementById("addBudgetForm").submit();
+   }
+function editform_submit() {
+    document.getElementById("editBudgetForm").submit();
+   }
 </script>
 {% endblock %}

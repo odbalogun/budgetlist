@@ -164,7 +164,7 @@ class Project(db.Model):
         if len(self.tasks) > 0:
             spent = 0
             for task in self.tasks:
-                spent += task.budget
+                spent += task.amount_performed
 
             return spent
         return 0
@@ -226,6 +226,18 @@ class Task(db.Model):
     def percent(self):
         if self.history:
             return self.history[-1].percent
+        return 0
+
+    @property
+    def amount_performed(self):
+        if self.history:
+            price = 0
+            for his in self.history:
+                if his.amount_spent:
+                    price = price + his.amount_spent
+                else:
+                    price = price + 0
+            return price
         return 0
 
     @property
@@ -366,7 +378,7 @@ class Budget(db.Model):
     date_created = Column(DateTime, default=func.now())
 
     period = relationship("Period", uselist=False)
-    main_subs = relationship("SubBudgets", foreign_keys="SubBudgets.budget_id", primaryjoin="and_(Budget.id==SubBudgets.budget_id, SubBudgets.parent_budget == None)")
+    main_subs = relationship("SubBudgets", foreign_keys="SubBudgets.budget_id", primaryjoin="and_(Budget.id==SubBudgets.budget_id, SubBudgets.parent_budget == None)", order_by="SubBudgets.name")
     subs = relationship("SubBudgets", foreign_keys="SubBudgets.budget_id")
 
     @property

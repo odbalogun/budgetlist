@@ -8,98 +8,9 @@
                 <div class="title pull-left">{{ project.title }}</div>
                 <a href="#" class="addUser pull-right" data-toggle="modal" data-target=".addTask">Add Task</a>
             </div><br><br>
-            <!-- <div class="tableSec">
-                <div class="tablerow header">
-                    <div class="withHover tableData width30 minus2">Title</div>
-                    <div class="withHover tableData width30">Allocation</div>
-                    <div class="withHover tableData width20">Status</div>
-                    <div class="withHover tableData width20">Start Date</div>
-                    <div class="withHover tableData width20">Deadline</div>
-                    <div class="tableData width2"></div>
-                    <div class="tableData width2"></div>
-                </div>
-                {% if form.errors %}
-                    {{ form.errors }}
-                {% endif %}
-                {% if subform.errors %}
-                    {{ subform.errors}}
-                {% endif %}
-                {% if not project.main_tasks %}
-                    <div>
-                        There are no tasks to display...
-                    </div>
-                {% else %}
-                    {% for task in project.main_tasks %}
-                        <div class="tablerow content">
-                            <div class="tableData width30 withBar" data-toggle="modal" data-target=".updateProject">{{ task.title }}</div>
-                            <div class="tableData width30">₦{{ task.budget }}</div>
-                            <div class="tableData width20 {% if task.status == 0 %} ongoing {% endif %}">{{ task.statusText }}</div>
-                            <div class="tableData width20">
-                                {% if task.start_date %}
-                                {{ task.start_date.strftime("%d %b %Y") }}
-                                {% endif %}
-                            </div>
-                            <div class="tableData width20">{{ task.deadline_string.date }}</div>
-                            {% if not task.parent_id or not task.parent.parent_id %}
-                                <div class="tableData width8 task" data-toggle="modal" data-target=".addSubTask" data-id="{{ task.id }}"> Add Subtask</div>
-                            {% endif %}
-                            {% if task.child_tasks %}
-
-                                <div class="tableData width8 task" data-toggle="collapse" data-target=".innertable">View Task <i class="fa fa-angle-down" aria-hidden="true"></i></div>
-                            {% endif %}
-                        </div>
-                        {% if task.child_tasks %}
-
-                            {% for child in task.child_tasks %}
-                            <div class="innertable collapse" style="padding: 0 0 0 10px;">
-                                <div class="tablerow content">
-                                    <div class="tableData width30 withInnerBar" data-toggle="modal" data-target=".updateProject">{{ child.title }}</div>
-                                    <div class="tableData width30">₦{{ child.budget }}</div>
-                                    <div class="tableData width20 {% if child.status == 0 %} ongoing {% endif %}">{{ child.statusText }}</div>
-                                    <div class="tableData width20">
-                                        {% if child.start_date %}
-                                            {{ child.start_date.strftime("%d %b %Y") }}
-                                        {% endif %}
-                                    </div>
-                                    <div class="tableData width20">{{ child.deadline_string.date }}</div>
-                                    {% if not child.parent_id or not child.parent.parent_id %}
-                                        <div class="tableData width8 task" data-toggle="modal" data-target=".addSubTask" data-id="{{ child.id }}"><i class="fa fa-plus" aria-hidden="true"></i> Add Subtask</div>
-                                    {% endif %}
-                                    {% if child.child_tasks %}
-
-                                        <div class="tableData width8 task" data-toggle="collapse" data-target=".innerinnertable">View Task <i class="fa fa-angle-down" aria-hidden="true"></i></div>
-                                    {% endif %}
-                                </div>
-                                {% if child.child_tasks %}
-                                    <div>
-                                        {% for grandkid in child.child_tasks %}
-                                        <div class="innerinnertable collapse" style="padding: 0 0 0 10px;">
-                                            <div class="tablerow content">
-                                                <div class="tableData width30 minus2 withInnerinnerBar" data-toggle="modal" data-target=".innertable">{{ grandkid.title }}</div>
-                                                <div class="tableData width30" data-toggle="modal" data-target=".innertable">₦{{ grandkid.budget }}</div>
-                                                <div class="tableData width20 {% if grandkid.status == 0 %} ongoing {% endif %}">{{ grandkid.statusText }}</div>
-                                                <div class="tableData width20">
-                                                    {% if grandkid.start_date %}
-                                                        {{ grandkid.start_date.strftime("%d %b %Y") }}
-                                                    {% endif %}
-                                                </div>
-                                                <div class="tableData width20">{{ grandkid.deadline_string.date }}</div>
-                                            </div>
-                                        </div>
-                                        {% endfor %}
-                                    </div>
-                                {% endif %}
-                            </div>
-                            {% endfor %}
-                        {% endif %}
-                    {% endfor %}
-                {% endif %}
-
-            </div> -->
             <table class="taskTable collaptable">
                 <thead>
                     <tr>
-                        <th>S/N</th>
                         <th>Title</th>
                         <th>Allocation</th>
                         <th>Status</th>
@@ -109,63 +20,58 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr data-id="1" data-parent="">
-                        <td>1</td>
-                        <td class="withBar">Buy Milk</td>
-                        <td>₦2000</td>
-                        <td class="ongoing">Pending</td>
-                        <td>12/12/12</td>
-                        <td>07 Mar 2017</td>
-                        <td class="actionBtn">
-                            <button class="task" data-toggle="modal" data-target=".subTask"><i class="fa fa-plus" aria-hidden="true"></i> Add Subtask</button>
-                        </td>
-                        <!-- <td class="actionBtn">
-                            <button class="task sub act-more act-collapsed"><i class="fa fa-eye" aria-hidden="true"></i> View Subtask</button>
-                        </td> -->
-                    </tr>
-
-                    <tr data-id="2" data-parent="1">
-                        <td>1</td>
-                        <td class="withBar">Buy Milk</td>
-                        <td>₦2000</td>
-                        <td class="ongoing">Pending</td>
-                        <td>12/12/12</td>
-                        <td>07 Mar 2017</td>
-                        <td class="actionBtn">
-                            <button class="task"><i class="fa fa-plus" aria-hidden="true"></i> Add Subtask</button>
-                        </td>
-                        <!-- <td class="actionBtn">
-                            <button class="task sub"><i class="fa fa-eye" aria-hidden="true"></i> View Subtask</button>
-                        </td> -->
-                    </tr>
-                    <tr data-id="3" data-parent="">
-                        <td>1</td>
-                        <td class="withBar">Buy Milk</td>
-                        <td>₦2000</td>
-                        <td class="ongoing">Pending</td>
-                        <td>12/12/12</td>
-                        <td>07 Mar 2017</td>
-                        <td class="actionBtn">
-                            <button class="task" data-toggle="modal" data-target=".subTask"><i class="fa fa-plus" aria-hidden="true"></i> Add Subtask</button>
-                        </td>
-                        <!-- <td class="actionBtn">
-                            <button class="task sub"><i class="fa fa-eye" aria-hidden="true"></i> View Subtask</button>
-                        </td> -->
-                    </tr>
-                    <tr data-id="4" data-parent="3">
-                        <td>1</td>
-                        <td class="withBar">Buy Milk</td>
-                        <td>₦2000</td>
-                        <td class="ongoing">Pending</td>
-                        <td>12/12/12</td>
-                        <td>07 Mar 2017</td>
-                        <td class="actionBtn">
-                            <button class="task" data-toggle="modal" data-target=".subTask"><i class="fa fa-plus" aria-hidden="true"></i> Add Subtask</button>
-                        </td>
-                        <!-- <td class="actionBtn">
-                            <button class="task sub"><i class="fa fa-eye" aria-hidden="true"></i> View Subtask</button>
-                        </td> -->
-                    </tr>
+                    {% for task in project.main_tasks %}
+                        <tr data-id="{{ task.id }}" data-parent="">
+                            <td class="withBar">{{ task.title }}</td>
+                            <td>₦{{ task.budget }}</td>
+                            <td class="ongoing">{{ task.statusText }}</td>
+                            <td>{{ task.start_date }}</td>
+                            <td>{{ task.deadline }}</td>
+                            <td class="actionBtn">
+                                <button class="task" data-toggle="modal" data-target=".subTask"><i class="fa fa-plus" aria-hidden="true"></i> Add Subtask</button>
+                            </td>
+                        </tr>
+                        {% if task.child_tasks %}
+                            {% for pikin in task.child_tasks %}
+                                <tr data-id="{{ pikin.id }}" data-parent="{{ pikin.parent_task }}">
+                                    <td class="withBar">{{ pikin.title }}</td>
+                                    <td>₦{{ pikin.budget }}</td>
+                                    <td class="ongoing">{{ pikin.statusText }}</td>
+                                    <td>{{ pikin.start_date }}</td>
+                                    <td>{{ pikin.deadline }}</td>
+                                    <td class="actionBtn">
+                                        <button class="task" data-toggle="modal" data-target=".subTask"><i class="fa fa-plus" aria-hidden="true"></i> Add Subtask</button>
+                                    </td>
+                                </tr>
+                                {% if pikin.child_tasks %}
+                                    {% for grand in pikin.child_tasks %}
+                                        <tr data-id="{{ grand.id }}" data-parent="{{ grand.parent_task }}">
+                                            <td class="withBar">{{ grand.title }}</td>
+                                            <td>₦{{ grand.budget }}</td>
+                                            <td class="ongoing">{{ grand.statusText }}</td>
+                                            <td>{{ grand.start_date }}</td>
+                                            <td>{{ grand.deadline }}</td>
+                                            <td class="actionBtn">
+                                                <button class="task" data-toggle="modal" data-target=".subTask"><i class="fa fa-plus" aria-hidden="true"></i> Add Subtask</button>
+                                            </td>
+                                        </tr>
+                                        {% if grand.child_tasks %}
+                                            {% for great in grand.child_tasks %}
+                                                <tr data-id="{{ great.id }}" data-parent="{{ great.parent_task }}">
+                                                    <td class="withBar">{{ great.title }}</td>
+                                                    <td>₦{{ great.budget }}</td>
+                                                    <td class="ongoing">{{ great.statusText }}</td>
+                                                    <td>{{ great.start_date }}</td>
+                                                    <td>{{ great.deadline }}</td>
+                                                    <td class="actionBtn"></td>
+                                                </tr>
+                                            {% endfor %}
+                                        {% endif %}
+                                    {% endfor %}
+                                {% endif %}
+                            {% endfor %}
+                        {% endif %}
+                    {% endfor %}
                 </tbody>
             </table>
         </div>
