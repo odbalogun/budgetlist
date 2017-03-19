@@ -23,29 +23,16 @@
         </div>
     </div>
     <div class="infoWrap">
-        <div class="bs-callout bs-callout-info"> 
-            <h4>Babatunde Adegbite</h4>
-            <small class="smallText">25/04/2017</small>
-            <small class="smallText">Updated To: 
-            <strong>100%</strong></small>
-            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aut, iste, commodi. Quas non cumque error, recusandae unde sint nisi possimus voluptatum est dicta mollitia alias hic distinctio ab, doloribus fugitLorem ipsum dolor sit amet, consectetur adipisicing elit. Aut, iste, commodi. Quas non cumque error, recusandae unde sint nisi possimus voluptatum est dicta mollitia alias hic distinctio ab, doloribus fugit.</p>
+        {% for audit in audits %}
+        <div class="bs-callout bs-callout-info">
+            <h4>{{ audit.owner }}</h4>
+            <small class="smallText">{{ audit.category }}</small>
+            <small class="smallText">{{ audit.date_created }}</small>
+            <small class="smallText">Affected Item:
+            <strong>{{ audit.get_item }}</strong></small>
+            <p>{{ audit.description }}</p>
         </div>
-
-        <div class="bs-callout bs-callout-danger"> 
-            <h4>Babatunde Adegbite</h4>
-            <small class="smallText">25/04/2017</small>
-            <small class="smallText">Updated To: 
-            <strong>100%</strong></small>
-            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aut, iste, commodi. Quas non cumque error, recusandae unde sint nisi possimus voluptatum est dicta mollitia alias hic distinctio ab, doloribus fugitLorem ipsum dolor sit amet, consectetur adipisicing elit. Aut, iste, commodi. Quas non cumque error, recusandae unde sint nisi possimus voluptatum est dicta mollitia alias hic distinctio ab, doloribus fugit.</p>
-        </div>
-
-        <div class="bs-callout bs-callout-warning"> 
-            <h4>Babatunde Adegbite</h4>
-            <small class="smallText">25/04/2017</small>
-            <small class="smallText">Updated To: 
-            <strong>100%</strong></small>
-            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aut, iste, commodi. Quas non cumque error, recusandae unde sint nisi possimus voluptatum est dicta mollitia alias hic distinctio ab, doloribus fugitLorem ipsum dolor sit amet, consectetur adipisicing elit. Aut, iste, commodi. Quas non cumque error, recusandae unde sint nisi possimus voluptatum est dicta mollitia alias hic distinctio ab, doloribus fugit.</p>
-        </div>
+        {% endfor %}
     </div>
     </div>
 </div>

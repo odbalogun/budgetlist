@@ -34,11 +34,11 @@
                     </div>
                     <div class="title">
                         <span class="caption">Amount Assigned</span>
-                        <span class="dTitle pupple">₦27100</span>
+                        <span class="dTitle pupple">₦{{ budget.amount_allocated }}</span>
                     </div>
                     <div class="title">
                         <span class="caption">Amount Unassigned</span>
-                        <span class="dTitle red">₦72900</span>
+                        <span class="dTitle red">₦{{ budget.budget_difference}}</span>
                     </div>
                 </div>
             </div>
@@ -111,52 +111,6 @@
         </div>
     </div>
 </div>
-
-
-<!-- Add Task -->
-<!-- <div class="generalModal modal fade addBudget" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" data-backdrop="static" data-keyboard="false">
-  <div class="modal-dialog modal-lg" role="document">
-    <div class="modal-content">
-    <form method="post" id="addBudgetForm" action="{{ request.path }}">
-        {{ form.csrf_token }}
-        {{ form.parent_id(id='parent_id', **{'data-bind': 'value: parent_id'}) }}
-        <div class="titleSection">
-            <div class="cancel clearfix">
-                <span class="title" data-bind="text: form_title"></span>
-                <i data-dismiss="modal" class="fa fa-times" aria-hidden="true"></i>
-            </div>
-            <div class="stateSection clearfix">
-                <div class="col-md-8">
-                    <div class="form-wrap clearfix">
-                        <div class="col-md-1 p-0">
-                            <div class="title">Name</div>
-                        </div>
-                        <div class="col-md-11">
-                            {{ form.name(class_='title', placeholder='Enter Name') }}
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="stateSection clearfix">
-                <div class="col-md-8">
-                    <div class="form-wrap clearfix">
-                        <div class="col-md-1 p-0">
-                            <div class="title">Allocation</div>
-                        </div>
-                        <div class="col-md-11">
-                            {{ form.allocation(class_='title', placeholder='Enter Allocation') }}
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="assign clearfix">
-                <button type="submit" onclick="form_submit()" data-dismiss="modal" class="save"><i class="fa fa-floppy-o" aria-hidden="true"></i> Save & close</button>
-            </div>
-        </div>
-        </form>
-    </div>
-  </div>
-</div> -->
 
 <!-- Edit Budget modal -->
 <div class="modal fade editTask addBudget" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel">

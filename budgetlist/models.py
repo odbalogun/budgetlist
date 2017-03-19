@@ -2,7 +2,7 @@ from sqlalchemy import Column, Integer, DECIMAL, String, Date, DateTime, func, F
 from sqlalchemy.orm import relationship, remote, foreign
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
-from helpers import dump_datetime, to_json, list_task_status, list_budget_types
+from helpers import dump_datetime, to_json, list_task_status, list_audit_models, list_audit_types
 import random
 from flask_login import UserMixin
 
@@ -343,6 +343,9 @@ class Period(db.Model):
     status = Column(Integer)
     date_created = Column(DateTime, default=func.now())
 
+    def __repr__(self):
+        return self.name
+
     def string_date(self, value):
         return dump_datetime(value)
 
@@ -355,6 +358,9 @@ class Department(db.Model):
     name = Column(String(100))
 
     members = relationship("User", back_populates="department", foreign_keys="User.department_id")
+
+    def __repr__(self):
+        return self.name
 
     @property
     def member_count(self):
@@ -380,6 +386,9 @@ class Budget(db.Model):
     period = relationship("Period", uselist=False)
     main_subs = relationship("SubBudgets", foreign_keys="SubBudgets.budget_id", primaryjoin="and_(Budget.id==SubBudgets.budget_id, SubBudgets.parent_budget == None)", order_by="SubBudgets.name")
     subs = relationship("SubBudgets", foreign_keys="SubBudgets.budget_id")
+
+    def __repr__(self):
+        return self.title
 
     @property
     def title(self):
@@ -415,6 +424,9 @@ class SubBudgets(db.Model):
     creator = relationship("User", uselist=False)
     budget = relationship("Budget", uselist=False)
     child_budgets = relationship("SubBudgets", primaryjoin="SubBudgets.id == SubBudgets.parent_budget")
+
+    def __repr__(self):
+        return self.name
 
     @property
     def amount_allocated(self):
@@ -454,3 +466,55 @@ class SubBudgets(db.Model):
                 'editable': i.is_editable
             })
         return subs
+
+class Audit(db.Model):
+    __tablename__ = 'audit'
+
+    id = Column(Integer, primary_key=True)
+    user_id = Column(Integer, ForeignKey('users.id'))
+    description = Column(Text)
+    action_type = Column(Integer)
+    action_model = Column(String(100))
+    item_id = Column(Integer)
+    date_created = Column(DateTime, default=func.now())
+
+    project = relationship("Project", foreign_keys="Audit.item_id", primaryjoin="and_(Project.id==Audit.item_id,"
+                                                                                " Audit.action_model == 'Project')", uselist=False)
+    task = relationship("Task", foreign_keys="Audit.item_id", primaryjoin="and_(Task.id==Audit.item_id,"
+                                                                                " Audit.action_model == 'Task')", uselist=False)
+    user = relationship("User", foreign_keys="Audit.item_id", primaryjoin="and_(User.id==Audit.item_id,"
+                                                                                " Audit.action_model == 'User')", uselist=False)
+    budget = relationship("Budget", foreign_keys="Audit.item_id", primaryjoin="and_(Budget.id==Audit.item_id,"
+                                                                                " Audit.action_model == 'Budget')", uselist=False)
+    sub_budget = relationship("SubBudgets", foreign_keys="Audit.item_id", primaryjoin="and_(SubBudgets.id==Audit.item_id,"
+                                                                                " Audit.action_model == 'SubBudget')", uselist=False)
+    department = relationship("Department", foreign_keys="Audit.item_id", primaryjoin="and_(Department.id==Audit.item_id,"
+                                                                                " Audit.action_model == 'Department')", uselist=False)
+
+    owner = relationship("User", uselist=False)
+
+    def __init__(self, user_id, desc, action_type, action_model, item_id):
+        self.user_id = user_id
+        self.description = desc
+        self.action_type = action_type
+        self.action_model = action_model
+        self.item_id = item_id
+
+    @property
+    def get_item(self):
+        if self.action_model == 'User':
+            return self.user
+        elif self.action_model == 'Project':
+            return self.project
+        elif self.action_model == 'Task':
+            return self.task
+        elif self.action_model == 'Budget':
+            return self.budget
+        elif self.action_model == 'SubBudget':
+            return self.sub_budget
+        elif self.action_model == 'Department':
+            return self.department
+
+    @property
+    def category(self):
+        return list_audit_types[self.action_type]

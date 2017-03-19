@@ -1,11 +1,11 @@
 from flask import Blueprint, redirect, url_for, abort, render_template, flash
 from flask_login import login_user, logout_user, login_required, current_user
-from budgetlist.models import db, User, Project, Task, Company, Period, Department, Permissions, Budget, TaskHistory, SubBudgets
+from budgetlist.models import db, User, Project, Task, Company, Period, Department, Permissions, Budget, TaskHistory, SubBudgets, Audit
 from functools import wraps
 from budgetlist import lm
 from budgetlist.forms import LoginForm, CompanyForm, PeriodForm, DepartmentForm, UserForm, BudgetForm, ProjectForm, \
     TaskForm, SubTaskForm, EditUserForm, UpdateTaskForm, SubBudgetForm, EditSubBudgetForm
-from budgetlist.helpers import list_budget_types, list_priority
+from budgetlist.helpers import list_budget_types, list_priority, list_audit_types
 from datetime import date
 
 main = Blueprint('main', __name__)
@@ -100,6 +100,9 @@ def project_detail(id):
                 permission = Permissions(userid, task.id, 0)
                 db.session.add(permission)
                 db.session.commit()
+            audit = Audit(current_user.id, "User created a task", 2, 'Task', task.id)
+            db.session.add(audit)
+            db.session.commit()
             flash('Task has been successfully created', 'success')
     elif subform.parent_id.data:
         if subform.validate_on_submit():
@@ -112,9 +115,10 @@ def project_detail(id):
                 permission = Permissions(userid, task.id, 0)
                 db.session.add(permission)
                 db.session.commit()
+            audit = Audit(current_user.id, "User created a task", 2, 'Task', task.id)
+            db.session.add(audit)
+            db.session.commit()
             flash('Task has been successfully created', 'success')
-    
-
     return render_template('backlogs.html', project=project, form=form, subform=subform)
 
 @main.route('/completed-activities', methods=['GET'])
@@ -155,6 +159,8 @@ def assigned_tasks():
         if form.status.data == 2:
             history.percent = 100
 
+        audit = Audit(current_user.id, "User updated a task", 3, 'Task', task.id)
+        db.session.add(audit)
         db.session.add(history)
         db.session.add(task)
         db.session.commit()
@@ -179,6 +185,9 @@ def login():
         else:
             if user.check_password(form.password.data):
                 login_user(user)
+                audit = Audit(user.id, "User logged in", 0, 'User', user.id)
+                db.session.add(audit)
+                db.session.commit()
                 return redirect(url_for('.home'))
             else:
                 flash('Invalid login credentials', 'error')
@@ -187,6 +196,9 @@ def login():
 @main.route('/logout', methods=['GET'])
 @login_required
 def logout():
+    audit = Audit(current_user.id, "User logged out", 0, 'User', current_user.id)
+    db.session.add(audit)
+    db.session.commit()
     logout_user()
     flash('You have been logged out', 'success')
     return redirect(url_for('.login'))
@@ -238,6 +250,9 @@ def edit_user(userid):
 
         db.session.add(user)
         db.session.commit()
+        audit = Audit(current_user.id, "User account was updated", 5, 'User', user.id)
+        db.session.add(audit)
+        db.session.commit()
         flash('The user\'s account status has been updated', 'success')
         return redirect(url_for('.user_settings'))
 
@@ -257,6 +272,13 @@ def toggle_user_status(action, userid):
             user.status = action
             db.session.add(user)
             db.session.commit()
+
+            if action == 0:
+                audit = Audit(current_user.id, "User account was activated", 5, 'User', user.id)
+            else:
+                audit = Audit(current_user.id, "User account was deactivated", 5, 'User', user.id)
+            db.session.add(audit)
+            db.session.commit()
             flash('The user\'s account status has been updated', 'success')
             return redirect(url_for('.user_settings'))
         else:
@@ -269,25 +291,6 @@ def toggle_user_status(action, userid):
 @main.route('/settings', methods=['GET', 'POST'])
 def settings():
     return redirect(url_for('.periods'))
-    company = Company.query.first()
-    form = CompanyForm()
-    if company:
-        if form.validate_on_submit():
-            company.name = form.name.data
-            company.address = form.address.data
-            company.website = form.website.data
-            db.session.add(company)
-            db.session.commit()
-            flash('Company details have been successfully updated', 'success')
-        return render_template('settings.html', company=company, form=form)
-    else:
-        c = Company()
-        c.name = 'Test Company'
-        c.address = 'Test Address'
-        c.website = 'www.test.com'
-        db.session.add(c)
-        db.session.commit()
-        return redirect(url_for('.settings'))
 
 @main.route('/periods', methods=['GET', 'POST'])
 def periods():
@@ -322,6 +325,13 @@ def periods():
 
         db.session.add(period)
         db.session.commit()
+
+        audit = Audit(current_user.id, "Period was created", 6, 'Period', period.id)
+        db.session.add(audit)
+        baudit = Audit(current_user.id, "Budget for period," + period.name + " was created", 4, 'Budget', budget.id)
+        db.session.add(baudit)
+        db.session.commit()
+
         flash('The period has been successfully created', 'success')
 
         # if period.status == 0:
@@ -338,6 +348,8 @@ def activate_period(id):
         db.session.commit()
 
         db.session.query(Period).filter(Period.id != id).update({Period.status: 1})
+        audit = Audit(current_user.id, "Period was activated", 6, 'Period', period.id)
+        db.session.add(audit)
         db.session.commit()
         flash('The period has been activated', 'success')
         return redirect(url_for('.manage_budget'))
@@ -359,6 +371,9 @@ def departments():
 
                 db.session.add(dep)
                 db.session.commit()
+                audit = Audit(current_user.id, "Department was updated", 7, 'Department', dep.id)
+                db.session.add(audit)
+                db.session.commit()
                 flash('The department has been successfully updated', 'success')
         else:
             # check if department already exists
@@ -370,6 +385,9 @@ def departments():
                 dep.name = form.name.data
 
                 db.session.add(dep)
+                db.session.commit()
+                audit = Audit(current_user.id, "Department was created", 7, 'Department', dep.id)
+                db.session.add(audit)
                 db.session.commit()
                 flash('The department has been successfully created', 'success')
     departments = Department.query.all()
@@ -479,9 +497,7 @@ def manage_budget():
 
     form = SubBudgetForm()
     editform = EditSubBudgetForm()
-    print('test')
-    print(editform.sub_budget_id.data)
-    if form.validate_on_submit() and form.sub_budget_id.data == '0':
+    if form.validate_on_submit() and (form.sub_budget_id.data == '0' or form.sub_budget_id.data == ""):
         # new budget
         sub = SubBudgets()
         sub.name = form.name.data
@@ -515,7 +531,8 @@ def budget_overview():
 
 @main.route('/audit', methods=['GET', 'POST'])
 def audit():
-    return render_template('audit.html')
+    audits = Audit.query.all()
+    return render_template('audit.html', audits=audits)
 
 # error handling
 @main.app_errorhandler(404)

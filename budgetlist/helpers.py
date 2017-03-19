@@ -11,6 +11,9 @@ list_percentages = [(0, '0%'), (10, '10%'), (20, '20%'), (30, '30%'), (40, '40%'
 list_budget_types = ['Operational Ex.', 'Capital Ex.', 'Consultancy', 'Moveables']
 list_priority = ['Normal', 'Medium', 'High']
 
+list_audit_types = ['User Access', 'Activity Creation', 'Task Creation', 'Task Update', 'Budget Creation',
+                    'User Management', 'Period Management', 'Department Management']
+list_audit_models = ['User', 'Project', 'Task', 'Budget', 'Sub Budget', 'Period']
 
 def dump_datetime(value):
     """Deserialize datetime object into string form for JSON processing."""

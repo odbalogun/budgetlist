@@ -116,8 +116,8 @@
             Are you sure you want to close this activity? This action can not be reversed!
         </div>
         <div class="modal-footer">
-            <button type="button" class="btn btn-default btn-sm" data-dismiss="modal" id="closebg">Close</button>
-            <button type="button" class="btn btn-danger btn-sm" data-dismiss="modal" id="closebg2"> <i class="fa fa-warning" aria-hidden="true"></i> Close Activity</button>
+            <button type="button" class="btn btn-default btn-sm" data-dismiss="modal" id="closebg">Cancel</button>
+            <button type="button" onclick="close_activity()" class="btn btn-danger btn-sm" data-dismiss="modal" id="closebg2"> <i class="fa fa-warning" aria-hidden="true"></i> Close Activity</button>
         </div>
     </div>
   </div>
@@ -323,7 +323,7 @@
                 <div class="col-md-6">
                     <label for="">Name</label>
                     <input type="text" placeholder="Name">
-                </div>  
+                </div>
                 <div class="col-md-6">
                     <label for="">Status</label>
                     <input type="text" placeholder="Status">
@@ -331,7 +331,7 @@
                 <div class="col-md-12">
                     <label for="">Note</label>
                     <textarea name="note" id="" cols="30" rows="10"></textarea>
-                </div>  
+                </div>
             </div>
             <div class="buttonWrap">
                 <button type="submit" onclick="form_submit()"  data-dismiss="modal" class="save"><i class="fa fa-floppy-o" aria-hidden="true"></i> Save &amp; close</button>
@@ -356,6 +356,11 @@ function form_submit() {
 function subform_submit() {
     document.getElementById("addSubTaskForm").submit();
    }
+
+function close_project(){
+    // redirect to url
+
+}
 
     $('#closebg, #closebg2').click(function(){
         $('#closebg').modal('hide');
