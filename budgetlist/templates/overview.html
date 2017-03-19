@@ -176,10 +176,43 @@
                         <div class="title">Budget</div>
                     </div>
                     <div class="col-md-10" id="budgetList">
-                        <select name="budget_1" id="budget_1" data-bind="value: budget_id">
+                        <style>
+                            .optionGroup {
+                                font-weight: bold;
+                            }
+
+                            .optionChild {
+                                padding-left: 15px;
+                            }
+
+                            .optionGrandChild {
+                                padding-left: 30px;
+                            }
+                            .optionGreatChild {
+                                padding-left: 45px;
+                            }
+                        </style>
+                        <select name="budget" id="budget" data-bind="value: budget_id">
                             <option disabled selected>Select a Budget</option>
-                            {% for b in budget_types %}
-                                <option value="{{ b.id }}" data-id="{{ b.is_editable }}">{{ b.name }}</option>
+                            {% for b in budgets %}
+                                <option value="{{ b.id }}" class="optionGroup">{{ b.name }}</option>
+                                {% for b1 in b.child_budgets %}
+                                    {% if b1.child_budgets %}
+                                       <option value="{{ b1.id }}" class="optionGroup optionChild">{{ b1.name }}</option>
+                                    {% else %}
+                                        <option value="{{ b1.id }}" class="optionChild">{{ b1.name }}</option>
+                                    {% endif %}
+                                    {% for b2 in b1.child_budgets %}
+                                        {% if b2.child_budgets %}
+                                           <option value="{{ b2.id }}" class="optionGroup optionGrandChild">{{ b2.name }}</option>
+                                        {% else %}
+                                            <option value="{{ b2.id }}" class="optionGrandChild">{{ b2.name }}</option>
+                                        {% endif %}
+                                        {% for b3 in b2.child_budgets %}
+                                            <option value="{{ b3.id }}" class="optionGreatChild">{{ b3.name }}</option>
+                                        {% endfor %}
+                                    {% endfor %}
+                                {% endfor %}
                             {% endfor %}
                         </select><br/>
                         <!--

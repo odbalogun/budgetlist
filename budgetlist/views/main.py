@@ -71,7 +71,7 @@ def overview():
     overdue_count = len(overdue)
 
     return render_template('overview.html', projects=projects, overdue=overdue, ongoing=ongoing, form=form, completed_count=completed_count,
-                           deficit_count=deficit_count, overdue_count=overdue_count, budget_types=budget_types)
+                           deficit_count=deficit_count, overdue_count=overdue_count, budgets=budget_types)
 
 @main.route('/all-activities', methods=['GET'])
 def all_projects():

@@ -124,62 +124,6 @@
 </div>
 
 
-<!-- Add new sub task -->
-<div class="generalModal modal fade addSubTask" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" data-backdrop="static" data-keyboard="false">
-  <div class="modal-dialog modal-lg" role="document">
-    <div class="modal-content">
-    <form method="post" id="addSubTaskForm" action="{{ request.path }}">
-        {{ subform.csrf_token }}
-        <input type="hidden" name="parent_id" id="parent_id" value="" />
-        <div class="titleSection">
-            <div class="cancel clearfix">
-                <span class="title">Add new task</span>
-                <i data-dismiss="modal" class="fa fa-times" aria-hidden="true"></i>
-            </div>
-            <input type="text" class="title" name="title" placeholder="Enter Title">
-            <div class="assign clearfix">
-                {{ subform.assigned_to(class_='assignTo', prompt='Assigned to') }}
-                <button type="submit" name="subtask_submit" onclick="subform_submit()" data-dismiss="modal" class="save"><i class="fa fa-floppy-o" aria-hidden="true"></i> Save & close</button>
-            </div>
-        </div>
-        <div class="stateSection clearfix">
-            <div class="col-md-8">
-                <div class="form-wrap clearfix">
-                    <div class="col-md-1 p-0">
-                        <div class="title">Allocation</div>
-                    </div>
-                    <div class="col-md-11">
-                        <input type="text" name="allocation" class="stateForm" placeholder="Amount(₦)">
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="descritpionSection clearfix">
-            <div class="col-md-8">
-                <div class="title">Description</div>
-                <textarea name="description"></textarea>
-            </div>
-            <div class="col-md-4">
-                <div class="title">Planning</div>
-                <div class="planingForms">
-                   <div class="title">Priority</div>
-                   {{ subform.priority(class_='plan') }}
-                </div>
-                <div class="planingForms">
-                   <div class="title">Start Date</div>
-                   {{ subform.start_date(class_="datetimepicker plan") }}
-                </div>
-                <div class="planingForms">
-                   <div class="title">End Date</div>
-                   <input class="datetimepicker plan" name="end_date" type="text">
-                </div>
-            </div>
-        </div>
-    </form>
-    </div>
-  </div>
-</div>
-
 <!-- Add Task -->
 <div class="generalModal modal fade addTask" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" data-backdrop="static" data-keyboard="false">
   <div class="modal-dialog modal-lg" role="document">
@@ -209,66 +153,6 @@
         </div>
         <div class="descritpionSection clearfix">
             <div class="col-md-12 p-0">
-                <div class="col-md-6 sub0">
-                    <div class="planingForms">
-                        <div class="title">Budget</div> 
-                        <select class="plan">
-                            <option value="">--Select Budget--</option>
-                            <option value="Operational">Operational Ex.</option>
-                            <option value="Capital">Capital Ex.</option>
-                            <option value="Consultancy">Consultancy</option>
-                            <option value="Moveables">Moveables</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="col-md-6 sub1">
-                    <div class="planingForms">
-                        <div class="title">Budget</div> 
-                        <select class="plan">
-                            <option value="">--Select SubBudget--</option>
-                            <option value="Operational">Operational Ex.</option>
-                            <option value="Capital">Capital Ex.</option>
-                            <option value="Consultancy">Consultancy</option>
-                            <option value="Moveables">Moveables</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="col-md-6 sub2">
-                    <div class="planingForms">
-                        <div class="title">Budget</div> 
-                        <select class="plan">
-                            <option value="">--Select SubBudget--</option>
-                            <option value="Operational">Operational Ex.</option>
-                            <option value="Capital">Capital Ex.</option>
-                            <option value="Consultancy">Consultancy</option>
-                            <option value="Moveables">Moveables</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="col-md-6 sub3">
-                    <div class="planingForms">
-                        <div class="title">Budget</div> 
-                        <select class="plan">
-                            <option value="">--Select SubBudget--</option>
-                            <option value="Operational">Operational Ex.</option>
-                            <option value="Capital">Capital Ex.</option>
-                            <option value="Consultancy">Consultancy</option>
-                            <option value="Moveables">Moveables</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="col-md-6 sub4">
-                    <div class="planingForms">
-                        <div class="title">Budget</div> 
-                        <select class="plan">
-                            <option value="">--Select SubBudget--</option>
-                            <option value="Operational">Operational Ex.</option>
-                            <option value="Capital">Capital Ex.</option>
-                            <option value="Consultancy">Consultancy</option>
-                            <option value="Moveables">Moveables</option>
-                        </select>
-                    </div>
-                </div>
                 <div class="col-md-6">
                     <div class="planingForms">
                         <div class="title">Allocation</div> 
@@ -295,7 +179,7 @@
                 </div>
                 <div class="col-md-12">
                     <div class="planingForms">
-                        <div class="title">Note</div> 
+                        <div class="title">Description</div>
                         {{ form.description() }}
                     </div>
                 </div>
@@ -311,31 +195,73 @@
 </div>
 
 <!-- Add Sub Task -->
-<div class="modal fade editTask subTask" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel">
+<div class="generalModal modal fade editTask subTask" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel">
   <div class="modal-dialog modal-lg" role="document">
     <div class="modal-content">
         <div class="title clearfix">
             <span class="pull-left"> Add Subtask</span>
             <span data-dismiss="modal" aria-label="Close" class="pull-right"><i class="fa fa-times" aria-hidden="true"></i></span>
         </div>
-        <form method="post" id="updateTaskForm" action="{{ request.path }}">
-            <div class="content clearfix">
-                <div class="col-md-6">
-                    <label for="">Name</label>
-                    <input type="text" placeholder="Name">
+        <form method="post" id="addSubTaskForm" action="{{ request.path }}">
+            {{ subform.csrf_token }}
+            <div class="titleSection">
+                <div class="cancel clearfix">
+                    <span class="title">Add new sub task</span>
+                    <i data-dismiss="modal" class="fa fa-times" aria-hidden="true"></i>
                 </div>
-                <div class="col-md-6">
-                    <label for="">Status</label>
-                    <input type="text" placeholder="Status">
-                </div>
+                {{ subform.title(class_='title', placeholder='Enter Title') }}
+
+            </div>
+            <div class="stateSection clearfix">
                 <div class="col-md-12">
-                    <label for="">Note</label>
-                    <textarea name="note" id="" cols="30" rows="10"></textarea>
+                    <div class="form-wrap clearfix">
+                        <div class="col-md-1 p-0">
+                            <div class="title">Assign</div>
+                        </div>
+                        <div class="col-md-11">
+                            <!-- {{ form.allocation(class_='stateForm', placeholder="Amount(₦)")}} -->
+                            {{ subform.assigned_to(class_='assignTo multiselect', multiple="multiple", prompt='Assigned to') }}
+                        </div>
+                    </div>
                 </div>
             </div>
-            <div class="buttonWrap">
-                <button type="submit" onclick="form_submit()"  data-dismiss="modal" class="save"><i class="fa fa-floppy-o" aria-hidden="true"></i> Save &amp; close</button>
+            <div class="descritpionSection clearfix">
+                <div class="col-md-12 p-0">
+                    <div class="col-md-6">
+                        <div class="planingForms">
+                            <div class="title">Allocation</div>
+                            {{ subform.allocation(class_='stateForm plan', placeholder="Amount(₦)")}}
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="planingForms">
+                            <div class="title">Priority</div>
+                            {{ subform.priority(class_='plan') }}
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="planingForms">
+                            <div class="title">Start Date</div>
+                            {{ subform.start_date(class_="datetimepicker plan") }}
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="planingForms">
+                            <div class="title">End Date</div>
+                            {{ subform.end_date(class_="datetimepicker plan") }}
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="planingForms">
+                            <div class="title">Description</div>
+                            {{ subform.description() }}
+                        </div>
+                    </div>
+
+                </div>
+
             </div>
+            <button type="submit" onclick="subform_submit()"  data-dismiss="modal" class="save"><i class="fa fa-floppy-o" aria-hidden="true"></i> Save &amp; close</button>
         </form>
     </div>
   </div>
@@ -362,59 +288,11 @@ function close_project(){
 
 }
 
-    $('#closebg, #closebg2').click(function(){
-        $('#closebg').modal('hide');
-        $('body').removeClass('modal-open');
-        $('.modal-backdrop').remove();
-    })
-
-    $('.planingForms .plan').on('change',function(){
-        if( $(this).val()==="Operational"){
-        $(".sub1").show()
-        }
-        else{
-        $(".sub1").hide()
-        }
-    });
-
-    $('.sub0 .plan').on('change',function(){
-        if( $(this).val()==="Operational"){
-        $(".sub1").show()
-        }
-        else{
-        $(".sub1").hide()
-        }
-    });
-    $('.sub1 .plan').on('change',function(){
-        if( $(this).val()==="Capital"){
-        $(".sub2").show()
-        $(".sub1").show()
-        }
-        else{
-        $(".sub2").hide()
-        }
-    });
-    $('.sub2 .plan').on('change',function(){
-        if( $(this).val()==="Consultancy"){
-        $(".sub3").show()
-        $(".sub1").show()
-        $(".sub2").show()
-        }
-        else{
-        $(".sub3").hide()
-        }
-    });
-    $('.sub3 .plan').on('change',function(){
-        if( $(this).val()==="Moveables"){
-        $(".sub4").show()
-        $(".sub3").show()
-        $(".sub2").show()
-        $(".sub1").show()
-        }
-        else{
-        $(".sub4").hide()
-        }
-    });
+$('#closebg, #closebg2').click(function(){
+    $('#closebg').modal('hide');
+    $('body').removeClass('modal-open');
+    $('.modal-backdrop').remove();
+})
 
 </script>
 {% endblock %}
