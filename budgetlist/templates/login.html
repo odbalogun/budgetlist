@@ -1,52 +1,47 @@
 {% extends "layout.html" %}
 {% block header %}
 {% endblock %}
-{% block loginImage %} style="background-image: url('static/img/login.jpeg');"{% endblock %}
+{% block loginImage %} style="background-color: #fbfbfb;"{% endblock %}
+{% block flask %}
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      {% for category, message in messages %}
+          {% if category == 'success' %}
+            <div class="alert" style="top: 0">
+              <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
+              <span><strong>Success!</strong> {{ message }}</span>
+            </div>
+          {% else %}
+            <div class="alert alert-danger" style="top: 0">
+                <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
+                <span><strong>Error!</strong> {{ message }}</span>
+            </div>
+          {% endif %}
+      {% endfor %}
+    {% endif %}
+  {% endwith %}
+{% endblock %}
 {% block body %}     
 <div id="loginPage">
     <div class="container-fluid p-0">
         <div class="form_wrp">
-           <div class="d_form clearfix">
-               <div class="col-md-5 p-0">
-                   <div class="info-sec">
-                       <div class="title">Welcome</div>
-                       <div class="caption">to the best budget app ever.</div>
-                       <div class="list">
-                           <ul>
-                               <li>
-                                    <i class="fa fa-check" aria-hidden="true"></i>
-                                    Secure and relible for all users
-                               </li>
-                               <li>
-                                    <i class="fa fa-check" aria-hidden="true"></i>
-                                    Simple to use and configure
-                               </li>
-                               <li>
-                                    <i class="fa fa-check" aria-hidden="true"></i>
-                                    Track updates and stay informed
-                               </li>
-                           </ul>
-                       </div>
-                   </div>
-               </div>
-               <div class="col-md-7 p-0">
-                   <div class="form-sec">
-                       <form method="post">
-                           {{ form.csrf_token }}
-                           <div class="formWrap clearfix">
-                               <span class="icon"><i class="fa fa-user" aria-hidden="true"></i></span>
-                               <input type="text" placeholder="Username" name="username" required>
-                           </div>
-                           <div class="formWrap clearfix">
-                               <span class="icon"><i class="fa fa-lock" aria-hidden="true"></i></span>
-                               <input type="password" placeholder="Password" name="password" required>
-                           </div>
-                           <button type="submit" class="submit">Login</button>
-                       </form>
-                   </div>
-               </div>
+          <div class="logo">budget</div>
+           <div class="d_form">
+              <form method="post">
+                 {{ form.csrf_token }}
+                 <div class="formWrap clearfix">
+                     <label>Name</label>
+                     <input type="text" placeholder="Username" name="username" required>
+                 </div>
+                 <div class="formWrap clearfix">
+                     <label>Password</label>
+                     <input type="password" placeholder="Password" name="password" required>
+                 </div>
+                 <button type="submit" class="submit btn btn-success">Login</button>
+             </form>
            </div>
         </div>
     </div>
 </dix>
 {% endblock %}
+

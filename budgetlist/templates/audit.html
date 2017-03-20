@@ -1,9 +1,19 @@
 {% extends "layout.html" %}
-
+{% block secondLayer %}
+<div class="secondLayer">
+    <div class="wrapper">
+        <ul>
+            <li>
+                <a class="{% if request.path == '/audit' %} active {% endif %}" href="{{ url_for('.audit')}}">Audit</a>
+            </li>
+        </ul>
+    </div>
+</div>
+{% endblock %}
 {% block body %}
 <div class="details">
     <div class="wrapper">
-    <div class="filterWrap clearfix">
+    <!-- <div class="filterWrap clearfix">
         <div class="col-md-8"></div>
         <div class="col-md-2">
             <div class="filter">
@@ -21,18 +31,35 @@
                 </select>
             </div>
         </div>
-    </div>
+    </div> -->
     <div class="infoWrap">
-        {% for audit in audits %}
-        <div class="bs-callout bs-callout-info">
-            <h4>{{ audit.owner }}</h4>
-            <small class="smallText">{{ audit.category }}</small>
-            <small class="smallText">{{ audit.date_created }}</small>
-            <small class="smallText">Affected Item:
-            <strong>{{ audit.get_item }}</strong></small>
-            <p>{{ audit.description }}</p>
-        </div>
-        {% endfor %}
+        
+
+
+        <table class="table table-striped table-bordered table-hover dataTable">
+            <thead>
+                <tr>
+                    <th>S/N</th>
+                    <th>Name</th>
+                    <th>Action</th>
+                    <th>Date</th>
+                    <th>Affected Item</th>
+                    <th>Description</th>
+                </tr>
+            </thead>            
+            <tbody>
+            {% for audit in audits %}
+                <tr>
+                    <td>{{loop.index}}</td>
+                    <td>{{ audit.owner }}</td>
+                    <td>{{ audit.category }}</td>
+                    <td>{{ audit.date_created }}</td>
+                    <td>{{ audit.get_item }}</td>
+                    <td>{{ audit.description }}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
     </div>
     </div>
 </div>
