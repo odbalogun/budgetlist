@@ -101,5 +101,4 @@ class UpdateTaskForm(FlaskForm):
     percent = SelectField('Percent Completed', coerce=int, choices=list_percentages)
     note = TextAreaField('Description')
     status = SelectField('Status', choices=[(list_task_status.index(a), a) for a in list_task_status], coerce=int)
-    amount_spent = IntegerField('Amount Spent')
     task_id = HiddenField('Task ID')

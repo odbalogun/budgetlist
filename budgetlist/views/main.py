@@ -121,6 +121,19 @@ def project_detail(id):
             flash('Task has been successfully created', 'success')
     return render_template('backlogs.html', project=project, form=form, subform=subform)
 
+@main.route('/close-project/<int:id>', methods=['GET', 'POST'])
+def close_project(id):
+    project = Project.query.get(id)
+    project.status = 2
+    db.session.add(project)
+
+    audit = Audit(current_user.id, "User closed a project", 8, 'Project', project.id)
+    db.session.add(audit)
+    db.session.commit()
+
+    flash("The activity has been closed", 'success')
+    return redirect(url_for('.project_detail', id=project.id))
+
 @main.route('/completed-activities', methods=['GET'])
 def completed_projects():
     projects = Project.query.filter(Project.status==2).order_by(Project.date_created.desc()).all()
@@ -147,9 +160,6 @@ def assigned_tasks():
         task = Task.query.get(form.task_id.data)
         task.status = form.status.data
 
-        if form.amount_spent.data:
-            history.amount_spent = form.amount_spent.data
-
         # contextual updates
         if form.percent.data != 0 and form.percent.data != 100 and form.status.data in [0, 2, 3]:
             task.status = 1
@@ -166,7 +176,7 @@ def assigned_tasks():
         db.session.commit()
         flash('The task has been successfully updated', 'success')
 
-    tasks = Permissions.query.filter(Permissions.user_id==current_user.id).all()
+    tasks = Permissions.query.filter(Permissions.user_id==current_user.id).order_by(Permissions.date_created.desc()).all()
     return render_template('assigned.html', tasks=tasks, form=form)
 
 # login function
