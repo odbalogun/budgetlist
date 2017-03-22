@@ -13,6 +13,7 @@
         <link rel="stylesheet" href="{{ url_for('static', filename='css/normalize.css') }}" />
         <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}" />
         <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap/css/bootstrap.min.css') }}" />
+        <link rel="stylesheet" href="{{ url_for('static', filename='js/datatable/css/dataTables.bootstrap.min.css') }}" />
         <link rel="stylesheet" href="{{ url_for('static', filename='css/font-awesome/css/font-awesome.css') }}" />
         <link rel="stylesheet" href="{{ url_for('static', filename='css/chart.css') }}" />
         <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
@@ -31,6 +32,7 @@
         <!--[if lt IE 8]>
             <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
         <![endif]-->
+    {% block flask %}
         {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}
                 {% for category, message in messages %}
@@ -48,6 +50,7 @@
                 {% endfor %}
             {% endif %}
         {% endwith %}
+    {% endblock %}
 
 
         {% block header %}
@@ -168,6 +171,8 @@
         <script src="{{ url_for('static', filename='js/dx.chartjs.js') }}"></script>
         <script src="{{ url_for('static', filename='js/select2.min.js') }}"></script>
         <script src="{{ url_for('static', filename='js/tinymce.min.js') }}"></script>
+        <script src="{{ url_for('static', filename='js/datatable/js/jquery.dataTables.min.js') }}"></script>
+        <script src="{{ url_for('static', filename='js/datatable/js/dataTables.bootstrap.min.js') }}"></script>
         <script src="{{ url_for('static', filename='js/jquery.aCollapTable.min.js') }}"></script>
         <script type="text/javascript" src="{{ url_for('static', filename='js/plugins.js') }}"></script>
         <script type="text/javascript" src="{{ url_for('static', filename='js/main.js') }}"></script>

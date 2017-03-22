@@ -78,91 +78,47 @@ input, select{
 		}
 	}
 }
+@import url('https://fonts.googleapis.com/css?family=Cinzel');
 #loginPage{
 	color: #fff;
 	.form_wrp{
-		padding: 0 25em;
+		.logo{
+			text-align: center;
+			font-family: 'Cinzel', serif;
+			color: #000;
+		    font-size: 31px;
+		    margin-top: 3em;
+		    margin-bottom: 20px;
+		    font-weight: 600;
+		}
 		.d_form{
-			width: 100%;
+			width: 30%;
 			margin-top: 8em;
 			background-color: #fff;
-			box-shadow: 0 4px 8px rgba(0,0,0,.28);
-			.info-sec{
-				background-color: #003970;
-				min-height: 10em;
-				padding: 20px;
-				.title{
-					font-size: 28px;
-    				margin-top: 80px;
-    				text-align: center;
-    				padding-bottom: 3px;
-				}
-				.caption{
-					text-align: center;
-					font-size: 15px;
-				}
-				.list{
-					margin: 35px 0 75px 0;
-					ul{
-						margin: 0;
-						padding: 0;
-						li{
-							display: block;
-							padding-bottom: 12px;
-							i{
-								display: inline-block;
-								padding-right: 5px;
-							}
-						}
-					}
-				}
+			height: auto;
+			margin: auto;
+			color: #000;
+			padding: 50px 20px;
+			-webkit-box-shadow: 0 1px 1px rgba(0, 0, 0, .15), -1px 0 0 rgba(0, 0, 0, .03), 1px 0 0 rgba(0, 0, 0, .03), 0 1px 0 rgba(0, 0, 0, .12);
+    		-moz-box-shadow: 0 1px 1px rgba(0, 0, 0, .15), -1px 0 0 rgba(0, 0, 0, .03), 1px 0 0 rgba(0, 0, 0, .03), 0 1px 0 rgba(0, 0, 0, .12);
+    		box-shadow: 0 1px 1px rgba(0, 0, 0, .15), -1px 0 0 rgba(0, 0, 0, .03), 1px 0 0 rgba(0, 0, 0, .03), 0 1px 0 rgba(0, 0, 0, .12);
+			label{
+				display: block;
+				font-size: 14px;
 			}
-			.form-sec{
-				background-color: #fff;
-				min-height: 10em;
-				padding: 8em 3em;
-				color: #333;
-				.formWrap{
-					width: 100%;
-					height: 20px;
-					border: 1px solid @borderColor;
-					height: 40px;
-    				margin-bottom: 20px;
-					.icon{
-						width: 10%;
-						height: 100%;
-						float: left;
-						text-align: center;
-					    font-size: 18px;
-					    line-height: 40px;
-					    color: @borderColor;
-					}
-					input{
-						width: 90%;
-						height: 100%;
-						float: right;
-						padding: 0 10px;
-						border: none;
-						border-radius: 3px;
-						outline: none;
-					}
-				}
-				.submit{
-					background-color: #003970;
-				    color: #fff;
-				    padding: 9px 40px;
-				    border: none;
-				    float: right;
-				    box-shadow: 0 1px 8px rgba(0,0,0,.28);
-				    transition: all .5s cubic-bezier(.08,1.08,.58,1.11);
-				    transform: scale(1);
-				    cursor: pointer;
-				    float: right;
-				    &:hover{
-				    	box-shadow: 0 6px 12px rgba(0,0,0,.31);
-    					transform: scale(1.03);
-				    }
-				}
+			input{
+				width: 100%;
+				height: 40px;
+				border: 1px solid #ddd;
+				padding: 0 10px;
+				margin-bottom: 30px;
+				border-radius: 2px;
+			}
+			button{
+				width: 100%;
+			    height: 45px;
+			    font-size: 16px;
+			    border-radius: 2px;
 			}
 		}
 		.account{
@@ -1906,4 +1862,9 @@ input.select2-search__field{
 }
 .infoWrap{
 	margin-top: 50px;
+}
+div.dataTables_wrapper div.dataTables_filter input, div.dataTables_wrapper div.dataTables_length select{
+	border-radius: 0;
+    box-shadow: none;
+    outline: none;
 }
