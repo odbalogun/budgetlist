@@ -1,5 +1,5 @@
 from flask import Blueprint, jsonify, abort, make_response, request
-from budgetlist.models import db, User, Project, Task, SubBudgets, Department
+from budgetlist.models import db, User, Project, Task, SubBudgets, Department, Audit
 
 api = Blueprint('api', __name__)
 
@@ -94,6 +94,10 @@ def create_project():
     db.session.add(project)
     db.session.commit()
 
+    audit = Audit(request.json['owner_id'], "Activity was created", 1, 'Project', project.id)
+    db.session.add(audit)
+    db.session.commit()
+
     return jsonify({'status': 'success', 'project': project.serialize}), 201
 
 
@@ -144,6 +148,9 @@ def create_tasks():
     else:
         task = Task(request.json['title'], request.json['budget'], request.json['project_id'], request.json['owner_id'])
     db.session.add(task)
+    db.session.commit()
+    audit = Audit(request.json['owner_id'], "Task was created", 2, 'Task', task.id)
+    db.session.add(audit)
     db.session.commit()
 
     return jsonify({'status': 'success', 'task': task.serialize}), 201

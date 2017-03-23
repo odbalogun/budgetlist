@@ -438,11 +438,20 @@ class SubBudgets(db.Model):
     @property
     def amount_allocated(self):
         amount = 0
-        print(len(self.child_budgets))
+        for p in self.projects:
+            amount = amount + p.amount_spent
+
         for sub in self.child_budgets:
-            print(sub.name)
-            for project in sub.projects:
-                amount = amount + project.amount_spent
+            for sub_project in sub.projects:
+                amount = amount + sub_project.amount_spent
+
+            for grand in sub.child_budgets:
+                for grand_project in grand.projects:
+                    amount = amount + grand_project.amount_spent
+
+                for great in grand.child_budgets:
+                    for great_project in great.projects:
+                        amount = amount + great_project.amount_spent
         return amount
 
     @property
