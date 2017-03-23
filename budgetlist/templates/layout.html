@@ -20,12 +20,18 @@
         <link rel="stylesheet" href="{{ url_for('static', filename='css/select2.css') }}" />
         <link rel="stylesheet" href="{{ url_for('static', filename='css/font/font.css') }}" />
         <link rel="stylesheet" href="{{ url_for('static', filename='css/general.css') }}" />
-
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/jquery-ui.css') }}" />
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/morris.css') }}" />
         <script type="text/javascript" src="{{ url_for('static', filename='js/jquery-2.0.3.min.js') }}"></script>
         <!-- for dates in js -->
         <script type="text/javascript" src="{{ url_for('static', filename='js/moment.js') }}"></script>
         <script type="text/javascript" src="{{ url_for('static', filename='js/knockout.js') }}"></script>
-
+        
+        <style type="text/css" media="print">
+            .dontprint{ 
+                display: none;
+            }
+        </style>
         
     </head>
     <body {% block loginImage %}{% endblock %}>
@@ -54,7 +60,7 @@
 
 
         {% block header %}
-            <header>
+            <header class="dontprint">
                 {% block firstLayer %}
                 <div class="firstLayer clearfix">
                     <ul class="left">
@@ -173,11 +179,19 @@
         <script src="{{ url_for('static', filename='js/tinymce.min.js') }}"></script>
         <script src="{{ url_for('static', filename='js/datatable/js/jquery.dataTables.min.js') }}"></script>
         <script src="{{ url_for('static', filename='js/datatable/js/dataTables.bootstrap.min.js') }}"></script>
+        <script src="{{ url_for('static', filename='js/jquery-ui.js') }}"></script>
         <script src="{{ url_for('static', filename='js/jquery.aCollapTable.min.js') }}"></script>
+        <script src="{{ url_for('static', filename='js/jspdf.debug.js') }}"></script>
         <script type="text/javascript" src="{{ url_for('static', filename='js/plugins.js') }}"></script>
         <script type="text/javascript" src="{{ url_for('static', filename='js/main.js') }}"></script>
+        <script src="{{ url_for('static', filename='js/transition.js') }}"></script>
+        <script src="{{ url_for('static', filename='js/collapse.js') }}"></script>
+        <script src="{{ url_for('static', filename='js/raphael-2.0.2.min.js') }}"></script>
+        <script src="{{ url_for('static', filename='js/morris.js') }}"></script>
 
+        {% block extraJs %}
 
+        {% endblock %}
 
         <!-- Google Analytics: change UA-XXXXX-X to be your site's ID. -->
         <script>

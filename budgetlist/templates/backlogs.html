@@ -195,22 +195,18 @@
 </div>
 
 <!-- Add Sub Task -->
-<div class="generalModal modal fade editTask subTask" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel">
+<div class="generalModal modal fade subTask" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel">
   <div class="modal-dialog modal-lg" role="document">
-    <div class="modal-content">
-        <div class="title clearfix">
-            <span class="pull-left"> Add Subtask</span>
-            <span data-dismiss="modal" aria-label="Close" class="pull-right"><i class="fa fa-times" aria-hidden="true"></i></span>
-        </div>
-        <form method="post" id="addSubTaskForm" action="{{ request.path }}">
+    <div class="modal-content clearfix">
+        <form method="post" id="addSubTaskForm" class="clearfix" action="{{ request.path }}">
             {{ subform.csrf_token }}
             <div class="titleSection">
                 <div class="cancel clearfix">
-                    <span class="title">Add new sub task</span>
+                    <span class="title">Add Subtask</span>
                     <i data-dismiss="modal" class="fa fa-times" aria-hidden="true"></i>
                 </div>
                 {{ subform.title(class_='title', placeholder='Enter Title') }}
-
+               
             </div>
             <div class="stateSection clearfix">
                 <div class="col-md-12">
@@ -242,13 +238,13 @@
                     <div class="col-md-6">
                         <div class="planingForms">
                             <div class="title">Start Date</div>
-                            {{ subform.start_date(class_="datetimepicker plan") }}
+                            {{ subform.start_date(class_="datepicker plan") }}
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="planingForms">
                             <div class="title">End Date</div>
-                            {{ subform.end_date(class_="datetimepicker plan") }}
+                            {{ subform.end_date(class_="datepicker plan") }}
                         </div>
                     </div>
                     <div class="col-md-12">

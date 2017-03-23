@@ -54,3 +54,31 @@ $(document).ready(function() {
 $(document).ready(function() {
     $('.dataTable').DataTable();
 } );
+
+
+var doc = new jsPDF();
+var specialElementHandlers = {
+    '#editor': function (element, renderer) {
+        return true;
+    }
+};
+
+$('.printPDF').click(function () {
+    doc.fromHTML($('#mainPage').html(), 15, 15, {
+        'width': 170,
+            'elementHandlers': specialElementHandlers
+    });
+    doc.save('budgetHistory.pdf');
+});
+
+$('.printMe').click(function(){
+     window.print();
+});
+
+$( function() {
+    $( ".datepicker" ).datepicker({
+      changeMonth: true,
+      changeYear: true,
+      dateFormat: "dd/mm/yy"
+    });
+  } );
