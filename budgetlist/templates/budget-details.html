@@ -1,0 +1,151 @@
+{% extends "layout.html" %}
+
+{% block secondLayer %}
+<div class="secondLayer dontprint">
+    <div class="wrapper">
+        <ul>
+            <li>
+                <a class="{% if request.path == '/dashboard'%} active {% endif %}" href="{{ url_for('.budget_overview')}}">Overview</a>
+            </li>
+            <li>
+                <a class="{% if request.path == '/manage-budget'%} active {% endif %}" href="{{ url_for('.manage_budget')}}">Budgets</a>
+            </li>
+            <li>
+                <a class="{% if request.path == '/budget-details'%} active {% endif %}" href="{{ url_for('.budget_details')}}">Budget Details</a>
+            </li>
+        </ul>
+    </div>
+</div>
+{% endblock %}
+
+{% block body %}
+
+<div class="backlogs">
+    <div class="wrapper clearfix">
+        <div class="filterWrap clearfix mt-30 dontprint">
+            <div class="col-md-6">
+                <button type="button" class="btn btn-info btn-sm p-btn printPDF"><i class="fa fa-file-pdf-o" aria-hidden="true"></i> Download PDF</button>
+                <button type="button" class="btn btn-primary btn-sm p-btn printMe"><i class="fa fa-print" aria-hidden="true"></i> Print</button>
+            </div>
+            <div class="col-md-2">
+                <div class="filter">
+                    <label for="">Start Date</label>
+                    <input type="text" class="datepicker">
+                </div>
+            </div>
+            <div class="col-md-2">
+                <div class="filter">
+                    <label for="">End Date</label>
+                    <input type="text" class="datepicker">
+                </div>
+            </div>
+            <div class="col-md-2">
+                <div class="filter">
+                    <label for="">Filter By</label>
+                    <select>
+                        <option value="">--Select One--</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="mainPage" id="mainPage">
+            <div id="editor"></div>
+            <table class="table table-bordered table-hover">
+                <thead>
+                    <tr class="success">
+                        <th>Budget Type</th>
+                        <th>Period</th>
+                        <th>Date Created</th>
+                        <th>Allocation</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Opex</td>
+                        <td>22nd Jan - 30th Feb</td>
+                        <td>22/01/2017</td>
+                        <td>₦3,000,000</td>
+                    </tr>
+                    <tr>
+                        <td colspan="5">
+                            <table class="table table-bordered ">
+                                <thead>
+                                    <tr class="info">
+                                        <th>Budget Type</th>
+                                        <th>Period</th>
+                                        <th>Date Created</th>
+                                        <th>Allocation</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>Opex</td>
+                                        <td>22nd Jan - 30th Feb</td>
+                                        <td>22/01/2017</td>
+                                        <td>₦3,000,000</td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="4">
+                                            <table class="table table-bordered ">
+                                                <thead>
+                                                    <tr class="warning" >
+                                                        <th>Sub Budget Type</th>
+                                                        <th>Allocation</th>
+                                                        <th>Parent Budget</th>
+                                                        <th>Created By</th>
+                                                        <th>Date Created</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr>
+                                                        <td>Build an Office</td>
+                                                        <td>₦20,000</td>
+                                                        <td>Opex</td>
+                                                        <td>Odunlami</td>
+                                                        <td>22/01/2017</td>
+                                                        
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="5">
+                            <table class="table table-bordered ">
+                                <thead>
+                                    <tr class="info" >
+                                        <th>Sub Budget Type</th>
+                                        <th>Allocation</th>
+                                        <th>Parent Budget</th>
+                                        <th>Created By</th>
+                                        <th>Date Created</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>Build an Office</td>
+                                        <td>₦20,000</td>
+                                        <td>Opex</td>
+                                        <td>Odunlami</td>
+                                        <td>22/01/2017</td>
+                                        
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </td>
+                    </tr>
+                
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+
+</script>
+{% endblock %}

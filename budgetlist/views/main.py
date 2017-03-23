@@ -537,6 +537,11 @@ def manage_budget():
 
     return render_template('manage_budget.html', budget=budget, form=form, editform=editform)
 
+@main.route('/budget-details', methods=['GET', 'POST'])
+def budget_details():
+    
+    return render_template('budget-details.html')
+
 @main.route('/dashboard', methods=['GET', 'POST'])
 def budget_overview():
     # get budget

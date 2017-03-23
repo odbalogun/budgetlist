@@ -10,6 +10,9 @@
             <li>
                 <a class="{% if request.path == '/manage-budget'%} active {% endif %}" href="{{ url_for('.manage_budget')}}">Budgets</a>
             </li>
+            <li>
+                <a class="{% if request.path == '/budget-details'%} active {% endif %}" href="{{ url_for('.budget_details')}}">Budget Details</a>
+            </li>
         </ul>
     </div>
 </div>
