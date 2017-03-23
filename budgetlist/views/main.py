@@ -4,7 +4,7 @@ from budgetlist.models import db, User, Project, Task, Company, Period, Departme
 from functools import wraps
 from budgetlist import lm
 from budgetlist.forms import LoginForm, CompanyForm, PeriodForm, DepartmentForm, UserForm, BudgetForm, ProjectForm, \
-    TaskForm, SubTaskForm, EditUserForm, UpdateTaskForm, SubBudgetForm, EditSubBudgetForm
+    TaskForm, SubTaskForm, EditUserForm, UpdateTaskForm, SubBudgetForm, EditSubBudgetForm, ChangePasswordForm
 from budgetlist.helpers import list_budget_types, list_priority, list_audit_types
 from datetime import date
 
@@ -215,8 +215,14 @@ def logout():
 
 @main.route('/change-password', methods=['GET', 'POST'])
 def change_password():
+    form = ChangePasswordForm()
 
-    return render_template('change_password.html')
+    if form.validate_on_submit():
+        current_user.set_password(form.password.data)
+        db.session.add(current_user)
+        db.session.commit()
+        flash('Your password has been updated', 'success')
+    return render_template('change_password.html', form=form)
 
 # user management
 @main.route('/users', methods=['GET'])
