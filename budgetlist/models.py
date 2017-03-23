@@ -102,7 +102,7 @@ class Project(db.Model):
     title = Column(String(100))
     description = Column(Text)
     budget_limit = Column(Integer)
-    budget_id = Column(Integer)
+    budget_id = Column(Integer, ForeignKey('sub_budgets.id'))
     start_date = Column(Date)
     end_date = Column(Date)
     priority = Column(Integer, default=0)
@@ -114,6 +114,7 @@ class Project(db.Model):
     owner = relationship("User", uselist=False, back_populates="projects")
     main_tasks = relationship("Task", foreign_keys="Task.project_id", primaryjoin="and_(Project.id==Task.project_id, Task.parent_task == None)")
     tasks = relationship("Task", back_populates="project")
+    budget = relationship("SubBudgets", uselist=False, back_populates="projects")
 
     def __repr__(self):
         return self.title
@@ -146,16 +147,22 @@ class Project(db.Model):
         }
 
     @property
-    def completion(self):
-        if len(self.tasks) > 0:
-            percent = 0
-            for task in self.tasks:
-                percent += task.percent
+    def is_completed(self):
+        if self.status == 2:
+            return True
+        return False
 
-            return int(percent / len(self.tasks))
+    @property
+    def completion(self):
+        if self.status == 2:
+            return 100
         else:
-            if self.status == 2:
-                return 100
+            if len(self.tasks) > 0:
+                percent = 0
+                for task in self.tasks:
+                    percent += task.percent
+
+                return int(percent / len(self.tasks))
             else:
                 return 0
 
@@ -230,15 +237,15 @@ class Task(db.Model):
 
     @property
     def amount_performed(self):
-        if self.history:
-            price = 0
-            for his in self.history:
-                if his.amount_spent:
-                    price = price + his.amount_spent
-                else:
-                    price = price + 0
-            return price
-        return 0
+        #if self.history:
+        #    price = 0
+        #    for his in self.history:
+        #        if his.amount_spent:
+        #            price = price + his.amount_spent
+        #        else:
+        #            price = price + 0
+        #    return price
+        return self.budget
 
     @property
     def statusText(self):
@@ -288,7 +295,6 @@ class TaskHistory(db.Model):
     task_id = Column(Integer, ForeignKey('tasks.id'))
     owner_id = Column(Integer, ForeignKey('users.id'))
     date_created = Column(DateTime, default=func.now())
-    amount_spent = Column(Integer)
 
     owner = relationship("User", uselist=False)
     task = relationship("Task", uselist=False, back_populates="history")
@@ -424,13 +430,20 @@ class SubBudgets(db.Model):
     creator = relationship("User", uselist=False)
     budget = relationship("Budget", uselist=False)
     child_budgets = relationship("SubBudgets", primaryjoin="SubBudgets.id == SubBudgets.parent_budget")
+    projects = relationship("Project")
 
     def __repr__(self):
         return self.name
 
     @property
     def amount_allocated(self):
-        return random.randint(200000, 5000000)
+        amount = 0
+        print(len(self.child_budgets))
+        for sub in self.child_budgets:
+            print(sub.name)
+            for project in sub.projects:
+                amount = amount + project.amount_spent
+        return amount
 
     @property
     def get_allocation(self):
@@ -491,6 +504,9 @@ class Audit(db.Model):
     department = relationship("Department", foreign_keys="Audit.item_id", primaryjoin="and_(Department.id==Audit.item_id,"
                                                                                 " Audit.action_model == 'Department')", uselist=False)
 
+    period = relationship("Period", foreign_keys="Audit.item_id", primaryjoin="and_(Period.id==Audit.item_id,"
+                                                                                " Audit.action_model == 'Period')", uselist=False)
+
     owner = relationship("User", uselist=False)
 
     def __init__(self, user_id, desc, action_type, action_model, item_id):
@@ -514,6 +530,8 @@ class Audit(db.Model):
             return self.sub_budget
         elif self.action_model == 'Department':
             return self.department
+        elif self.action_model == 'Period':
+            return self.period
 
     @property
     def category(self):

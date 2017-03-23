@@ -46,10 +46,6 @@
                 </div>
 
                 <div class="col-md-12">
-                    <label for="">Amount Spent</label>
-                    {{ form.amount_spent() }}
-                </div>
-                <div class="col-md-12">
                     <label for="">Note</label>
                     <textarea name="note" id="" cols="30" rows="10"></textarea>
                 </div>
@@ -155,7 +151,9 @@
                                 {{ task.task.statusText }}
                             </td>
                             <td>
-                                <a class="update" href="#" data-bind="click: function(){ getTask({{ task.task.id }}); }">Update</a>
+                                {% if task.task.project.status != 2 %}
+                                    <a class="update" href="#" data-bind="click: function(){ getTask({{ task.task.id }}); }">Update</a>
+                                {% endif %}
                             </td>
                             <td>
                                 <a class="details" href="#" data-bind="click: function(){ getDetails({{ task.task.id }}); }">View details</a>
@@ -196,16 +194,18 @@
                             </td>
                             <td class="progressBar">
                                 <div class="progress">
-                                    <div class="progressBar" role="progressbar" aria-valuenow="70" aria-valuemin="0" aria-valuemax="{{ task.task.percent }}">
-                                      <span class="sr-only">{{ task.task.percent }}% Complete</span>
-                                    </div>
+                                  <div class="progress-bar" role="progressbar" aria-valuenow="{{ task.task.percent }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ task.task.percent }}%;">
+                                    {{ task.task.percent }}%
+                                  </div>
                                 </div>
                             </td>
                             <td>
                                 {{ task.task.statusText }}
                             </td>
                             <td>
-                                <a class="update" href="#" data-bind="click: function(){ getTask({{ task.task.id }}); }">Update</a>
+                                {% if task.task.project.status != 2 %}
+                                    <a class="update" href="#" data-bind="click: function(){ getTask({{ task.task.id }}); }">Update</a>
+                                {% endif %}
                             </td>
                             <td>
                                 <a class="details" href="#" data-bind="click: function(){ getDetails({{ task.task.id }}); }">View details</a>
@@ -245,16 +245,18 @@
                             </td>
                             <td class="progressBar">
                                 <div class="progress">
-                                    <div class="progressBar" role="progressbar" aria-valuenow="70" aria-valuemin="0" aria-valuemax="{{ task.task.percent }}">
-                                      <span class="sr-only">{{ task.task.percent }}% Complete</span>
-                                    </div>
+                                  <div class="progress-bar" role="progressbar" aria-valuenow="{{ task.task.percent }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ task.task.percent }}%;">
+                                    {{ task.task.percent }}%
+                                  </div>
                                 </div>
                             </td>
                             <td>
                                 {{ task.task.statusText }}
                             </td>
                             <td>
-                                <a class="update" href="#" data-bind="click: function(){ getTask({{ task.task.id }}); }">Update</a>
+                                {% if task.task.project.status != 2 %}
+                                    <a class="update" href="#" data-bind="click: function(){ getTask({{ task.task.id }}); }">Update</a>
+                                {% endif %}
                             </td>
                             <td>
                                 <a class="details" href="#" data-bind="click: function(){ getDetails({{ task.task.id }}); }">View details</a>

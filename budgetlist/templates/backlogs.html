@@ -6,9 +6,11 @@
         <div class="tableSection">
             <div class="titleWrap clearfix">
                 <div class="title pull-left">{{ project.title }}</div>
-                <a href="#" class="addUser pull-right" data-toggle="modal" data-target=".addTask">Add Task</a>
-                <a href="#" class="closeActivity pull-right" data-toggle="modal" data-target=".closeActivity"> <i class="fa fa-warning" aria-hidden="true"></i> Close Activity</a>
-                
+                {% if project.status == 2 %}
+                {% else %}
+                    <a href="#" class="addUser pull-right" data-toggle="modal" data-target=".addTask">Add Task</a>
+                    <a href="#" class="closeActivity pull-right" data-toggle="modal" data-target=".closeActivity"> <i class="fa fa-warning" aria-hidden="true"></i> Close Activity</a>
+                {% endif %}
             </div><br><br>
             <table class="taskTable collaptable">
                 <thead>
@@ -30,7 +32,7 @@
                             <td>{{ task.start_date }}</td>
                             <td>{{ task.deadline }}</td>
                             <td class="actionBtn">
-                                <button class="task" data-toggle="modal" data-target=".subTask"><i class="fa fa-plus" aria-hidden="true"></i> Add Subtask</button>
+                                <button class="task" {% if project.status == 2 %} disabled {% endif %} data-toggle="modal" data-id="{{ task.id }}" data-target=".subTask"><i class="fa fa-plus" aria-hidden="true"></i> Add Subtask</button>
                             </td>
                         </tr>
                         {% if task.child_tasks %}
@@ -42,7 +44,7 @@
                                     <td>{{ pikin.start_date }}</td>
                                     <td>{{ pikin.deadline }}</td>
                                     <td class="actionBtn">
-                                        <button class="task" data-toggle="modal" data-target=".subTask"><i class="fa fa-plus" aria-hidden="true"></i> Add Subtask</button>
+                                        <button class="task" {% if project.status == 2 %} disabled {% endif %} data-id="{{ pikin.id }}" data-toggle="modal" data-target=".subTask"><i class="fa fa-plus" aria-hidden="true"></i> Add Subtask</button>
                                     </td>
                                 </tr>
                                 {% if pikin.child_tasks %}
@@ -54,7 +56,7 @@
                                             <td>{{ grand.start_date }}</td>
                                             <td>{{ grand.deadline }}</td>
                                             <td class="actionBtn">
-                                                <button class="task" data-toggle="modal" data-target=".subTask"><i class="fa fa-plus" aria-hidden="true"></i> Add Subtask</button>
+                                                <button class="task" {% if project.status == 2 %} disabled {% endif %} data-id="{{ grand.id }}" data-toggle="modal" data-target=".subTask"><i class="fa fa-plus" aria-hidden="true"></i> Add Subtask</button>
                                             </td>
                                         </tr>
                                         {% if grand.child_tasks %}
@@ -123,6 +125,78 @@
   </div>
 </div>
 
+
+<!-- Add new sub task -->
+<div class="generalModal modal fade subTask" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" data-backdrop="static" data-keyboard="false">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+    <form method="post" id="addSubTaskForm" action="{{ request.path }}">
+        {{ subform.csrf_token }}
+        <input type="hidden" name="parent_id" id="parent_id" value="" />
+        <div class="titleSection">
+            <div class="cancel clearfix">
+                <span class="title">Add new Subtask</span>
+                <i data-dismiss="modal" class="fa fa-times" aria-hidden="true"></i>
+            </div>
+            {{ subform.title(class_='title', placeholder='Enter Title') }}
+
+        </div>
+        <div class="stateSection clearfix">
+            <div class="col-md-12">
+                <div class="form-wrap clearfix">
+                    <div class="col-md-1 p-0">
+                        <div class="title">Assign</div>
+                    </div>
+                    <div class="col-md-11">
+                        <!-- {{ form.allocation(class_='stateForm', placeholder="Amount(₦)")}} -->
+                        {{ subform.assigned_to(class_='assignTo multiselect', multiple="multiple", prompt='Assigned to') }}
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="descritpionSection clearfix">
+            <div class="col-md-12 p-0">
+                <div class="col-md-6">
+                    <div class="planingForms">
+                        <div class="title">Allocation</div>
+                        {{ subform.allocation(class_='stateForm plan', placeholder="Amount(₦)")}}
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="planingForms">
+                        <div class="title">Priority</div>
+                        {{ subform.priority(class_='plan') }}
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="planingForms">
+                        <div class="title">Start Date</div>
+                        {{ subform.start_date(class_="datetimepicker plan") }}
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="planingForms">
+                        <div class="title">End Date</div>
+                        {{ subform.end_date(class_="datetimepicker plan") }}
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <div class="planingForms">
+                        <div class="title">Description</div>
+                        {{ subform.description() }}
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+        <div class="clearfix">
+        <button type="submit" onclick="subform_submit()" data-dismiss="modal" class="save"><i class="fa fa-floppy-o" aria-hidden="true"></i> Save & close</button>
+        </div>
+    </form>
+    </div>
+  </div>
+</div>
 
 <!-- Add Task -->
 <div class="generalModal modal fade addTask" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" data-backdrop="static" data-keyboard="false">
@@ -194,6 +268,7 @@
   </div>
 </div>
 
+<<<<<<< HEAD
 <!-- Add Sub Task -->
 <div class="generalModal modal fade subTask" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel">
   <div class="modal-dialog modal-lg" role="document">
@@ -267,7 +342,7 @@
 <script type="text/javascript">
 $(document).on("click", ".task", function(){
     var parent_id = $(this).data('id');
-
+    console.log($(this).data('id'));
     $("#parent_id").val(parent_id);
 });
 
@@ -279,16 +354,16 @@ function subform_submit() {
     document.getElementById("addSubTaskForm").submit();
    }
 
-function close_project(){
+function close_activity(){
     // redirect to url
-
+    window.location.replace("{{ url_for('.close_project', id=project.id) }}");
 }
 
-$('#closebg, #closebg2').click(function(){
-    $('#closebg').modal('hide');
-    $('body').removeClass('modal-open');
-    $('.modal-backdrop').remove();
-})
+    $('#closebg, #closebg2').click(function(){
+        $('#closebg').modal('hide');
+        $('body').removeClass('modal-open');
+        $('.modal-backdrop').remove();
+    })
 
 </script>
 {% endblock %}

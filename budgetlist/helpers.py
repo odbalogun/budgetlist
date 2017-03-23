@@ -12,7 +12,7 @@ list_budget_types = ['Operational Ex.', 'Capital Ex.', 'Consultancy', 'Moveables
 list_priority = ['Normal', 'Medium', 'High']
 
 list_audit_types = ['User Access', 'Activity Creation', 'Task Creation', 'Task Update', 'Budget Creation',
-                    'User Management', 'Period Management', 'Department Management']
+                    'User Management', 'Period Management', 'Department Management', 'Project Management']
 list_audit_models = ['User', 'Project', 'Task', 'Budget', 'Sub Budget', 'Period']
 
 def dump_datetime(value):
