@@ -67,8 +67,8 @@
                         <li>
                             <a class="projectName" href="{{ url_for('.home')}}">Budgeting App</a>
                         </li>
+                        {% if not current_user.is_basic %}
                         <li class="
-
                             {% if
                                 request.path == '/manage-budget' or
                                 request.path == '/dashboard'
@@ -90,6 +90,7 @@
                             %} selected {% endif %}">
                             <a href="{{ url_for('.overview')}}">Activities</a>
                         </li>
+                        {% endif %}
 
                         <li class="
                             {% if 
@@ -99,6 +100,7 @@
                             <a href="{{ url_for('.assigned_tasks')}}">Assigned</a>
                         </li>
 
+                        {% if not current_user.is_basic %}
                         <li class="
                             {% if 
                                 request.path == '/audit'
@@ -106,10 +108,11 @@
                             %} selected {% endif %}">
                             <a href="{{ url_for('.audit')}}">Audit Log</a>
                         </li>
-                       
+                       {% endif %}
                     </ul>
 
                     <ul class="right">
+                        {% if current_user.is_admin %}
                         <li class="
                             {% if 
                                 request.path == '/settings' or
@@ -120,7 +123,8 @@
 
                             %} selected {% endif %}">
                             <a href="{{ url_for('.settings')}}">Settings</a>
-                        </li> 
+                        </li>
+                        {% endif %}
                         <li class="withDropDown">
                             <strong>{{ current_user.full_name }} &nbsp; <i class="fa fa-caret-down" aria-hidden="true"></i></strong>
 

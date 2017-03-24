@@ -132,14 +132,15 @@
 {% block extraJs %}
 
 <script>
-     var data = [
-          { y: 'Capital Ex.', a: 2000000, b: 100000 },
-          { y: 'Consultancy', a: 1500000, b: 75 },
-          { y: 'Movables', a: 1000000, b: 50 },
-          { y: 'Operational Ex.', a: 2000000, b: 60 }
-          
-            ],
-        config = {
+     var data = [];
+     var datapie = []
+
+    {% for bud in budget.main_subs %}
+        data.push({ y: "{{ bud.name }}", a: {{ bud.get_allocation }}, b: {{ bud.amount_allocated }} });
+        datapie.push({ label: "{{ bud.name }}", value: {{ bud.get_allocation }} });
+    {% endfor %}
+
+     var  config = {
             data: data,
             xkey: 'y',
             ykeys: ['a', 'b'],
@@ -157,12 +158,7 @@
             Morris.Bar(config);
             Morris.Donut({
                 element: 'pie-chart',
-                data: [
-                  { label: "Capital Ex.", value: 200000 },
-                  { label: "Consultancy", value: 1500000 },
-                  { label: "Movables", value: 1000000 },
-                  { label: "Operational Ex.", value: 2000000 }
-                ]
+                data: datapie
         });
 </script>
 

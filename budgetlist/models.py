@@ -103,6 +103,7 @@ class Project(db.Model):
     description = Column(Text)
     budget_limit = Column(Integer)
     budget_id = Column(Integer, ForeignKey('sub_budgets.id'))
+    period_id = Column(Integer, ForeignKey('periods.id'))
     start_date = Column(Date)
     end_date = Column(Date)
     priority = Column(Integer, default=0)
@@ -115,6 +116,7 @@ class Project(db.Model):
     main_tasks = relationship("Task", foreign_keys="Task.project_id", primaryjoin="and_(Project.id==Task.project_id, Task.parent_task == None)")
     tasks = relationship("Task", back_populates="project")
     budget = relationship("SubBudgets", uselist=False, back_populates="projects")
+    period = relationship("Period", uselist=False)
 
     def __repr__(self):
         return self.title
@@ -402,7 +404,10 @@ class Budget(db.Model):
 
     @property
     def amount_allocated(self):
-        return random.randint(200000, 5000000)
+        amount = 0
+        for sub in self.main_subs:
+            amount = amount + sub.amount_allocated
+        return amount
 
     @property
     def total_budget(self):
@@ -438,20 +443,36 @@ class SubBudgets(db.Model):
     @property
     def amount_allocated(self):
         amount = 0
+        # get for projects
         for p in self.projects:
-            amount = amount + p.amount_spent
+            amount += p.amount_spent
 
-        for sub in self.child_budgets:
-            for sub_project in sub.projects:
-                amount = amount + sub_project.amount_spent
+        # check for child budgets
+        if self.child_budgets:
+            for s1 in self.child_budgets:
+                for p1 in s1.projects:
+                    amount += p1.amount_spent
 
-            for grand in sub.child_budgets:
-                for grand_project in grand.projects:
-                    amount = amount + grand_project.amount_spent
+                # check for more children
+                if s1.child_budgets:
+                    for s2 in s1.child_budgets:
+                        # get projects
+                        for p2 in s2.projects:
+                            amount += p2.amount_spent
 
-                for great in grand.child_budgets:
-                    for great_project in great.projects:
-                        amount = amount + great_project.amount_spent
+                        # check for children
+                        if s2.child_budgets:
+                            for s3 in s2.child_budgets:
+                                # get projects
+                                for p3 in s3.projects:
+                                    amount += p3.amount_spent
+
+                                # check for children
+                                if s3.child_budgets:
+                                    for s4 in s3.child_budgets:
+                                        for p4 in s4.projects:
+                                            amount += p4.amount_spent
+
         return amount
 
     @property

@@ -68,13 +68,14 @@ def overview():
     completed_count = db.session.query(Project.id).filter(Project.status == 2).count()
     # todo add deficit conditions
     deficit_count = db.session.query(Project.id).filter(Project.amount_remaining < 0).count()
-    overdue_count = len(overdue)
+    overdue_count = len(Project.query.filter(date.today() > Project.end_date, Project.status != 2).order_by(Project.date_created.desc()).all())
 
     return render_template('overview.html', projects=projects, overdue=overdue, ongoing=ongoing, form=form, completed_count=completed_count,
                            deficit_count=deficit_count, overdue_count=overdue_count, budgets=budget_types)
 
 @main.route('/all-activities', methods=['GET'])
 def all_projects():
+    period = Period.query.filter(Period.status==0).first()
     projects = Project.query.order_by(Project.date_created.desc()).all()
 
     return render_template('allProjects.html', projects=projects)
@@ -136,12 +137,14 @@ def close_project(id):
 
 @main.route('/completed-activities', methods=['GET'])
 def completed_projects():
+    period = Period.query.filter(Period.status==0).first()
     projects = Project.query.filter(Project.status==2).order_by(Project.date_created.desc()).all()
 
     return render_template('completedProjects.html', projects=projects)
 
 @main.route('/overdue-activities', methods=['GET'])
 def overdue_projects():
+    period = Period.query.filter(Period.status==0).first()
     projects = Project.query.filter(date.today() > Project.end_date, Project.status != 2).order_by(Project.date_created.desc()).all()
 
     return render_template('overdueProjects.html', projects=projects)
@@ -539,8 +542,11 @@ def manage_budget():
 
 @main.route('/budget-details', methods=['GET', 'POST'])
 def budget_details():
-    
-    return render_template('budget-details.html')
+    # get budget
+    period = Period.query.filter(Period.status==0).first()
+    budget = period.budget
+
+    return render_template('budget-details.html', budget=budget)
 
 @main.route('/dashboard', methods=['GET', 'POST'])
 def budget_overview():
@@ -555,7 +561,9 @@ def audit():
     audits = Audit.query.all()
     return render_template('audit.html', audits=audits)
 
+
 # error handling
 @main.app_errorhandler(404)
 def error_not_found(e):
     return render_template('error.html'), 404
+
