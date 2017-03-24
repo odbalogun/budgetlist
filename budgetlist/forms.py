@@ -102,3 +102,8 @@ class UpdateTaskForm(FlaskForm):
     note = TextAreaField('Description')
     status = SelectField('Status', choices=[(list_task_status.index(a), a) for a in list_task_status], coerce=int)
     task_id = HiddenField('Task ID')
+
+class ChangePasswordForm(FlaskForm):
+    password = PasswordField('New Password', validators=[DataRequired()])
+    confirm_password = PasswordField('Confirm Password', [DataRequired(),
+                                                          EqualTo('password', 'The passwords do not match')])
