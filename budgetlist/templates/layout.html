@@ -194,6 +194,14 @@
         <script src="{{ url_for('static', filename='js/raphael-2.0.2.min.js') }}"></script>
         <script src="{{ url_for('static', filename='js/morris.js') }}"></script>
 
+        <style>
+            .select2-container--default .select2-search--inline .select2-search__field{
+                    padding: 0!important;
+                    height: 1px!important;
+                    opacity: 0!important;
+            }
+        </style>
+
         {% block extraJs %}
 
         {% endblock %}

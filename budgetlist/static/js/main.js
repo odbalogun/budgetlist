@@ -43,7 +43,7 @@ $('.collaptable').aCollapTable({
     plusButton: "<button title='Show Subtask' class='viewBtn'><i class='fa fa-chevron-right' aria-hidden='true'></i></button>", 
 
     // The collapse button ("minus" -)
-    minusButton: "<button title='Hide Subtask' class='viewBtn'><i class='fa fa-chevron-up' aria-hidden='true'></i></button>" 
+    minusButton: "<button title='Hide Subtask' class='viewBtn'><i class='fa fa-chevron-down' aria-hidden='true'></i></button>" 
   
 });
 
@@ -79,6 +79,7 @@ $( function() {
     $( ".datepicker" ).datepicker({
       changeMonth: true,
       changeYear: true,
-      dateFormat: "dd/mm/yy"
+      dateFormat: "dd/mm/yy",
+      altFormat: 'yy-mm-dd'
     });
   } );

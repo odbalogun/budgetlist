@@ -403,6 +403,7 @@ header{
 			margin-top: 20px;
 			.title{
 				font-size: 17px;
+				font-weight: 600;
 			}
 			.addUser{
 				// margin-right: 20px;
@@ -429,6 +430,19 @@ header{
 				&:hover{
 					background-color: rgba(255, 0, 0, 1);
 					border-color: rgba(255, 0, 0, 1);
+				}
+			}
+			.openActivity{
+				display: block;
+				margin-right: 10px;
+				color: #fff;
+				text-decoration: none;
+				border: 1px solid #449d44;
+				padding: 5px 10px;
+				background-color: #449d44;
+				&:hover{
+					background-color: #449d44;
+					border-color: #449d44;
 				}
 			}
 		}
@@ -2029,4 +2043,30 @@ div#ui-datepicker-div{
 			}
 		}
 	}
+}
+
+.withBar:before{
+	content: " ";
+	border: 2px solid rgb(255, 123, 0);
+	margin-right: 3px;
+}
+.withInnerBar:before{
+	content: " ";
+	border: 2px solid rgb(119, 59, 147);
+	margin-right: 3px;
+}
+.withInnerinnerBar:before{
+	content: " ";
+	border: 2px solid #1EBBEE;
+	margin-right: 3px;
+}
+
+.innerShift{
+	padding: 10px 20px!important;
+}
+.innerInnerShift{
+	padding: 10px 25px!important;
+}
+.innerInnerInnerShift{
+	padding: 10px 30px!important;
 }
