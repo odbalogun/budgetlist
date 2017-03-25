@@ -2085,3 +2085,48 @@ div#ui-datepicker-div{
 	color: rgb(255, 123, 0);
 	margin-right: 3px;
 }
+
+.budgetTable{
+	.w-70{
+		width: 70%;
+	}
+	.bold{
+		font-weight: bold;
+	}
+	.text-big{
+		font-size: 17px;
+	}
+	.text-medium{
+		font-size: 14px;
+	}
+	.text-small{
+		font-size: 13px;
+	}
+	tr{
+		&.parent{
+			td:first-child{
+				// color: #0078D7;
+			}
+		}
+		&.child{
+			td:first-child{
+				padding-left: 30px;
+			}
+		}
+		&.grandChild{
+			td:first-child{
+				padding-left: 45px;
+			}
+		}
+		&.greatGrandChild{
+			td:first-child{
+				padding-left: 55px;
+			}
+		}
+		&.Total{
+			td:first-child{
+				color: #d43f3a;
+			}
+		}
+	}
+}

@@ -23,20 +23,16 @@
 <div class="backlogs">
     <div class="wrapper clearfix">
         <div class="filterWrap clearfix mt-30 dontprint">
-            <div class="col-md-6">
+            <div class="col-md-8">
                 <button type="button" class="btn btn-info btn-sm p-btn printPDF"><i class="fa fa-file-pdf-o" aria-hidden="true"></i> Download PDF</button>
                 <button type="button" class="btn btn-primary btn-sm p-btn printMe"><i class="fa fa-print" aria-hidden="true"></i> Print</button>
             </div>
             <div class="col-md-2">
                 <div class="filter">
-                    <label for="">Start Date</label>
-                    <input type="text" class="datepicker">
-                </div>
-            </div>
-            <div class="col-md-2">
-                <div class="filter">
-                    <label for="">End Date</label>
-                    <input type="text" class="datepicker">
+                    <label for="">Budget Type</label>
+                    <select>
+                        <option value="">--Select One--</option>
+                    </select>
                 </div>
             </div>
             <div class="col-md-2">
@@ -52,92 +48,104 @@
             <div id="editor"></div><br><br>
 
 
-            <!-- <table class="table table-bordered table-hover">
+            <table class="table table-bordered budgetTable">
                 <thead>
                     <tr class="">
-                        <th>Name</th>
+                        <th class="w-70">Name</th>
                         <th>Allocation</th>
                         <th>Performance</th>
                     </tr>
                 </thead>
+
                 <tbody>
-                    <tr>
-                        <td>Opex</td>
-                        <td>₦3,700,000</td>
-                        <td>₦3,000,000</td>
+                    <tr class="parent">
+                        <td class="bold text-big">Opex</td>
+                        <td class="bold text-medium">₦3,700,000</td>
+                        <td class="bold text-medium">₦3,000,000</td>
                     </tr>
-                    <tr>
-                        <td colspan="5">
-                            <table class="table table-bordered ">
-                                <thead>
-                                    <tr class="">
-                                        <th>Name</th>
-                                        <th>Allocation</th>
-                                        <th>Performance</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td>Opex</td>
-                                        <td>₦3,700,000</td>
-                                        <td>₦3,000,000</td>
-                                    </tr>
-                                    <tr>
-                                        <td colspan="4">
-                                            <table class="table table-bordered ">
-                                                <thead>
-                                                    <tr class="" >
-                                                        <th>Name</th>
-                                                        <th>Allocation</th>
-                                                        <th>Performance</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    <tr>
-                                                        <td>Opex</td>
-                                                        <td>₦3,700,000</td>
-                                                        <td>₦3,000,000</td>
-                                                        
-                                                    </tr>
-                                                </tbody>
-                                            </table>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </td>
+                    <tr class="child">
+                        <td class=" text-medium">Building</td>
+                        <td class="text-small">₦3,700,000</td>
+                        <td class="text-small">₦3,000,000</td>
                     </tr>
-                    <tr>
-                        <td colspan="5">
-                            <table class="table table-bordered ">
-                                <thead>
-                                    <tr class="" >
-                                        <th>Sub Budget Type</th>
-                                        <th>Allocation</th>
-                                        <th>Parent Budget</th>
-                                        <th>Created By</th>
-                                        <th>Date Created</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td>Build an Office</td>
-                                        <td>₦20,000</td>
-                                        <td>Opex</td>
-                                        <td>Odunlami</td>
-                                        <td>22/01/2017</td>
-                                        
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </td>
+                    <tr class="grandChild">
+                        <td class="text-medium">Walls</td>
+                        <td class="text-small">₦3,700,000</td>
+                        <td class="text-small">₦3,000,000</td>
                     </tr>
-                
+                    <tr class="child">
+                        <td class=" text-medium">Buying Cars</td>
+                        <td class="text-small">₦3,700,000</td>
+                        <td class="text-small">₦3,000,000</td>
+                    </tr>
+                    <tr class="child">
+                        <td class=" text-medium">Travling</td>
+                        <td class="text-small">₦3,700,000</td>
+                        <td class="text-small">₦3,000,000</td>
+                    </tr>
+                    <tr class="grandChild">
+                        <td class="text-medium">Visa</td>
+                        <td class="text-small">₦3,700,000</td>
+                        <td class="text-small">₦3,000,000</td>
+                    </tr>
+                    <tr class="greatGrandChild">
+                        <td class="text-medium">Tours</td>
+                        <td class="text-small">₦3,700,000</td>
+                        <td class="text-small">₦3,000,000</td>
+                    </tr>
+                    <tr class="Total">
+                        <td class="bold text-big">Total</td>
+                        <td class="bold text-medium">₦3,700,000</td>
+                        <td class="bold text-medium">₦3,000,000</td>
+                    </tr>
                 </tbody>
-            </table> -->
+
+                <tbody>
+                    <tr class="parent">
+                        <td class="bold text-big">Capex</td>
+                        <td class="bold text-medium">₦3,700,000</td>
+                        <td class="bold text-medium">₦3,000,000</td>
+                    </tr>
+                    <tr class="child">
+                        <td class="text-medium">Building</td>
+                        <td class="text-small">₦3,700,000</td>
+                        <td class="text-small">₦3,000,000</td>
+                    </tr>
+                    <tr class="grandChild">
+                        <td class="text-medium">Walls</td>
+                        <td class="text-small">₦3,700,000</td>
+                        <td class="text-small">₦3,000,000</td>
+                    </tr>
+                    <tr class="child">
+                        <td class="text-medium">Buying Cars</td>
+                        <td class="text-small">₦3,700,000</td>
+                        <td class="text-small">₦3,000,000</td>
+                    </tr>
+                    <tr class="child">
+                        <td class="text-medium">Travling</td>
+                        <td class="text-small">₦3,700,000</td>
+                        <td class="text-small">₦3,000,000</td>
+                    </tr>
+                    <tr class="grandChild">
+                        <td class="text-medium">Visa</td>
+                        <td class="text-small">₦3,700,000</td>
+                        <td class="text-small">₦3,000,000</td>
+                    </tr>
+                    <tr class="greatGrandChild">
+                        <td class="text-medium">Tours</td>
+                        <td class="text-small">₦3,700,000</td>
+                        <td class="text-small">₦3,000,000</td>
+                    </tr>
+                    <tr class="Total">
+                        <td class="bold text-big">Total</td>
+                        <td class="bold text-medium">₦3,700,000</td>
+                        <td class="bold text-medium">₦3,000,000</td>
+                    </tr>
+                </tbody>
+            </table>
 
             
-            <div class="hv-container">
+            <!-- <div class="hv-container">
                 <div class="hv-wrapper">
 
                     <div class="hv-item">
@@ -168,7 +176,7 @@
                         <div class="hv-item-children">
 
                             <div class="hv-item-child">
-                                <!-- Key component -->
+
                                 <div class="hv-item">
 
                                     <div class="hv-item-parent">
@@ -300,7 +308,7 @@
                     </div>
 
                 </div>
-            </div><br><br><br><br>
+            </div><br><br><br><br> -->
 
 
         </div>
