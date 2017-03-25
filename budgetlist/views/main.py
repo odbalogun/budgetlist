@@ -53,7 +53,7 @@ def overview():
     b = Budget.query.filter(Budget.period_id==period.id).first()
 
     # get budgets
-    budget_types = SubBudgets.query.filter(SubBudgets.budget_id==b.id, SubBudgets.parent_budget==None).all()
+    # budget_types = SubBudgets.query.filter(SubBudgets.budget_id==b.id, SubBudgets.parent_budget==None).all()
 
     form = ProjectForm()
     form.owner_id.data = current_user.id
@@ -62,16 +62,16 @@ def overview():
     # get all projects
     projects = Project.query.filter(Project.period_id==period.id).order_by(Project.date_created.desc()).limit(5).all()
     overdue = Project.query.filter(date.today() > Project.end_date, Project.status != 2, Project.period_id==period.id).order_by(Project.date_created.desc()).limit(3).all()
-    ongoing = Project.query.filter(Project.status == 1, Project.period_id==period.id).order_by(Project.date_created.desc()).limit(3).all()
+    ongoing = Project.query.filter(Project.status != 2, Project.period_id==period.id).order_by(Project.date_created.desc()).limit(3).all()
 
     # get count of projects
     completed_count = db.session.query(Project.id).filter(Project.status == 2, Project.period_id==period.id).count()
     # todo add deficit conditions
-    deficit_count = db.session.query(Project.id).filter(Project.amount_remaining < 0).count()
-    overdue_count = len(Project.query.filter(date.today() > Project.end_date, Project.status != 2, Project.period_id==period.id).order_by(Project.date_created.desc()).all())
+    ongoing_count = len(Project.query.filter(Project.status != 2, Project.period_id==period.id).all())
+    overdue_count = len(Project.query.filter(date.today() > Project.end_date, Project.status != 2, Project.period_id==period.id).all())
 
     return render_template('overview.html', projects=projects, overdue=overdue, ongoing=ongoing, form=form, completed_count=completed_count,
-                           deficit_count=deficit_count, overdue_count=overdue_count, budgets=budget_types)
+                           ongoing_count=ongoing_count, overdue_count=overdue_count, budgets=b.main_subs)
 
 @main.route('/all-activities', methods=['GET'])
 def all_projects():
@@ -531,7 +531,8 @@ def manage_budget():
     elif editform.validate_on_submit() and editform.sub_budget_id.data != '0' and editform.sub_budget_id.data != "":
         # edit budget
         sub = SubBudgets.query.get(editform.sub_budget_id.data)
-        sub.name = editform.name.data
+        if editform.name.data:
+            sub.name = editform.name.data
         sub.allocation = editform.allocation.data
         db.session.add(sub)
         db.session.commit()

@@ -1,5 +1,5 @@
 from flask import Blueprint, jsonify, abort, make_response, request
-from budgetlist.models import db, User, Project, Task, SubBudgets, Department, Audit
+from budgetlist.models import db, User, Project, Task, SubBudgets, Department, Audit, Period
 
 api = Blueprint('api', __name__)
 
@@ -81,16 +81,14 @@ def login():
 
 @api.route('/v1.0/projects/create', methods=['POST'])
 def create_project():
-    dict = request.json
-    for key in dict:
-        print 'form key '+dict[key]
     if not request.json or 'title' not in request.json or 'description' not in request.json or 'budget_limit' not in \
             request.json or 'start_date' not in request.json or 'end_date' not in request.json or \
             'owner_id' not in request.json:
         abort(400)
 
+    period = Period.query.filter(Period.status==0).first()
     project = Project(request.json['title'], request.json['description'], request.json['budget_limit'], request.json['budget_id'],
-                      request.json['start_date'], request.json['end_date'], request.json['priority'], request.json['owner_id'])
+                      request.json['start_date'], request.json['end_date'], request.json['priority'], request.json['owner_id'], period.id)
     db.session.add(project)
     db.session.commit()
 
