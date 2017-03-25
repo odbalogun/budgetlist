@@ -213,11 +213,11 @@
             <div class="content clearfix">
                 <div class="col-md-12">
                     <label for="">Title</label>
-                    {{ subform.title(class_='title', placeholder='Enter Title') }}
+                    {{ subform.title(class_='title', placeholder='Enter Title', required="required") }}
                 </div>  
                 <div class="col-md-12">
                     <label for="">Assign</label>
-                    {{ subform.assigned_to(class_='assignTo multiselect', multiple="multiple", prompt='Assigned to') }}
+                    {{ subform.assigned_to(class_='assignTo multiselect', multiple="multiple", prompt='Assigned to', required="required") }}
                 </div>
                 <div class="col-md-6">
                     <label for="">Allocation</label>
@@ -231,13 +231,13 @@
 
                 <div class="col-md-6">
                     <label for="">Start Date</label>
-                    {{ subform.start_date(class_="datetimepicker plan") }}
+                    {{ subform.start_date(class_="datetimepicker plan datepicker") }}
                 </div>
 
                 <div class="col-md-6">
                     <label for="">End Date</label>
                     
-                    {{ subform.end_date(class_="datetimepicker plan") }}
+                    {{ subform.end_date(class_="datetimepicker plan datepicker") }}
                 </div>
 
                 <div class="col-md-12">
@@ -246,7 +246,7 @@
                 </div>
             </div>
             <div class="buttonWrap">
-                <button type="submit" onclick="subform_submit()" data-dismiss="modal" class="save"><i class="fa fa-floppy-o" aria-hidden="true"></i> Save & close</button>
+                <button type="submit" onclick="subform_submit()" class="save"><i class="fa fa-floppy-o" aria-hidden="true"></i> Save & close</button>
         </div>
             </div>
         </form>
@@ -356,13 +356,13 @@
 
                 <div class="col-md-6">
                     <label for="">Start Date</label>
-                    {{ form.start_date(class_="datetimepicker plan") }}
+                    {{ form.start_date(class_="datetimepicker plan datepicker") }}
                 </div>
 
                 <div class="col-md-6">
                     <label for="">End Date</label>
                     
-                    {{ form.end_date(class_="datetimepicker plan") }}
+                    {{ form.end_date(class_="datetimepicker plan datepicker") }}
                 </div>
 
                 <div class="col-md-12">
@@ -388,12 +388,27 @@ $(document).on("click", ".task", function(){
     $("#parent_id").val(parent_id);
 });
 
+// function validateForm() {
+//   var isValid = true;
+//   $('input').each(function() {
+//     if ($(this).val() === '' )
+//         isValid = false;
+//   });
+//   return isValid;
+// }
+
 function form_submit() {
     document.getElementById("addTaskForm").submit();
    }
 
+// function form_submit(){
+//     $("#addSubTaskForm").submit()
+// }
+
 function subform_submit() {
-    document.getElementById("addSubTaskForm").submit();
+
+    $("#addSubTaskForm").submit()
+    
    }
 
 function close_activity(){

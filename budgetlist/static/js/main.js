@@ -26,10 +26,6 @@ $(document).ready( function() {
 
 $("input.money").maskMoney();
 
-$("form").submit(function(){
-    $('input.money').maskMoney('unmasked')[0];
-    console.log($('#input-value-id').val(value))
-  });
 
 $('.collaptable').aCollapTable({ 
 
