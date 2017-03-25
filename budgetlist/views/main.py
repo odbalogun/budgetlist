@@ -60,15 +60,15 @@ def overview():
     form.priority.choices = [(list_priority.index(a), a) for a in list_priority]
 
     # get all projects
-    projects = Project.query.order_by(Project.date_created.desc()).limit(5).all()
-    overdue = Project.query.filter(date.today() > Project.end_date, Project.status != 2).order_by(Project.date_created.desc()).limit(3).all()
-    ongoing = Project.query.filter(Project.status == 1).order_by(Project.date_created.desc()).limit(3).all()
+    projects = Project.query.filter(Project.period_id==period.id).order_by(Project.date_created.desc()).limit(5).all()
+    overdue = Project.query.filter(date.today() > Project.end_date, Project.status != 2, Project.period_id==period.id).order_by(Project.date_created.desc()).limit(3).all()
+    ongoing = Project.query.filter(Project.status == 1, Project.period_id==period.id).order_by(Project.date_created.desc()).limit(3).all()
 
     # get count of projects
-    completed_count = db.session.query(Project.id).filter(Project.status == 2).count()
+    completed_count = db.session.query(Project.id).filter(Project.status == 2, Project.period_id==period.id).count()
     # todo add deficit conditions
     deficit_count = db.session.query(Project.id).filter(Project.amount_remaining < 0).count()
-    overdue_count = len(Project.query.filter(date.today() > Project.end_date, Project.status != 2).order_by(Project.date_created.desc()).all())
+    overdue_count = len(Project.query.filter(date.today() > Project.end_date, Project.status != 2, Project.period_id==period.id).order_by(Project.date_created.desc()).all())
 
     return render_template('overview.html', projects=projects, overdue=overdue, ongoing=ongoing, form=form, completed_count=completed_count,
                            deficit_count=deficit_count, overdue_count=overdue_count, budgets=budget_types)
@@ -76,7 +76,7 @@ def overview():
 @main.route('/all-activities', methods=['GET'])
 def all_projects():
     period = Period.query.filter(Period.status==0).first()
-    projects = Project.query.order_by(Project.date_created.desc()).all()
+    projects = Project.query.filter(Project.period_id==period.id).order_by(Project.date_created.desc()).all()
 
     return render_template('allProjects.html', projects=projects)
 
@@ -138,14 +138,14 @@ def close_project(id):
 @main.route('/completed-activities', methods=['GET'])
 def completed_projects():
     period = Period.query.filter(Period.status==0).first()
-    projects = Project.query.filter(Project.status==2).order_by(Project.date_created.desc()).all()
+    projects = Project.query.filter(Project.status==2, Project.period_id==period.id).order_by(Project.date_created.desc()).all()
 
     return render_template('completedProjects.html', projects=projects)
 
 @main.route('/overdue-activities', methods=['GET'])
 def overdue_projects():
     period = Period.query.filter(Period.status==0).first()
-    projects = Project.query.filter(date.today() > Project.end_date, Project.status != 2).order_by(Project.date_created.desc()).all()
+    projects = Project.query.filter(date.today() > Project.end_date, Project.status != 2, Project.period_id==period.id).order_by(Project.date_created.desc()).all()
 
     return render_template('overdueProjects.html', projects=projects)
 
