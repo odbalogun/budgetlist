@@ -70,7 +70,7 @@
             {% if sub.child_budgets %}
                 {% for kid in sub.child_budgets %}
                     <tr data-id="{{ kid.id }}" data-parent="{{ kid.parent_budget }}">
-                        <td class="withBar">{{ kid.name }}</td>
+                        <td class="withInnerBar innerShift">{{ kid.name }}</td>
                         <td>₦{{ kid.get_allocation }}</td>
                         <td>₦{{ kid.amount_allocated }}</td>
                         <td>{{ kid.date_created }}</td>
@@ -82,7 +82,7 @@
                     {% if kid.child_budgets %}
                         {% for grand in kid.child_budgets %}
                             <tr data-id="{{ grand.id }}" data-parent="{{ grand.parent_budget }}">
-                                <td class="withBar">{{ grand.name }}</td>
+                                <td class="withInnerinnerBar innerInnerShift">{{ grand.name }}</td>
                                 <td>₦{{ grand.get_allocation }}</td>
                                 <td>₦{{ grand.amount_allocated }}</td>
                                 <td>{{ grand.date_created }}</td>
@@ -94,7 +94,7 @@
                             {% if grand.child_budgets %}
                                 {% for great in grand.child_budgets %}
                                     <tr data-id="{{ great.id }}" data-parent="{{ great.parent_budget }}">
-                                        <td class="withBar">{{ great.name }}</td>
+                                        <td class="withInnerinnerBar innerInnerInnerShift">{{ great.name }}</td>
                                         <td>₦{{ great.get_allocation }}</td>
                                         <td>₦{{ great.amount_allocated }}</td>
                                         <td>{{ great.date_created }}</td>
@@ -161,7 +161,7 @@
             <div class="content clearfix">
                 <div class="col-md-6">
                     <label for="">Name</label>
-                    {{ form.name(class_='title', **{'data-bind': 'value: name, enable: isEditable'}) }}
+                    {{ form.name(class_='title', id='editName', **{'data-bind': 'value: name, enable: isEditable'}) }}
             
                 </div>  
                 <div class="col-md-6">
@@ -213,7 +213,7 @@ function ShowEditBudgetModel(){
         self.sub_budget_id(budget.id);
         console.log(budget.editable);
 
-        if(budget.editable == "False"){
+        if(budget.editable == false){
             self.isEditable(false);
         }else{
             self.isEditable(true);
@@ -284,6 +284,7 @@ function form_submit() {
     document.getElementById("addBudgetForm").submit();
    }
 function editform_submit() {
+    document.getElementById("editName").removeAttribute("disabled");
     document.getElementById("editBudgetForm").submit();
    }
 </script>

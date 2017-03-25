@@ -106,7 +106,7 @@
                                 </li>
                                 {% endfor %}
                             </ul>
-                            <a class="pull-right" href="{{ url_for('.ongoing')}}">View All <i class="fa fa-long-arrow-right" aria-hidden="true"></i></a>
+                            <a class="pull-right" href="{{ url_for('.all_projects')}}">View All <i class="fa fa-long-arrow-right" aria-hidden="true"></i></a>
                             {% else %}
                                 <p>There are no ongoing activities to display</p>
                             {% endif %}
@@ -136,10 +136,10 @@
                         </div>
                     </div>
                     <div class="analytics pupple">
-                        <div class="icon"><i class="fa fa-money" aria-hidden="true"></i></i></div>
+                        <div class="icon"><i class="fa fa-folder-open-o" aria-hidden="true"></i></i></div>
                         <div class="data">
-                            <span>{{ deficit_count }}</span>
-                            <span>Deficit activities</span>
+                            <span data-bind="text: ongoing"></span>
+                            <span>Ongoing activities</span>
                         </div>
                     </div>
                 </div>
@@ -152,107 +152,12 @@
     </div>
 </div>
 
-<!-- Add new project -->
-<!-- <div class="generalModal modal fade addProject" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" data-backdrop="static" data-keyboard="false">
-  <div class="modal-dialog modal-lg" role="document">
-    <div class="modal-content" id="addProject">
-    <form>
-        {{ form.csrf_token }}
-        {{ form.owner_id(**{'data-bind': 'value: owner_id'}) }}
-        <div class="titleSection">
-            <div class="cancel clearfix">
-                <span class="title">Add new activity</span>
-                <i data-dismiss="modal" class="fa fa-times" aria-hidden="true"></i>
-            </div>
-            <input type="text" name="title" class="title" data-bind="value: title" placeholder="Enter Title">
-            <div class="assign clearfix">
-                <button data-dismiss="modal" data-bind="click: addProject" class="save" type="button"><i class="fa fa-floppy-o" aria-hidden="true"></i> Save & close</button>
-            </div>
-        </div>
-        <div class="stateSection clearfix">
-            <div class="col-md-5">
-                <div class="form-wrap clearfix">
-                    <div class="col-md-2 p-0">
-                        <div class="title">Budget</div>
-                    </div>
-                    <div class="col-md-10" id="budgetList">
-                        <select name="budget" id="budget" data-bind="value: budget_id">
-                            <option disabled selected>Select a Budget</option>
-                            {% for b in budgets %}
-                                <option value="{{ b.id }}" class="optionGroup">&nbsp;&nbsp;{{ b.name }}</option>
-                                {% for b1 in b.child_budgets %}
-                                    {% if b1.child_budgets %}
-                                       <option value="{{ b1.id }}" class="optionGroup optionChild">{{ b1.name }}</option>
-                                    {% else %}
-                                        <option value="{{ b1.id }}" class="optionChild">{{ b1.name }}</option>
-                                    {% endif %}
-                                    {% for b2 in b1.child_budgets %}
-                                        {% if b2.child_budgets %}
-                                           <option value="{{ b2.id }}" class="optionGroup optionGrandChild">{{ b2.name }}</option>
-                                        {% else %}
-                                            <option value="{{ b2.id }}" class="optionGrandChild">{{ b2.name }}</option>
-                                        {% endif %}
-                                        {% for b3 in b2.child_budgets %}
-                                            <option value="{{ b3.id }}" class="optionGreatChild">{{ b3.name }}</option>
-                                        {% endfor %}
-                                    {% endfor %}
-                                {% endfor %}
-                            {% endfor %}
-                        </select>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-7">
-                <div class="form-wrap clearfix">
-                    <div class="col-md-1 p-0">
-                        <div class="title">Allocation</div>
-                    </div>
-                    <div class="col-md-11">
-                        <input type="text" class="stateForm" data-bind="value: allocation" name="budget_limit" placeholder="Amount(₦)">
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="descritpionSection clearfix">
-            <div class="col-md-8">
-                <div class="title">Description</div>
-                <textarea data-bind="value: description" id="richtxt" name="description"></textarea>
-            </div>
-            <div class="col-md-4">
-                <div class="title">Planning</div>
-                <div class="planingForms">
-                   <div class="title">Priority</div>
-                   {{ form.priority(class_='plan', **{'data-bind': 'value: priority'}) }}
-                </div>
-                <div class="planingForms">
-                   <div class="title">Start Date</div>
-                   <input data-bind="value: start_date" name="start_date" type="date">
-                </div>
-                <div class="planingForms">
-                   <div class="title">End Date</div>
-                   <input data-bind="value: end_date" name="end_date" type="date">
-                </div>
-            </div>
-        </div>
-    </form>
-    </div>
-  </div>
-</div> -->
-
-
-
-
-
-
-
-
-
 <div class="modal fade editTask addProject" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel">
   <div class="modal-dialog modal-lg" role="document">
-    <div class="modal-content">
+    <div class="modal-content" id="addProject">
         <div class="title clearfix">
             <span class="pull-left">Add New Activity</span>
-            <span data-dismiss="modal" aria-label="Close" class="pull-right"><i class="fa fa-times" aria-hidden="true"></i></span>
+            <span data-dismiss="modal" id="close" aria-label="Close" class="pull-right"><i class="fa fa-times" aria-hidden="true"></i></span>
         </div>
         <form>
             {{ form.csrf_token }}
@@ -263,25 +168,33 @@
                     <input type="text" name="title" data-bind="value: title" placeholder="Enter Title" required>
                 </div>  
                 <div class="col-md-6">
+                    <style type="text/css">
+                        .optionGroup{
+                            font-weight: bold;
+                        }
+                        .optionChild{
+                            padding-left: 15px;
+                        }
+                    </style>
                     <label for="">Budget</label>
                     <select name="budget" id="budget" data-bind="value: budget_id" required>
                         <option disabled selected>Select a Budget</option>
                         {% for b in budgets %}
-                            <option value="{{ b.id }}" class="optionGroup">&nbsp;&nbsp;{{ b.name }}</option>
+                            <option value="{{ b.id }}" class="optionGroup">{{ b.name }}</option>
                             {% for b1 in b.child_budgets %}
                                 {% if b1.child_budgets %}
-                                   <option value="{{ b1.id }}" class="optionGroup optionChild">{{ b1.name }}</option>
+                                   <option value="{{ b1.id }}" class="optionGroup optionChild">&nbsp;&nbsp;&nbsp;&nbsp;{{ b1.name }}</option>
                                 {% else %}
-                                    <option value="{{ b1.id }}" class="optionChild">{{ b1.name }}</option>
+                                    <option value="{{ b1.id }}" class="optionChild">&nbsp;&nbsp;&nbsp;&nbsp;{{ b1.name }}</option>
                                 {% endif %}
                                 {% for b2 in b1.child_budgets %}
                                     {% if b2.child_budgets %}
-                                       <option value="{{ b2.id }}" class="optionGroup optionGrandChild">{{ b2.name }}</option>
+                                       <option value="{{ b2.id }}" class="optionGroup optionGrandChild">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{ b2.name }}</option>
                                     {% else %}
-                                        <option value="{{ b2.id }}" class="optionGrandChild">{{ b2.name }}</option>
+                                        <option value="{{ b2.id }}" class="optionGrandChild">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{ b2.name }}</option>
                                     {% endif %}
                                     {% for b3 in b2.child_budgets %}
-                                        <option value="{{ b3.id }}" class="optionGreatChild">{{ b3.name }}</option>
+                                        <option value="{{ b3.id }}" class="optionGreatChild">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{ b3.name }}</option>
                                     {% endfor %}
                                 {% endfor %}
                             {% endfor %}
@@ -290,7 +203,7 @@
                 </div>
                 <div class="col-md-6">
                     <label for="">Allocation</label>
-                    <input type="text" class="money" data-bind="value: allocation" name="budget_limit" placeholder="Allocation" required>
+                    <input type="text" class="money" data-bind="value: allocation" id="budget_limit" name="budget_limit" placeholder="Allocation" required>
                 </div>
 
                 <div class="col-md-12">
@@ -309,8 +222,8 @@
                 </div>
 
                 <div class="col-md-12">
-                    <label for="">Note</label>
-                    <textarea data-bind="value: description" id="richtxt" name="description" required></textarea>
+                    <label for="">Description</label>
+                    <textarea data-bind="value: description" id="richtxt" name="description"></textarea>
                 </div>
             </div>
             <div class="buttonWrap">
@@ -412,14 +325,20 @@ function CreateProjectModel() {
     self.end_date = ko.observable();
 
     self.addProject = function() {
+        $('.addProject').modal('hide');
+
         tinymce.triggerSave();
         var txt = tinymce.get('richtxt').getContent();
+
+        // for allocation
+        var money = $('#budget_limit').maskMoney('unmasked')[0];
 
         console.log('title: ' + self.title());
         console.log('owner_id: ' + self.owner_id());
         console.log('priority: ' + self.priority());
         console.log('budget_id: ' + self.budget_id());
         console.log('allocation: ' + self.allocation());
+        console.log('money: ' + money);
         console.log('description: ' + self.description());
         console.log('start_date: ' + self.start_date());
         console.log('end_date: ' + self.end_date());
@@ -429,11 +348,12 @@ function CreateProjectModel() {
             owner_id: self.owner_id(),
             priority: self.priority(),
             budget_id: self.budget_id(),
-            budget_limit: self.allocation(),
+            budget_limit: money,
             description: txt,
             start_date: self.start_date(),
             end_date: self.end_date()
         });
+        statView.update();
         self.title("");
         self.owner_id("");
         self.priority("");
@@ -444,12 +364,25 @@ function CreateProjectModel() {
         self.end_date("");
     }
 }
+
+function StatModel(){
+    var self = this;
+
+    self.ongoing = ko.observable({{ ongoing_count }});
+
+    self.update =  function(){
+        self.ongoing(self.ongoing() + 1);
+        console.log(self.ongoing);
+        console.log(self.ongoing());
+    }
+}
 var projectView = new ProjectsModel();
 var createView = new CreateProjectModel();
 var budgetsView = new BudgetsModel();
+var statView = new StatModel();
 ko.applyBindings(projectView, $('#projectGrid')[0]);
 ko.applyBindings(createView, $('#addProject')[0]);
-//ko.applyBindings(budgetsView, $('#budgetList')[0]);
+ko.applyBindings(statView, $('.analyticsWrap')[0]);
 </script>
 {% endblock %}
 

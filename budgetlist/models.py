@@ -121,7 +121,7 @@ class Project(db.Model):
     def __repr__(self):
         return self.title
 
-    def __init__(self, title, description, budget_limit, budget_id, start_date, end_date, priority, owner_id):
+    def __init__(self, title, description, budget_limit, budget_id, start_date, end_date, priority, owner_id, period_id):
         self.title = title
         self.description = description
         self.budget_limit = budget_limit
@@ -130,6 +130,7 @@ class Project(db.Model):
         self.end_date = end_date
         self.priority = priority
         self.owner_id = owner_id
+        self.period_id = period_id
 
     @property
     def serialize(self):
