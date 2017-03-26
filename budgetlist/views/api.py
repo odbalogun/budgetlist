@@ -119,6 +119,16 @@ def get_projects(limit=False):
     return jsonify(projects=[i.serialize for i in projects])
 
 
+@api.route('/v1.0/projects/ongoing', methods=['GET'])
+def get_ongoing_projects(limit=3):
+    if limit:
+        projects = Project.query.filter(Project.status != 2).order_by(Project.date_created.desc()).limit(limit).all()
+
+    if not projects:
+        abort(404)
+    return jsonify(projects=[i.serialize for i in projects])
+
+
 @api.route('/v1.0/projects/tasks/<int:projectid>', methods=['GET'])
 def get_project_tasks(projectid):
     project = Project.query.get(projectid)

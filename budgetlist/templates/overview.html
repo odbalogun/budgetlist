@@ -90,26 +90,23 @@
                     <div class="col-md-6 ">
                         <div class="rightUpdate">
                             <div class="title">Ongoing activities</div>
-                            {% if ongoing %}
-                            <ul class="list">
-                                {% for project in ongoing %}
+                            <ul class="list" data-bind="foreach: ongoing">
                                 <li>
-                                    <a href="{{ url_for('.project_detail', id=project.id)}}">
+                                    <a data-bind='attr: { "href": "/activity-detail/" + id }'>
                                         <span class="icon">
                                             <i class="fa fa-clock-o" aria-hidden="true"></i>
                                         </span> 
                                         <span>
-                                            <div class="listTitle">{{ project.title }}</div>
-                                            <div class="listTime">{{ project.end_date }} </div>
+                                            <div class="listTitle" data-bind="text: name"></div>
+                                            <div class="listTime" data-bind="text: end_date"></div>
                                         </span>
                                     </a>
                                 </li>
-                                {% endfor %}
                             </ul>
                             <a class="pull-right" href="{{ url_for('.all_projects')}}">View All <i class="fa fa-long-arrow-right" aria-hidden="true"></i></a>
-                            {% else %}
+                            <div style="display: none">
                                 <p>There are no ongoing activities to display</p>
-                            {% endif %}
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -235,13 +232,16 @@
 </div>
 
 <script type="text/javascript">
-function BudgetsModel(){
+function OngoingModel(){
     var self = this;
-    self.budgetsURI = 'http://localhost:9000/api/v1.0/budgets/children';
-    self.secondLevel = ko.observableArray();
-    self.thirdLevel = ko.observableArray();
+    self.ongoingURI = 'http://localhost:9000/api/v1.0/projects/ongoing'
+    self.ongoing = ko.observableArray();
 
-     self.ajax = function(uri, method, data){
+    {% for i in ongoing %}
+        self.ongoing.push({ id:'{{ i.id}}', name: '{{ i.title }}', end_date: '{{ i.end_date }}'});
+    {% endfor %}
+
+    self.ajax = function(uri, method, data){
         var request = {
             url: uri,
             type: method,
@@ -257,28 +257,21 @@ function BudgetsModel(){
         return $.ajax(request);
     }
 
-    self.getSecondLevel = function(){
-        // get variable
-        var e = document.getElementById("budget_1");
-        var strEditable = e.options[e.selectedIndex].data('id');
-        var strId = e.options[e.selectedIndex].value;
+    self.update = function(){
+        self.ajax(self.ongoingURI, 'GET').done(function(data){
+            self.ongoing.removeAll();
 
-        if(strEditable == 'True'){
-            var url = self.budgetsURI + '/' + strId;
-            self.ajax(url, 'GET').done(function(data){
-                  for (var i = 0; i < data.subs.length; i++) {
-                    self.secondLevel.push({
-                        id: ko.observable(data.subs[i].id),
-                        name: ko.observable(data.subs[i].name)
-                        //owner: ko.observable(data.history[i].owner)
-                    });
-                  }
-                }
-            );
-        }
+            for (var i = 0; i < data.projects.length; i++) {
+                self.ongoing.push({
+                    id: data.projects[i].id,
+                    name: data.projects[i].title,
+                    end_date: moment(data.projects[i].end_date).format('YYYY-MM-DD')
+                });
+            }
+
+        });
     }
 }
-
 function ProjectsModel(){
     var self = this;
     self.projectsURI = 'http://localhost:9000/api/v1.0/projects/create';
@@ -354,8 +347,8 @@ function CreateProjectModel() {
             end_date: self.end_date()
         });
         statView.update();
+        ongoingView.update();
         self.title("");
-        self.owner_id("");
         self.priority("");
         self.budget_id("");
         self.allocation("");
@@ -378,11 +371,12 @@ function StatModel(){
 }
 var projectView = new ProjectsModel();
 var createView = new CreateProjectModel();
-var budgetsView = new BudgetsModel();
 var statView = new StatModel();
+var ongoingView = new OngoingModel();
 ko.applyBindings(projectView, $('#projectGrid')[0]);
 ko.applyBindings(createView, $('#addProject')[0]);
 ko.applyBindings(statView, $('.analyticsWrap')[0]);
+ko.applyBindings(ongoingView, $('.rightUpdate')[0]);
 </script>
 {% endblock %}
 
