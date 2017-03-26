@@ -4,12 +4,6 @@ $(function() {
         barColor:'#2C3E50',
         trackColor: '#f2f2f2'
     });
-
-    //update instance after 5 sec
-
-    // setTimeout(function() {
-    //     $('.chart').data('easyPieChart').update(40);
-    // }, 5000);
 });
 
 $(document).ready(function(){
@@ -19,32 +13,21 @@ $(document).ready(function(){
      })
 });
 
-
 $(document).ready( function() {
     $('.alert').delay(5000).fadeOut();
 });
 
 $("input.money").maskMoney();
 
-$("form").submit(function(){
-    $('input.money').maskMoney('unmasked')[0];
-    console.log($('#input-value-id').val(value))
-  });
-
 $('.collaptable').aCollapTable({ 
-
     // the table is collapased at start
     startCollapsed: true,
-
     // the plus/minus button will be added like a column
     addColumn: true, 
-
     // The expand button ("plus" +)
     plusButton: "<button title='Show Subtask' class='viewBtn'><i class='fa fa-chevron-right' aria-hidden='true'></i></button>", 
-
     // The collapse button ("minus" -)
     minusButton: "<button title='Hide Subtask' class='viewBtn'><i class='fa fa-chevron-down' aria-hidden='true'></i></button>" 
-  
 });
 
 $(document).ready(function() {
@@ -62,7 +45,6 @@ var specialElementHandlers = {
         return true;
     }
 };
-
 $('.printPDF').click(function () {
     doc.fromHTML($('#mainPage').html(), 15, 15, {
         'width': 170,
@@ -82,4 +64,4 @@ $( function() {
       dateFormat: "dd/mm/yy",
       altFormat: 'yy-mm-dd'
     });
-  } );
+} );
