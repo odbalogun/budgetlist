@@ -117,7 +117,7 @@
         <div class="tab-content">
             <div role="tabpanel" class="tab-pane active mt-30" id="recent">
                 {% if tasks %}
-                    <table class="assignedTask">
+                    <table class="assignedTask" id="assignedTask1">
                     <tr>
                         <th>S/N</th>
                         <th>Name</th>
@@ -169,7 +169,7 @@
             </div>
             <div role="tabpanel" class="tab-pane" id="completed">
                 {% if tasks %}
-                    <table class="assignedTask">
+                    <table class="assignedTask" id="assignedTask2">
                     <tr>
                         <th>S/N</th>
                         <th>Name</th>
@@ -220,7 +220,7 @@
             <div role="tabpanel" class="tab-pane" id="all">
                 {% if tasks %}
                     
-                    <table class="assignedTask">
+                    <table class="assignedTask" id="assignedTask3">
                     <tr>
                         <th>S/N</th>
                         <th>Name</th>
@@ -368,9 +368,13 @@ function FetchTaskModel() {
 
 }
 var fetchTask = new FetchTaskModel();
+var fetchTask2 = new FetchTaskModel();
+var fetchTask3 = new FetchTaskModel();
 var showEdit = new ShowEditTaskModel();
 var showDetails = new ShowTaskDetailsModel();
-ko.applyBindings(fetchTask, $('.assignedTask')[0]);
+ko.applyBindings(fetchTask, $('#assignedTask1')[0]);
+ko.applyBindings(fetchTask2, $('#assignedTask2')[0]);
+ko.applyBindings(fetchTask3, $('#assignedTask3')[0]);
 ko.applyBindings(showEdit, $('.editTask')[0]);
 ko.applyBindings(showDetails, $('.taskDetails')[0]);
 </script>
