@@ -547,7 +547,9 @@ def budget_details():
     period = Period.query.filter(Period.status==0).first()
     budget = period.budget
 
-    return render_template('budget-details.html', budget=budget)
+    periods = Period.query.all()
+
+    return render_template('budget-details.html', budget=budget, periods=periods)
 
 @main.route('/dashboard', methods=['GET', 'POST'])
 def budget_overview():

@@ -358,6 +358,11 @@ class Period(db.Model):
     def string_date(self, value):
         return dump_datetime(value)
 
+    def is_active(self):
+        if self.status == 0:
+            return True
+        return False
+
     budget = relationship("Budget", uselist=False, back_populates="period")
 
 class Department(db.Model):
