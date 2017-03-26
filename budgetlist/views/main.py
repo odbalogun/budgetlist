@@ -105,10 +105,11 @@ def project_detail(id):
             db.session.add(audit)
             db.session.commit()
             flash('Task has been successfully created', 'success')
+            return redirect(url_for('.project_detail', id=id))
     elif subform.parent_id.data:
         if subform.validate_on_submit():
             task = Task(subform.title.data, subform.description.data, subform.allocation.data, id, current_user.id,
-                        subform.priority.data, subform.start_date.data, subform.end_date.data)
+                        subform.priority.data, subform.start_date1.data, subform.end_date1.data)
             task.parent_task = subform.parent_id.data
             db.session.add(task)
             db.session.commit()
@@ -120,6 +121,7 @@ def project_detail(id):
             db.session.add(audit)
             db.session.commit()
             flash('Task has been successfully created', 'success')
+            return redirect(url_for('.project_detail', id=id))
     return render_template('backlogs.html', project=project, form=form, subform=subform)
 
 @main.route('/close-project/<int:id>', methods=['GET', 'POST'])

@@ -30,7 +30,13 @@
                         <tr data-id="{{ task.id }}" data-parent="">
                             <td class="withBar">{{ task.title }}</td>
                             <td>₦{{ task.budget }}</td>
-                            <td class="ongoing">{{ task.statusText }}</td>
+                            {% if task.status == 2 %}
+                                <td class="completed">
+                            {% else %}
+                                <td class="ongoing">
+                            {% endif %}
+                                {{ task.statusText }}
+                            </td>
                             <td>{{ task.start_date }}</td>
                             <td>{{ task.deadline }}</td>
                             <td class="actionBtn">
@@ -42,7 +48,13 @@
                                 <tr data-id="{{ pikin.id }}" data-parent="{{ pikin.parent_task }}">
                                     <td class="withInnerBar innerShift">{{ pikin.title }}</td>
                                     <td>₦{{ pikin.budget }}</td>
-                                    <td class="ongoing">{{ pikin.statusText }}</td>
+                                    {% if pikin.status == 2 %}
+                                        <td class="completed">
+                                    {% else %}
+                                        <td class="ongoing">
+                                    {% endif %}
+                                        {{ pikin.statusText }}
+                                    </td>
                                     <td>{{ pikin.start_date }}</td>
                                     <td>{{ pikin.deadline }}</td>
                                     <td class="actionBtn">
@@ -54,7 +66,13 @@
                                         <tr data-id="{{ grand.id }}" data-parent="{{ grand.parent_task }}">
                                             <td class="withInnerinnerBar innerInnerShift">{{ grand.title }}</td>
                                             <td>₦{{ grand.budget }}</td>
-                                            <td class="ongoing">{{ grand.statusText }}</td>
+                                            {% if grand.status == 2 %}
+                                                <td class="completed">
+                                            {% else %}
+                                                <td class="ongoing">
+                                            {% endif %}
+                                                {{ grand.statusText }}
+                                            </td>
                                             <td>{{ grand.start_date }}</td>
                                             <td>{{ grand.deadline }}</td>
                                             <td class="actionBtn">
@@ -66,7 +84,13 @@
                                                 <tr data-id="{{ great.id }}" data-parent="{{ great.parent_task }}">
                                                     <td class="withInnerinnerBar innerInnerInnerShift">{{ great.title }}</td>
                                                     <td>₦{{ great.budget }}</td>
-                                                    <td class="ongoing">{{ great.statusText }}</td>
+                                                    {% if great.status == 2 %}
+                                                        <td class="completed">
+                                                    {% else %}
+                                                        <td class="ongoing">
+                                                    {% endif %}
+                                                        {{ great.statusText }}
+                                                    </td>
                                                     <td>{{ great.start_date }}</td>
                                                     <td>{{ great.deadline }}</td>
                                                     <td class="actionBtn"></td>
@@ -127,79 +151,6 @@
   </div>
 </div>
 
-
-<!-- Add new sub task -->
-<!-- <div class="generalModal modal fade subTask" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" data-backdrop="static" data-keyboard="false">
-  <div class="modal-dialog modal-lg" role="document">
-    <div class="modal-content">
-    <form method="post" id="addSubTaskForm" action="{{ request.path }}">
-        {{ subform.csrf_token }}
-        <input type="hidden" name="parent_id" id="parent_id" value="" />
-        <div class="titleSection">
-            <div class="cancel clearfix">
-                <span class="title">Add new Subtask</span>
-                <i data-dismiss="modal" class="fa fa-times" aria-hidden="true"></i>
-            </div>
-            {{ subform.title(class_='title', placeholder='Enter Title') }}
-
-        </div>
-        <div class="stateSection clearfix">
-            <div class="col-md-12">
-                <div class="form-wrap clearfix">
-                    <div class="col-md-1 p-0">
-                        <div class="title">Assign</div>
-                    </div>
-                    <div class="col-md-11">
-                        {{ subform.assigned_to(class_='assignTo multiselect', multiple="multiple", prompt='Assigned to') }}
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="descritpionSection clearfix">
-            <div class="col-md-12 p-0">
-                <div class="col-md-6">
-                    <div class="planingForms">
-                        <div class="title">Allocation</div>
-                        {{ subform.allocation(class_='stateForm plan', placeholder="Amount(₦)")}}
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="planingForms">
-                        <div class="title">Priority</div>
-                        {{ subform.priority(class_='plan') }}
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="planingForms">
-                        <div class="title">Start Date</div>
-                        {{ subform.start_date(class_="datetimepicker plan") }}
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="planingForms">
-                        <div class="title">End Date</div>
-                        {{ subform.end_date(class_="datetimepicker plan") }}
-                    </div>
-                </div>
-                <div class="col-md-12">
-                    <div class="planingForms">
-                        <div class="title">Description</div>
-                        {{ subform.description() }}
-                    </div>
-                </div>
-
-            </div>
-
-        </div>
-        <div class="clearfix">
-        <button type="submit" onclick="subform_submit()" data-dismiss="modal" class="save"><i class="fa fa-floppy-o" aria-hidden="true"></i> Save & close</button>
-        </div>
-    </form>
-    </div>
-  </div>
-</div> -->
-
-
 <div class="modal fade editTask subTask" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel">
   <div class="modal-dialog modal-lg" role="document">
     <div class="modal-content">
@@ -221,7 +172,7 @@
                 </div>
                 <div class="col-md-6">
                     <label for="">Allocation</label>
-                    {{ subform.allocation(class_='stateForm plan money', placeholder="Amount(₦)")}}
+                    {{ subform.allocation(class_='stateForm plan money', placeholder="Amount(₦)", id='sub_allocation')}}
                 </div>
 
                 <div class="col-md-6">
@@ -231,13 +182,13 @@
 
                 <div class="col-md-6">
                     <label for="">Start Date</label>
-                    {{ subform.start_date(class_="datetimepicker plan datepicker") }}
+                    {{ subform.start_date1(class_="datetimepicker plan datepicker") }}
                 </div>
 
                 <div class="col-md-6">
                     <label for="">End Date</label>
                     
-                    {{ subform.end_date(class_="datetimepicker plan datepicker") }}
+                    {{ subform.end_date1(class_="datetimepicker plan datepicker") }}
                 </div>
 
                 <div class="col-md-12">
@@ -254,76 +205,6 @@
   </div>
 </div>
 
-
-
-<!-- Add Task -->
-<!-- <div class="generalModal modal fade addTask" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" data-backdrop="static" data-keyboard="false">
-  <div class="modal-dialog modal-lg" role="document">
-    <div class="modal-content clearfix">
-    <form method="post" id="addTaskForm" action="{{ request.path }}">
-        {{ form.csrf_token }}
-        <div class="titleSection">
-            <div class="cancel clearfix">
-                <span class="title">Add new task</span>
-                <i data-dismiss="modal" class="fa fa-times" aria-hidden="true"></i>
-            </div>
-            {{ form.title(class_='title', placeholder='Enter Title') }}
-           
-        </div>
-        <div class="stateSection clearfix">
-            <div class="col-md-12">
-                <div class="form-wrap clearfix">
-                    <div class="col-md-1 p-0">
-                        <div class="title">Assign</div>
-                    </div>
-                    <div class="col-md-11">
-                        {{ form.assigned_to(class_='assignTo multiselect', multiple="multiple", prompt='Assigned to') }}
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="descritpionSection clearfix">
-            <div class="col-md-12 p-0">
-                <div class="col-md-6">
-                    <div class="planingForms">
-                        <div class="title">Allocation</div> 
-                        {{ form.allocation(class_='stateForm plan', placeholder="Amount(₦)")}}
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="planingForms">
-                        <div class="title">Priority</div> 
-                        {{ form.priority(class_='plan') }}
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="planingForms">
-                        <div class="title">Start Date</div> 
-                        {{ form.start_date(class_="datetimepicker plan") }}
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="planingForms">
-                        <div class="title">End Date</div> 
-                        {{ form.end_date(class_="datetimepicker plan") }}
-                    </div>
-                </div>
-                <div class="col-md-12">
-                    <div class="planingForms">
-                        <div class="title">Description</div>
-                        {{ form.description() }}
-                    </div>
-                </div>
-                
-            </div>
-            
-        </div>
-        {{ form.task_submit(value='True') }}
-        <button type="submit" onclick="form_submit()" data-dismiss="modal" class="save"><i class="fa fa-floppy-o" aria-hidden="true"></i> Save & close</button>
-    </form>
-    </div>
-  </div>
-</div> -->
 
 <div class="modal fade editTask addTask" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel">
   <div class="modal-dialog modal-lg" role="document">
@@ -346,7 +227,7 @@
                 </div>
                 <div class="col-md-6">
                     <label for="">Allocation</label>
-                    {{ form.allocation(class_='stateForm plan money', placeholder="Amount(₦)")}}
+                    {{ form.allocation(class_='stateForm plan money', placeholder="Amount(₦)", id='form_allocation')}}
                 </div>
 
                 <div class="col-md-6">
@@ -398,6 +279,7 @@ $(document).on("click", ".task", function(){
 // }
 
 function form_submit() {
+    $('#form_allocation').val($('#form_allocation').maskMoney('unmasked')[0]);
     document.getElementById("addTaskForm").submit();
    }
 
@@ -406,10 +288,9 @@ function form_submit() {
 // }
 
 function subform_submit() {
-
-    $("#addSubTaskForm").submit()
-    
-   }
+    $('#sub_allocation').val($('#sub_allocation').maskMoney('unmasked')[0]);
+    $("#addSubTaskForm").submit();
+}
 
 function close_activity(){
     // redirect to url
