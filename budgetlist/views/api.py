@@ -1,5 +1,5 @@
 from flask import Blueprint, jsonify, abort, make_response, request
-from budgetlist.models import db, User, Project, Task, SubBudgets, Department, Audit, Period
+from budgetlist.models import db, User, Project, Task, SubBudgets, Department, Audit, Period, SubBudgets
 
 api = Blueprint('api', __name__)
 
@@ -86,9 +86,16 @@ def create_project():
             'owner_id' not in request.json:
         abort(400)
 
+    budget = SubBudgets.query.get(request.json['budget_id'])
+    if budget.amount_remaining < request.json['budget_limit']:
+        abort(400)
+
     period = Period.query.filter(Period.status==0).first()
     project = Project(request.json['title'], request.json['description'], request.json['budget_limit'], request.json['budget_id'],
                       request.json['start_date'], request.json['end_date'], request.json['priority'], request.json['owner_id'], period.id)
+    budget.amt_allocated_project += request.json['budget_limit']
+
+    db.session.add(budget)
     db.session.add(project)
     db.session.commit()
 

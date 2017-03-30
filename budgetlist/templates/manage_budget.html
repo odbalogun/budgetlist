@@ -61,10 +61,10 @@
                 <td class="withBar">{{ sub.name }}</td>
                 <td>₦{{ sub.get_allocation }}</td>
                 <td>₦{{ sub.amount_allocated }}</td>
-                <td>{{ sub.date_created }}</td>
+                <td>{{ sub.date_created_string.date }}</td>
                 <td class="actionBtn">
                     <button class="task edit" data-bind="click: function(){ editBudget({{ sub.id }}); }"><i class="fa fa-edit" aria-hidden="true"></i> Edit</button>
-                    <button class="task" data-bind="click: function(){ addBudget({{ sub.id }}); }"><i class="fa fa-plus" aria-hidden="true"></i> Add Budget</button>
+                    <button class="task" data-bind="click: function(){ addBudget({{ sub.id }}); }"><i class="fa fa-folder-open-o" aria-hidden="true"></i> View</button>
                 </td>
             </tr>
             {% if sub.child_budgets %}
@@ -73,10 +73,15 @@
                         <td class="withInnerBar innerShift">{{ kid.name }}</td>
                         <td>₦{{ kid.get_allocation }}</td>
                         <td>₦{{ kid.amount_allocated }}</td>
-                        <td>{{ kid.date_created }}</td>
+                        <td>{{ kid.date_created_string.date }}</td>
                         <td class="actionBtn">
                             <button class="task edit" data-bind="click: function(){ editBudget({{ kid.id }}); }"><i class="fa fa-edit" aria-hidden="true"></i> Edit</button>
-                            <button class="task" data-bind="click: function(){ addBudget({{ kid.id }}); }"><i class="fa fa-plus" aria-hidden="true"></i> Add Budget</button>
+                            <button class="task" data-bind="click: function(){ viewBudget({{ kid.id }}); }"><i class="fa fa-folder-open-o" aria-hidden="true"></i> View</button>
+                            {% if kid.status == 0 %}
+                                <a href="#" class="pull-right" onclick=""> <i class="fa fa-warning" aria-hidden="true"></i> Freeze Budget</a>
+                            {% else %}
+                                <a href="#" class="pull-right" onclick=""> <i class="fa fa-warning" aria-hidden="true"></i> Unfreeze Budget</a>
+                            {% endif %}
                         </td>
                     </tr>
                     {% if kid.child_budgets %}
@@ -85,10 +90,10 @@
                                 <td class="withInnerinnerBar innerInnerShift">{{ grand.name }}</td>
                                 <td>₦{{ grand.get_allocation }}</td>
                                 <td>₦{{ grand.amount_allocated }}</td>
-                                <td>{{ grand.date_created }}</td>
+                                <td>{{ grand.date_created_string.date }}</td>
                                 <td class="actionBtn">
                                     <button class="task edit" data-bind="click: function(){ editBudget({{ grand.id }}); }"><i class="fa fa-edit" aria-hidden="true"></i> Edit</button>
-                                    <button class="task" data-bind="click: function(){ addBudget({{ grand.id }}); }"><i class="fa fa-plus" aria-hidden="true"></i> Add Budget</button>
+                                    <button class="task" data-bind="click: function(){ addBudget({{ grand.id }}); }"><i class="fa fa-folder-open-o" aria-hidden="true"></i> View</button>
                                 </td>
                             </tr>
                             {% if grand.child_budgets %}
@@ -97,9 +102,10 @@
                                         <td class="withInnerinnerBar innerInnerInnerShift">{{ great.name }}</td>
                                         <td>₦{{ great.get_allocation }}</td>
                                         <td>₦{{ great.amount_allocated }}</td>
-                                        <td>{{ great.date_created }}</td>
+                                        <td>{{ great.date_created_string.date }}</td>
                                         <td class="actionBtn">
                                             <button class="task edit" data-bind="click: function(){ editBudget({{ great.id }}); }"><i class="fa fa-edit" aria-hidden="true"></i> Edit</button>
+                                            <button class="task" data-bind="click: function(){ addBudget({{ grand.id }}); }"><i class="fa fa-folder-open-o" aria-hidden="true"></i> View</button>
                                         </td>
                                     </tr>
                                 {% endfor %}
@@ -268,6 +274,39 @@ function FetchBudgetModel() {
         );
     }
 
+    self.viewBudget = function(budget_id){
+        var url = self.budgetURI + '/' + budget_id;
+        self.ajax(url, 'GET').done(function(data){
+                addNewBudget.loadForm(data.sub);
+            }
+        );
+    }
+
+}
+
+function ViewBudgetModel(){
+    var self = this;
+    self.budget_id = ko.observable();
+    self.budget_name = ko.observable();
+    self.allocation = ko.observable();
+    self.total_allocation = ko.observable();
+    self.subs_array = ko.observableArray();
+
+    self.showDetails = function(budget){
+        // reset edit form
+        self.clear_fields();
+        self.parent_id(budget.id);
+        self.form_title("Add budget under "+ budget.name);
+        $('.addBudget').modal('show');
+    }
+
+    self.clearFields = function(){
+        self.budget_id("");
+        self.budget_name("");
+        self.allocation("");
+        self.total_allocation("");
+        self.subs_array.removeAll();
+    }
 }
 
 var fetchTask = new FetchBudgetModel();

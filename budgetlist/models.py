@@ -112,6 +112,8 @@ class Project(db.Model):
     status = Column(Integer, default=0)
     # 0 for open: 1 for ongoing: 2 for completed: 3 for suspended
 
+    amt_allocated_task = Column(Integer, default=0)
+
     owner = relationship("User", uselist=False, back_populates="projects")
     main_tasks = relationship("Task", foreign_keys="Task.project_id", primaryjoin="and_(Project.id==Task.project_id, Task.parent_task == None)")
     tasks = relationship("Task", back_populates="project")
@@ -171,13 +173,7 @@ class Project(db.Model):
 
     @property
     def amount_spent(self):
-        if len(self.tasks) > 0:
-            spent = 0
-            for task in self.tasks:
-                spent += task.amount_performed
-
-            return spent
-        return 0
+        return self.amt_allocated_task
 
     @property
     def amount_remaining(self):
@@ -418,7 +414,7 @@ class Budget(db.Model):
     @property
     def total_budget(self):
         budget = 0
-        for item in self.subs:
+        for item in self.main_subs:
             budget = budget + item.get_allocation
         return budget
 
@@ -437,6 +433,11 @@ class SubBudgets(db.Model):
     parent_budget = Column(Integer, ForeignKey('sub_budgets.id'))
     created_by = Column(Integer, ForeignKey('users.id'))
     date_created = Column(DateTime, default=func.now())
+    status = Column(Integer, default=0)
+
+    # amount allocated
+    amt_allocated_budget = Column(Integer, default=0)
+    amt_allocated_project = Column(Integer, default=0)
 
     creator = relationship("User", uselist=False)
     budget = relationship("Budget", uselist=False)
@@ -448,38 +449,11 @@ class SubBudgets(db.Model):
 
     @property
     def amount_allocated(self):
-        amount = 0
-        # get for projects
-        for p in self.projects:
-            amount += p.amount_spent
+        return self.amt_allocated_budget + self.amt_allocated_project
 
-        # check for child budgets
-        if self.child_budgets:
-            for s1 in self.child_budgets:
-                for p1 in s1.projects:
-                    amount += p1.amount_spent
-
-                # check for more children
-                if s1.child_budgets:
-                    for s2 in s1.child_budgets:
-                        # get projects
-                        for p2 in s2.projects:
-                            amount += p2.amount_spent
-
-                        # check for children
-                        if s2.child_budgets:
-                            for s3 in s2.child_budgets:
-                                # get projects
-                                for p3 in s3.projects:
-                                    amount += p3.amount_spent
-
-                                # check for children
-                                if s3.child_budgets:
-                                    for s4 in s3.child_budgets:
-                                        for p4 in s4.projects:
-                                            amount += p4.amount_spent
-
-        return amount
+    @property
+    def amount_remaining(self):
+        return self.allocation - self.amount_allocated
 
     @property
     def get_allocation(self):
@@ -494,12 +468,17 @@ class SubBudgets(db.Model):
         return False
 
     @property
+    def date_created_string(self):
+        return dump_datetime(self.date_created)
+
+    @property
     def serialize(self):
         """Return object data in easily serializeable format"""
         return {
             'id': self.id,
             'name': self.name,
             'allocation': self.allocation,
+            'amount_remaining': self.amount_remaining,
             'editable': self.is_editable
         }
 
@@ -562,7 +541,7 @@ class Audit(db.Model):
             return self.task
         elif self.action_model == 'Budget':
             return self.budget
-        elif self.action_model == 'SubBudget':
+        elif self.action_model == 'Sub Budget':
             return self.sub_budget
         elif self.action_model == 'Department':
             return self.department

@@ -93,34 +93,44 @@ def project_detail(id):
 
     if form.task_submit.data:
         if form.validate_on_submit():
-            task = Task(form.title.data, form.description.data, form.allocation.data, id, current_user.id,
-                        form.priority.data, form.start_date.data, form.end_date.data)
-            db.session.add(task)
-            db.session.commit()
-            for userid in form.assigned_to.data:
-                permission = Permissions(userid, task.id, 0)
-                db.session.add(permission)
+            if project.amount_remaining > form.allocation.data:
+                task = Task(form.title.data, form.description.data, form.allocation.data, id, current_user.id,
+                            form.priority.data, form.start_date.data, form.end_date.data)
+                project.amt_allocated_task += form.allocation.data
+                db.session.add(task)
+                db.session.add(project)
                 db.session.commit()
-            audit = Audit(current_user.id, "User created a task", 2, 'Task', task.id)
-            db.session.add(audit)
-            db.session.commit()
-            flash('Task has been successfully created', 'success')
+                for userid in form.assigned_to.data:
+                    permission = Permissions(userid, task.id, 0)
+                    db.session.add(permission)
+                    db.session.commit()
+                audit = Audit(current_user.id, "User created a task", 2, 'Task', task.id)
+                db.session.add(audit)
+                db.session.commit()
+                flash('Task has been successfully created', 'success')
+            else:
+                flash('Total task amount cannot exceed the limit for this activity', 'error')
             return redirect(url_for('.project_detail', id=id))
     elif subform.parent_id.data:
         if subform.validate_on_submit():
-            task = Task(subform.title.data, subform.description.data, subform.allocation.data, id, current_user.id,
-                        subform.priority.data, subform.start_date1.data, subform.end_date1.data)
-            task.parent_task = subform.parent_id.data
-            db.session.add(task)
-            db.session.commit()
-            for userid in form.assigned_to.data:
-                permission = Permissions(userid, task.id, 0)
-                db.session.add(permission)
+            if project.amount_remaining > form.allocation.data:
+                task = Task(subform.title.data, subform.description.data, subform.allocation.data, id, current_user.id,
+                            subform.priority.data, subform.start_date1.data, subform.end_date1.data)
+                task.parent_task = subform.parent_id.data
+                project.amt_allocated_task += subform.allocation.data
+                db.session.add(task)
+                db.session.add(project)
                 db.session.commit()
-            audit = Audit(current_user.id, "User created a task", 2, 'Task', task.id)
-            db.session.add(audit)
-            db.session.commit()
-            flash('Task has been successfully created', 'success')
+                for userid in form.assigned_to.data:
+                    permission = Permissions(userid, task.id, 0)
+                    db.session.add(permission)
+                    db.session.commit()
+                audit = Audit(current_user.id, "User created a task", 2, 'Task', task.id)
+                db.session.add(audit)
+                db.session.commit()
+                flash('Task has been successfully created', 'success')
+            else:
+                flash('Total task amount cannot exceed the limit for this activity', 'error')
             return redirect(url_for('.project_detail', id=id))
     return render_template('backlogs.html', project=project, form=form, subform=subform)
 
@@ -528,6 +538,11 @@ def manage_budget():
         sub.created_by = current_user.id
         db.session.add(sub)
         db.session.commit()
+
+        audit = Audit(current_user.id, "User created a sub budget", 9, 'Sub Budget', sub.id)
+        db.session.add(audit)
+        db.session.commit()
+
         flash('The sub budget has been successfully created', 'success')
         return redirect(url_for('.manage_budget'))
     elif editform.validate_on_submit() and editform.sub_budget_id.data != '0' and editform.sub_budget_id.data != "":
@@ -538,6 +553,11 @@ def manage_budget():
         sub.allocation = editform.allocation.data
         db.session.add(sub)
         db.session.commit()
+
+        audit = Audit(current_user.id, "User edited a sub budget", 10, 'Sub Budget', sub.id)
+        db.session.add(audit)
+        db.session.commit()
+
         flash('The sub budget has been successfully updated', 'success')
         return redirect(url_for('.manage_budget'))
 
