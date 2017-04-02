@@ -172,7 +172,8 @@
                 </div>
                 <div class="col-md-6">
                     <label for="">Allocation</label>
-                    {{ subform.allocation(class_='stateForm plan money', placeholder="Amount(₦)", id='sub_allocation')}}
+                    {{ subform.allocation(class_='stateForm plan money', placeholder="Amount(₦)", id='sub_allocation', **{'onchange': 'checkAllocation()'})}}
+                    <sub style="color: red;">Maximum amount allowed: ₦{{ project.amount_remaining }}</sub>
                 </div>
 
                 <div class="col-md-6">
@@ -187,7 +188,6 @@
 
                 <div class="col-md-6">
                     <label for="">End Date</label>
-                    
                     {{ subform.end_date1(class_="datetimepicker plan datepicker") }}
                 </div>
 
@@ -197,7 +197,7 @@
                 </div>
             </div>
             <div class="buttonWrap">
-                <button type="submit" onclick="subform_submit()" class="save"><i class="fa fa-floppy-o" aria-hidden="true"></i> Save & close</button>
+                <button type="submit" id="submit" onclick="subform_submit()" class="save"><i class="fa fa-floppy-o" aria-hidden="true"></i> Save & close</button>
         </div>
             </div>
         </form>
@@ -227,7 +227,8 @@
                 </div>
                 <div class="col-md-6">
                     <label for="">Allocation</label>
-                    {{ form.allocation(class_='stateForm plan money', placeholder="Amount(₦)", id='form_allocation')}}
+                    {{ form.allocation(class_='stateForm plan money', placeholder="Amount(₦)", id='form_allocation', **{'onchange': 'fcheckAllocation()'})}}
+                    <sub style="color: red;">Maximum amount allowed: ₦{{ project.amount_remaining }}</sub>
                 </div>
 
                 <div class="col-md-6">
@@ -253,7 +254,7 @@
             </div>
             <div class="buttonWrap">
                 {{ form.task_submit(value='True') }}
-                <button type="submit" onclick="form_submit()" data-dismiss="modal" class="save"><i class="fa fa-floppy-o" aria-hidden="true"></i> Save & close</button>
+                <button type="submit" id="fsubmit" onclick="form_submit()" data-dismiss="modal" class="save"><i class="fa fa-floppy-o" aria-hidden="true"></i> Save & close</button>
             </div>
         </form>
     </div>
@@ -268,6 +269,22 @@ $(document).on("click", ".task", function(){
     console.log($(this).data('id'));
     $("#parent_id").val(parent_id);
 });
+
+function checkAllocation(){
+    if($('#sub_allocation').maskMoney('unmasked')[0] > {{project.amount_remaining}}){
+        $('#submit').prop('disabled', true);
+    }else{
+        $('#submit').prop('disabled', false);
+    }
+}
+
+function fcheckAllocation(){
+    if($('#form_allocation').maskMoney('unmasked')[0] > {{project.amount_remaining}}){
+        $('#fsubmit').prop('disabled', true);
+    }else{
+        $('#fsubmit').prop('disabled', false);
+    }
+}
 
 // function validateForm() {
 //   var isValid = true;

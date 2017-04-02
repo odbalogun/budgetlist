@@ -93,6 +93,8 @@ def project_detail(id):
 
     if form.task_submit.data:
         if form.validate_on_submit():
+            print(project.amount_remaining)
+            print(form.allocation.data)
             if project.amount_remaining > form.allocation.data:
                 task = Task(form.title.data, form.description.data, form.allocation.data, id, current_user.id,
                             form.priority.data, form.start_date.data, form.end_date.data)
@@ -562,6 +564,20 @@ def manage_budget():
         return redirect(url_for('.manage_budget'))
 
     return render_template('manage_budget.html', budget=budget, form=form, editform=editform)
+
+@main.route('/toggle-budget/<int:id>/<int:action>', methods=['GET'])
+def toggle_budget_status(id, action):
+    sub = SubBudgets.query.get(id)
+    sub.status = action
+    db.session.add(sub)
+    db.session.commit()
+
+    audit = Audit(current_user.id, "User updated sub budget status", 10, 'Sub Budget', sub.id)
+    db.session.add(audit)
+    db.session.commit()
+
+    flash('The sub budget has been successfully updated', 'success')
+    return redirect(url_for('.manage_budget'))
 
 @main.route('/budget-details', methods=['GET', 'POST'])
 def budget_details():

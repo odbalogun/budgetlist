@@ -422,7 +422,6 @@ class Budget(db.Model):
     def budget_difference(self):
         return self.total_budget - self.amount_allocated
 
-
 class SubBudgets(db.Model):
     __tablename__ = 'sub_budgets'
 
@@ -436,7 +435,7 @@ class SubBudgets(db.Model):
     status = Column(Integer, default=0)
 
     # amount allocated
-    amt_allocated_budget = Column(Integer, default=0)
+    # amt_allocated_budget = Column(Integer, default=0)
     amt_allocated_project = Column(Integer, default=0)
 
     creator = relationship("User", uselist=False)
@@ -449,7 +448,7 @@ class SubBudgets(db.Model):
 
     @property
     def amount_allocated(self):
-        return self.amt_allocated_budget + self.amt_allocated_project
+        return self.amt_allocated_project
 
     @property
     def amount_remaining(self):
@@ -457,9 +456,13 @@ class SubBudgets(db.Model):
 
     @property
     def get_allocation(self):
-        if self.allocation:
-            return self.allocation
-        return 0
+        # if self.allocation:
+        #    return self.allocation
+        # return 0
+        amount = self.allocation
+        for i in self.child_budgets:
+            amount = amount + i.allocation
+        return amount
 
     @property
     def is_editable(self):
@@ -478,8 +481,12 @@ class SubBudgets(db.Model):
             'id': self.id,
             'name': self.name,
             'allocation': self.allocation,
+            'total_allocation': self.get_allocation,
             'amount_remaining': self.amount_remaining,
-            'editable': self.is_editable
+            'editable': self.is_editable,
+            'statusText': self.statusText,
+            'activityCount': len(self.projects),
+            'subs': self.sub_budgets
         }
 
     @property
@@ -491,9 +498,17 @@ class SubBudgets(db.Model):
                 'id': i.id,
                 'name': i.name,
                 'allocation': i.allocation,
+                'statusText': i.statusText,
                 'editable': i.is_editable
             })
         return subs
+
+    @property
+    def statusText(self):
+        if self.status == 0:
+            return 'Active'
+        else:
+            return 'Suspended'
 
 class Audit(db.Model):
     __tablename__ = 'audit'
@@ -515,7 +530,7 @@ class Audit(db.Model):
     budget = relationship("Budget", foreign_keys="Audit.item_id", primaryjoin="and_(Budget.id==Audit.item_id,"
                                                                                 " Audit.action_model == 'Budget')", uselist=False)
     sub_budget = relationship("SubBudgets", foreign_keys="Audit.item_id", primaryjoin="and_(SubBudgets.id==Audit.item_id,"
-                                                                                " Audit.action_model == 'SubBudget')", uselist=False)
+                                                                                " Audit.action_model == 'Sub Budget')", uselist=False)
     department = relationship("Department", foreign_keys="Audit.item_id", primaryjoin="and_(Department.id==Audit.item_id,"
                                                                                 " Audit.action_model == 'Department')", uselist=False)
 

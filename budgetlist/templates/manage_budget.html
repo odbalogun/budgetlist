@@ -52,7 +52,8 @@
             <th>Allocation</th>
             <th>Amount Performed</th>
             <th>Date Created</th>
-            <!-- <th colspan="2"></th> -->
+            <th>Status</th>
+            <th colspan="2"></th>
         </tr>
     </thead>
     <tbody class="budgetlist">
@@ -62,9 +63,10 @@
                 <td>₦{{ sub.get_allocation }}</td>
                 <td>₦{{ sub.amount_allocated }}</td>
                 <td>{{ sub.date_created_string.date }}</td>
+                <td>{{ sub.statusText }}</td>
                 <td class="actionBtn">
                     <button class="task edit" data-bind="click: function(){ editBudget({{ sub.id }}); }"><i class="fa fa-edit" aria-hidden="true"></i> Edit</button>
-                    <button class="task" data-bind="click: function(){ addBudget({{ sub.id }}); }"><i class="fa fa-folder-open-o" aria-hidden="true"></i> View</button>
+                    <button class="task" data-bind="click: function(){ viewBudget({{ sub.id }}); }"><i class="fa fa-folder-open-o" aria-hidden="true"></i> View</button>
                 </td>
             </tr>
             {% if sub.child_budgets %}
@@ -74,13 +76,14 @@
                         <td>₦{{ kid.get_allocation }}</td>
                         <td>₦{{ kid.amount_allocated }}</td>
                         <td>{{ kid.date_created_string.date }}</td>
+                        <td>{{ kid.statusText }}</td>
                         <td class="actionBtn">
                             <button class="task edit" data-bind="click: function(){ editBudget({{ kid.id }}); }"><i class="fa fa-edit" aria-hidden="true"></i> Edit</button>
                             <button class="task" data-bind="click: function(){ viewBudget({{ kid.id }}); }"><i class="fa fa-folder-open-o" aria-hidden="true"></i> View</button>
                             {% if kid.status == 0 %}
-                                <a href="#" class="pull-right" onclick=""> <i class="fa fa-warning" aria-hidden="true"></i> Freeze Budget</a>
+                                <a href="{{ url_for('.toggle_budget_status', id=kid.id, action=1)}}"><button class="warning"><i class="fa fa-warning" aria-hidden="true"></i> Freeze Budget</button></a>
                             {% else %}
-                                <a href="#" class="pull-right" onclick=""> <i class="fa fa-warning" aria-hidden="true"></i> Unfreeze Budget</a>
+                                <a href="{{ url_for('.toggle_budget_status', id=kid.id, action=0)}}"><button><i class="fa fa-warning" aria-hidden="true"></i> Unfreeze Budget</button></a>
                             {% endif %}
                         </td>
                     </tr>
@@ -91,9 +94,15 @@
                                 <td>₦{{ grand.get_allocation }}</td>
                                 <td>₦{{ grand.amount_allocated }}</td>
                                 <td>{{ grand.date_created_string.date }}</td>
+                                <td>{{ grand.statusText }}</td>
                                 <td class="actionBtn">
                                     <button class="task edit" data-bind="click: function(){ editBudget({{ grand.id }}); }"><i class="fa fa-edit" aria-hidden="true"></i> Edit</button>
-                                    <button class="task" data-bind="click: function(){ addBudget({{ grand.id }}); }"><i class="fa fa-folder-open-o" aria-hidden="true"></i> View</button>
+                                    <button class="task" data-bind="click: function(){ viewBudget({{ grand.id }}); }"><i class="fa fa-folder-open-o" aria-hidden="true"></i> View</button>
+                                    {% if grand.status == 0 %}
+                                        <a href="{{ url_for('.toggle_budget_status', id=grand.id, action=1)}}"><button class="warning"><i class="fa fa-warning" aria-hidden="true"></i> Freeze Budget</button></a>
+                                    {% else %}
+                                        <a href="{{ url_for('.toggle_budget_status', id=grand.id, action=0)}}"><button><i class="fa fa-warning" aria-hidden="true"></i> Unfreeze Budget</button></a>
+                                    {% endif %}
                                 </td>
                             </tr>
                             {% if grand.child_budgets %}
@@ -103,9 +112,15 @@
                                         <td>₦{{ great.get_allocation }}</td>
                                         <td>₦{{ great.amount_allocated }}</td>
                                         <td>{{ great.date_created_string.date }}</td>
+                                        <td>{{ great.statusText }}</td>
                                         <td class="actionBtn">
                                             <button class="task edit" data-bind="click: function(){ editBudget({{ great.id }}); }"><i class="fa fa-edit" aria-hidden="true"></i> Edit</button>
-                                            <button class="task" data-bind="click: function(){ addBudget({{ grand.id }}); }"><i class="fa fa-folder-open-o" aria-hidden="true"></i> View</button>
+                                            <button class="task" data-bind="click: function(){ viewBudget({{ great.id }}); }"><i class="fa fa-folder-open-o" aria-hidden="true"></i> View</button>
+                                            {% if great.status == 0 %}
+                                                <a href="{{ url_for('.toggle_budget_status', id=great.id, action=1)}}"><button class="warning"><i class="fa fa-warning" aria-hidden="true"></i> Freeze Budget</button></a>
+                                            {% else %}
+                                                <a href="{{ url_for('.toggle_budget_status', id=great.id, action=0)}}"><button><i class="fa fa-warning" aria-hidden="true"></i> Unfreeze Budget</button></a>
+                                            {% endif %}
                                         </td>
                                     </tr>
                                 {% endfor %}
@@ -184,6 +199,84 @@
   </div>
 </div>
 
+
+<!-- View Budget modal -->
+<div class="modal fade taskDetails showDetails" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+        <div class="title clearfix">
+            <span class="pull-left" >Budget Details</span>
+            <span data-dismiss="modal" aria-label="Close" class="pull-right"><i class="fa fa-times" aria-hidden="true"></i></span>
+        </div>
+        <div class="content clearfix">
+            <table class="detailTable">
+                <tr>
+                    <th>Budget Name</th>
+                </tr>
+                <tr>
+                    <td data-bind="text: budget_name"></td>
+                </tr>
+            </table>
+            <table class="moreDetailTable">
+                <tr>
+                    <td>Budget Allocation</td>
+                    <td data-bind="text: allocation"></td>
+                </tr>
+                <tr>
+                    <td>Total Allocation</td>
+                    <td data-bind="text: total_allocation"></td>
+                </tr>
+                <tr>
+                    <td>Activity Count</td>
+                    <td data-bind="text: activityCount"></td>
+                </tr>
+                <tr>
+                    <td>Current Status</td>
+                    <td data-bind="text: statusText"></td>
+                </tr>
+            </table>
+            <label class="myLabel">Sub Budgets</label>
+            <div data-bind="if: subs_array().length == 0">
+                <p>There are no sub budgets to display</p>
+            </div>
+            <table style="width:100%" data-bind="if: subs_array().length > 0">
+                <tr>
+                    <th>Sub Budget</th>
+                    <th>Allocation</th>
+                    <th>Status</th>
+                </tr>
+                <!-- ko foreach: subs_array -->
+                <tr>
+                    <td data-bind="text: name"></td>
+                    <td data-bind="text: allocation"></td>
+                    <td data-bind="text: statusText"></td>
+                </tr>
+                <!-- /ko -->
+            </table>
+            <br/>
+            <label class="myLabel">Add Sub Budget</label>
+            <div>
+                <form data-bind="submit: createSub">
+                    <div>
+                        <div class="col-md-6">
+                            <label for="">Name</label>
+                            <input type="text" data-bind="value: new_budget" name="new_budget" class="title" required>
+
+                        </div>
+                        <div class="col-md-6">
+                            <label for="">Allocation</label>
+                            <input type="number" data-bind="value: new_allocation" name="new_allocation" class="title" required>
+                        </div>
+                    </div>
+                    <div class="buttonWrap">
+                        <button type="submit" class="save"><i class="fa fa-floppy-o" aria-hidden="true"></i> Save</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+  </div>
+</div>
 
 <script type="text/javascript">
 /* knockoutjs view models */
@@ -277,7 +370,7 @@ function FetchBudgetModel() {
     self.viewBudget = function(budget_id){
         var url = self.budgetURI + '/' + budget_id;
         self.ajax(url, 'GET').done(function(data){
-                addNewBudget.loadForm(data.sub);
+                showBudget.showDetails(data.sub);
             }
         );
     }
@@ -290,14 +383,69 @@ function ViewBudgetModel(){
     self.budget_name = ko.observable();
     self.allocation = ko.observable();
     self.total_allocation = ko.observable();
+    self.total = ko.observable();
+    self.statusText = ko.observable();
+    self.activityCount = ko.observable();
     self.subs_array = ko.observableArray();
+
+    self.new_budget = ko.observable();
+    self.new_allocation = ko.observable();
+    self.createSubURI = 'http://localhost:9000/api/v1.0/budgets/create-sub';
+
+    /* make ajax request */
+    self.ajax = function(uri, method, data){
+        var request = {
+            url: uri,
+            type: method,
+            contentType: "application/json",
+            accepts: "application/json",
+            cache: true,
+            dataType: 'json',
+            data: JSON.stringify(data),
+            error: function(jqXHR) {
+                console.log("ajax error " + jqXHR.status);
+            }
+        };
+        return $.ajax(request);
+    }
+
 
     self.showDetails = function(budget){
         // reset edit form
-        self.clear_fields();
-        self.parent_id(budget.id);
-        self.form_title("Add budget under "+ budget.name);
-        $('.addBudget').modal('show');
+        self.clearFields();
+        self.budget_id(budget.id);
+        self.budget_name(budget.name);
+        self.allocation('₦'+budget.allocation);
+        self.total_allocation('₦'+budget.total_allocation);
+        self.total(budget.total_allocation);
+        self.statusText(budget.statusText);
+        self.activityCount(budget.activityCount);
+
+        for (var i = 0; i < budget.subs.length; i++) {
+            self.subs_array.push({
+                name: budget.subs[i].name,
+                allocation: '₦'+budget.subs[i].allocation,
+                statusText: budget.subs[i].statusText
+            });
+        }
+
+        $('.showDetails').modal('show');
+    }
+
+    self.createSub = function(){
+        self.ajax(self.createSubURI, 'POST', {budget_id: self.budget_id(), name: self.new_budget(), allocation: self.new_allocation(), owner_id: {{ current_user.id }} }).done(function(data){
+            self.subs_array.push({
+                name: self.new_budget(),
+                allocation: '₦'+self.new_allocation(),
+                statusText: 'Active'
+            });
+
+            var amt = parseInt(self.total()) + parseInt(self.new_allocation());
+            self.total_allocation('₦'+amt);
+            self.total(amt);
+            self.new_budget("");
+            self.new_allocation("");
+        });
     }
 
     self.clearFields = function(){
@@ -305,6 +453,9 @@ function ViewBudgetModel(){
         self.budget_name("");
         self.allocation("");
         self.total_allocation("");
+        self.activityCount("");
+        self.statusText("");
+        self.total("");
         self.subs_array.removeAll();
     }
 }
@@ -312,8 +463,10 @@ function ViewBudgetModel(){
 var fetchTask = new FetchBudgetModel();
 var showEdit = new ShowEditBudgetModel();
 var addNewBudget = new AddBudgetModel();
+var showBudget = new ViewBudgetModel();
 ko.applyBindings(fetchTask, $('.budgetlist')[0]);
 ko.applyBindings(showEdit, $('.editBudget')[0]);
+ko.applyBindings(showBudget, $('.showDetails')[0]);
 ko.applyBindings(addNewBudget, $('.addBudget')[0]);
 </script>
 

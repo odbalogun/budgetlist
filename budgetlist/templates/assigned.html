@@ -97,6 +97,9 @@
 
             </table>
             <label class="myLabel">History</label>
+            <div data-bind="if: history().length == 0">
+                <p>There are no items to display</p>
+            </div>
             <!-- ko foreach: history -->
             <div class="bs-callout bs-callout-info" id="callout-pagination-label"> 
                 <h4 data-bind="text: owner()"></h4>

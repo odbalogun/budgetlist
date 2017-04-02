@@ -174,24 +174,24 @@
                         }
                     </style>
                     <label for="">Budget</label>
-                    <select name="budget" id="budget" data-bind="value: budget_id" required>
+                    <select name="budget" id="budget" data-bind="value: budget_id, event:{ change: checkBudget }" required>
                         <option disabled selected>Select a Budget</option>
                         {% for b in budgets %}
-                            <option value="{{ b.id }}" class="optionGroup">{{ b.name }}</option>
+                            <option value="{{ b.id }}" class="optionGroup" {% if b.status != 0 %}disabled{% endif %}>{{ b.name }}</option>
                             {% for b1 in b.child_budgets %}
                                 {% if b1.child_budgets %}
-                                   <option value="{{ b1.id }}" class="optionGroup optionChild">&nbsp;&nbsp;&nbsp;&nbsp;{{ b1.name }}</option>
+                                   <option value="{{ b1.id }}" class="optionGroup optionChild" {% if b1.status != 0 %}disabled{% endif %}>&nbsp;&nbsp;&nbsp;&nbsp;{{ b1.name }}</option>
                                 {% else %}
-                                    <option value="{{ b1.id }}" class="optionChild">&nbsp;&nbsp;&nbsp;&nbsp;{{ b1.name }}</option>
+                                    <option value="{{ b1.id }}" class="optionChild" {% if b1.status != 0 %}disabled{% endif %}>&nbsp;&nbsp;&nbsp;&nbsp;{{ b1.name }}</option>
                                 {% endif %}
                                 {% for b2 in b1.child_budgets %}
                                     {% if b2.child_budgets %}
-                                       <option value="{{ b2.id }}" class="optionGroup optionGrandChild">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{ b2.name }}</option>
+                                       <option value="{{ b2.id }}" class="optionGroup optionGrandChild" {% if b2.status != 0 %}disabled{% endif %}>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{ b2.name }}</option>
                                     {% else %}
-                                        <option value="{{ b2.id }}" class="optionGrandChild">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{ b2.name }}</option>
+                                        <option value="{{ b2.id }}" class="optionGrandChild" {% if b2.status != 0 %}disabled{% endif %}>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{ b2.name }}</option>
                                     {% endif %}
                                     {% for b3 in b2.child_budgets %}
-                                        <option value="{{ b3.id }}" class="optionGreatChild">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{ b3.name }}</option>
+                                        <option value="{{ b3.id }}" class="optionGreatChild" {% if b3.status != 0 %}disabled{% endif %}>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{ b3.name }}</option>
                                     {% endfor %}
                                 {% endfor %}
                             {% endfor %}
@@ -201,7 +201,7 @@
                 </div>
                 <div class="col-md-6">
                     <label for="">Allocation</label>
-                    <input type="number" data-bind="value: allocation, attr: { max: max_budget }" id="budget_limit" name="budget_limit" placeholder="Allocation" required>
+                    <input type="number" data-bind="value: allocation, attr: { max: max_budget }, event:{ change: checkBudget }" id="budget_limit" name="budget_limit" placeholder="Allocation" required>
                 </div>
 
                 <div class="col-md-12">
@@ -225,7 +225,7 @@
                 </div>
             </div>
             <div class="buttonWrap">
-                <button data-bind="click: addProject" class="save" type="submit"><i class="fa fa-floppy-o" aria-hidden="true"></i> Save & close</button>
+                <button id="submitBtn" data-bind="click: addProject" class="save" type="submit"><i class="fa fa-floppy-o" aria-hidden="true"></i> Save & close</button>
             </div>
         </form>
     </div>
@@ -330,13 +330,14 @@ function CreateProjectModel() {
         // for allocation
         var money = $('#budget_limit').maskMoney('unmasked')[0];
 
+        console.log( self.allocation());
 
         projectView.add({
             title: self.title(),
             owner_id: self.owner_id(),
             priority: self.priority(),
             budget_id: self.budget_id(),
-            budget_limit: money,
+            budget_limit: self.allocation(),
             description: txt,
             start_date: self.start_date(),
             end_date: self.end_date()
@@ -376,15 +377,20 @@ function CreateProjectModel() {
     }
 
     self.budget_id.subscribe(function(newValue) {
-        // Handle a change here, e.g. update something on the server with Ajax.
-        //alert('myfield changed to ' + newValue);
-        console.log('New budget selected' + newValue);
         if(newValue != "Select a Budget"){
             self.getBudget(newValue);
         }else{
             self.budget_limit_text("");
         }
     });
+
+    self.checkBudget = function (){
+        if(self.allocation() > self.max_budget()){
+            $('#submitBtn').prop('disabled', true);
+        }else{
+            $('#submitBtn').prop('disabled', false);
+        }
+    }
 }
 
 function StatModel(){

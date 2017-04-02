@@ -17,6 +17,23 @@ def get_budget_children(budget_id):
         abort(404)
     return jsonify(subs=budget.sub_budgets)
 
+@api.route('/v1.0/budgets/create-sub', methods=['POST'])
+def add_sub_budget():
+    sub = SubBudgets()
+    sub.allocation = request.json["allocation"]
+    sub.name = request.json["name"]
+    sub.parent_budget = request.json["budget_id"]
+    sub.created_by = request.json["owner_id"]
+
+    db.session.add(sub)
+    db.session.commit()
+
+    audit = Audit(sub.created_by, "User created a sub budget", 9, 'Sub Budget', sub.id)
+    db.session.add(audit)
+    db.session.commit()
+
+    return jsonify({'status': 'success'}), 201
+
 @api.route('/v1.0/users/get/<int:userid>', methods=['GET'])
 def get_user(userid):
     user = User.query.get(userid)
@@ -81,19 +98,20 @@ def login():
 
 @api.route('/v1.0/projects/create', methods=['POST'])
 def create_project():
+
     if not request.json or 'title' not in request.json or 'description' not in request.json or 'budget_limit' not in \
             request.json or 'start_date' not in request.json or 'end_date' not in request.json or \
             'owner_id' not in request.json:
         abort(400)
 
     budget = SubBudgets.query.get(request.json['budget_id'])
-    if budget.amount_remaining < request.json['budget_limit']:
+    if budget.amount_remaining < int(request.json['budget_limit']):
         abort(400)
 
     period = Period.query.filter(Period.status==0).first()
     project = Project(request.json['title'], request.json['description'], request.json['budget_limit'], request.json['budget_id'],
                       request.json['start_date'], request.json['end_date'], request.json['priority'], request.json['owner_id'], period.id)
-    budget.amt_allocated_project += request.json['budget_limit']
+    budget.amt_allocated_project += int(request.json['budget_limit'])
 
     db.session.add(budget)
     db.session.add(project)
