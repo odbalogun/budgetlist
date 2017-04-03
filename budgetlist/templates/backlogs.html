@@ -227,7 +227,7 @@
                 </div>
                 <div class="col-md-6">
                     <label for="">Allocation</label>
-                    {{ form.allocation(class_='stateForm plan money', placeholder="Amount(₦)", id='form_allocation', **{'onchange': 'fcheckAllocation()'})}}
+                    {{ form.allocation(class_='stateForm plan money noMargin ', placeholder="Amount(₦)", id='form_allocation', **{'onchange': 'fcheckAllocation()'})}}
                     <sub style="color: red;">Maximum amount allowed: ₦{{ project.amount_remaining }}</sub>
                 </div>
 
@@ -254,7 +254,9 @@
             </div>
             <div class="buttonWrap">
                 {{ form.task_submit(value='True') }}
-                <button type="submit" id="fsubmit" onclick="form_submit()" data-dismiss="modal" class="save"><i class="fa fa-floppy-o" aria-hidden="true"></i> Save & close</button>
+                <button type="submit" id="fsubmit" onclick="form_submit()" data-dismiss="modal" class="save disabled">
+                    <i class="fa fa-floppy-o" aria-hidden="true"></i> Save & close
+                </button>
             </div>
         </form>
     </div>

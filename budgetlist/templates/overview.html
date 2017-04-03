@@ -174,7 +174,7 @@
                         }
                     </style>
                     <label for="">Budget</label>
-                    <select name="budget" id="budget" data-bind="value: budget_id, event:{ change: checkBudget }" required>
+                    <select name="budget" class="noMargin" id="budget" data-bind="value: budget_id, event:{ change: checkBudget }" required>
                         <option disabled selected>Select a Budget</option>
                         {% for b in budgets %}
                             <option value="{{ b.id }}" class="optionGroup" {% if b.status != 0 %}disabled{% endif %}>{{ b.name }}</option>

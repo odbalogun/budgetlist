@@ -1518,7 +1518,7 @@ table.assignedTask{
     		border: 1px solid #c8c8c8;
     		display: block;
     		width: 100%;
-    		margin-bottom: 15px;
+    		margin-bottom: 20px;
     		padding: 0 10px;
 		}
 		table.detailTable{
@@ -1810,6 +1810,10 @@ table.taskTable{
 			    	background-color: #449D44;
 			    	background-color: #efefef;
     				color: #333;
+			    }
+			    &.warning{
+			    	background-color: #EC971F;
+			    	color: #fff;
 			    }
 			}
 			&.actionBtn{
@@ -2129,4 +2133,11 @@ table .ongoing:before{
 			}
 		}
 	}
+}
+.noMargin{
+	margin: 0!important;
+}
+button.disabled{
+	cursor: not-allowed!important;
+    opacity: 0.6!important;
 }

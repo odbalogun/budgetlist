@@ -81,9 +81,9 @@
                             <button class="task edit" data-bind="click: function(){ editBudget({{ kid.id }}); }"><i class="fa fa-edit" aria-hidden="true"></i> Edit</button>
                             <button class="task" data-bind="click: function(){ viewBudget({{ kid.id }}); }"><i class="fa fa-folder-open-o" aria-hidden="true"></i> View</button>
                             {% if kid.status == 0 %}
-                                <a href="{{ url_for('.toggle_budget_status', id=kid.id, action=1)}}"><button class="warning"><i class="fa fa-warning" aria-hidden="true"></i> Freeze Budget</button></a>
+                                <a href="{{ url_for('.toggle_budget_status', id=kid.id, action=1)}}"><button class="task warning"><i class="fa fa-warning" aria-hidden="true"></i> Freeze</button></a>
                             {% else %}
-                                <a href="{{ url_for('.toggle_budget_status', id=kid.id, action=0)}}"><button><i class="fa fa-warning" aria-hidden="true"></i> Unfreeze Budget</button></a>
+                                <a href="{{ url_for('.toggle_budget_status', id=kid.id, action=0)}}"><button class="task sub"><i class="fa fa-warning" aria-hidden="true"></i> Unfreeze</button></a>
                             {% endif %}
                         </td>
                     </tr>
@@ -209,15 +209,11 @@
             <span data-dismiss="modal" aria-label="Close" class="pull-right"><i class="fa fa-times" aria-hidden="true"></i></span>
         </div>
         <div class="content clearfix">
-            <table class="detailTable">
+            <table class="moreDetailTable">
                 <tr>
-                    <th>Budget Name</th>
-                </tr>
-                <tr>
+                    <td>Budget Name</td>
                     <td data-bind="text: budget_name"></td>
                 </tr>
-            </table>
-            <table class="moreDetailTable">
                 <tr>
                     <td>Budget Allocation</td>
                     <td data-bind="text: allocation"></td>
@@ -235,13 +231,33 @@
                     <td data-bind="text: statusText"></td>
                 </tr>
             </table>
+            <label class="myLabel" style="color:#0078D7;">Add Sub Budget</label>
+            <div>
+                <form data-bind="submit: createSub" class="clearfix">
+                    <div>
+                        <div class="col-md-6 pl-0">
+                            <label for="">Name</label>
+                            <input type="text" data-bind="value: new_budget" name="new_budget" class="title" required>
+
+                        </div>
+                        <div class="col-md-6 pr-0">
+                            <label for="">Allocation</label>
+                            <input type="number" data-bind="value: new_allocation" name="new_allocation" class="title" required>
+                        </div>
+                    </div>
+                    <div class="buttonWrap" style="padding: 0;">
+                        <button type="submit" class="save pull-right"><i class="fa fa-floppy-o" aria-hidden="true"></i> Save</button>
+                    </div>
+                </form>
+            </div><br>
+
             <label class="myLabel">Sub Budgets</label>
             <div data-bind="if: subs_array().length == 0">
                 <p>There are no sub budgets to display</p>
             </div>
-            <table style="width:100%" data-bind="if: subs_array().length > 0">
+            <table class="table table-striped table-bordered" style="width:100%" data-bind="if: subs_array().length > 0">
                 <tr>
-                    <th>Sub Budget</th>
+                    <th>Sub Budget Name</th>
                     <th>Allocation</th>
                     <th>Status</th>
                 </tr>
@@ -253,26 +269,8 @@
                 </tr>
                 <!-- /ko -->
             </table>
-            <br/>
-            <label class="myLabel">Add Sub Budget</label>
-            <div>
-                <form data-bind="submit: createSub">
-                    <div>
-                        <div class="col-md-6">
-                            <label for="">Name</label>
-                            <input type="text" data-bind="value: new_budget" name="new_budget" class="title" required>
 
-                        </div>
-                        <div class="col-md-6">
-                            <label for="">Allocation</label>
-                            <input type="number" data-bind="value: new_allocation" name="new_allocation" class="title" required>
-                        </div>
-                    </div>
-                    <div class="buttonWrap">
-                        <button type="submit" class="save"><i class="fa fa-floppy-o" aria-hidden="true"></i> Save</button>
-                    </div>
-                </form>
-            </div>
+            
         </div>
     </div>
   </div>
