@@ -254,7 +254,7 @@
             </div>
             <div class="buttonWrap">
                 {{ form.task_submit(value='True') }}
-                <button type="submit" id="fsubmit" onclick="form_submit()" data-dismiss="modal" class="save disabled">
+                <button type="submit" id="fsubmit" onclick="form_submit()" data-dismiss="modal" class="save">
                     <i class="fa fa-floppy-o" aria-hidden="true"></i> Save & close
                 </button>
             </div>
@@ -275,16 +275,20 @@ $(document).on("click", ".task", function(){
 function checkAllocation(){
     if($('#sub_allocation').maskMoney('unmasked')[0] > {{project.amount_remaining}}){
         $('#submit').prop('disabled', true);
+        document.getElementById('submit').className = "save disabled";
     }else{
         $('#submit').prop('disabled', false);
+        document.getElementById('submit').className = "save";
     }
 }
 
 function fcheckAllocation(){
     if($('#form_allocation').maskMoney('unmasked')[0] > {{project.amount_remaining}}){
         $('#fsubmit').prop('disabled', true);
+        document.getElementById('fsubmit').className = "save disabled";
     }else{
         $('#fsubmit').prop('disabled', false);
+        document.getElementById('fsubmit').className = "save";
     }
 }
 

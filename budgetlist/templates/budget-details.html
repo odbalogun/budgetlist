@@ -61,59 +61,58 @@
                         <th>Performance</th>
                     </tr>
                 </thead>
-
+                <tbody>
                 {% for b in budget.main_subs %}
-                    <tbody>
-                        <tr class="parent">
-                            <td class="bold text-big">{{ b.name }}</td>
-                            <td class="bold text-medium">₦{{ b.get_allocation }}</td>
-                            <td class="bold text-medium">₦{{ b.amount_allocated }}</td>
+                    <tr class="parent">
+                        <td class="bold text-big">{{ b.name }}</td>
+                        <td class="bold text-medium">₦{{ b.get_allocation }}</td>
+                        <td class="bold text-medium">₦{{ b.amount_allocated }}</td>
+                    </tr>
+                    {% for pro in b.projects %}
+                        <tr class="child">
+                            <td class="text-medium">{{ pro.title }}</td>
+                            <td class="text-small">₦{{ pro.budget_limit }}</td>
+                            <td class="text-small">₦{{ pro.amount_spent }}</td>
                         </tr>
-                        {% for pro in b.projects %}
-                            <tr class="child">
+                    {% endfor %}
+                    {% for child_sub in b.child_budgets %}
+                        <tr class="child">
+                            <td class="bold text-medium">{{ child_sub.name }}</td>
+                            <td class="bold text-small">₦{{ child_sub.get_allocation }}</td>
+                            <td class="bold text-small">₦{{ child_sub.amount_allocated }}</td>
+                        </tr>
+
+                        {% for pro in child_sub.projects %}
+                            <tr class="grandChild">
                                 <td class="text-medium">{{ pro.title }}</td>
                                 <td class="text-small">₦{{ pro.budget_limit }}</td>
                                 <td class="text-small">₦{{ pro.amount_spent }}</td>
                             </tr>
                         {% endfor %}
-                        {% for child_sub in b.child_budgets %}
-                            <tr class="child">
-                                <td class="bold text-medium">{{ child_sub.name }}</td>
-                                <td class="bold text-small">₦{{ child_sub.get_allocation }}</td>
-                                <td class="bold text-small">₦{{ child_sub.amount_allocated }}</td>
+
+                        {% for grand_sub in child_sub.child_budgets %}
+                            <tr class="grandChild">
+                                <td class="bold text-medium">{{ grand_sub.name }}</td>
+                                <td class="bold text-small">₦{{ grand_sub.get_allocation }}</td>
+                                <td class="bold text-small">₦{{ grand_sub.amount_allocated }}</td>
                             </tr>
 
                             {% for pro in child_sub.projects %}
-                                <tr class="grandChild">
+                                <tr class="greatGrandChild">
                                     <td class="text-medium">{{ pro.title }}</td>
                                     <td class="text-small">₦{{ pro.budget_limit }}</td>
                                     <td class="text-small">₦{{ pro.amount_spent }}</td>
                                 </tr>
                             {% endfor %}
-
-                            {% for grand_sub in child_sub.child_budgets %}
-                                <tr class="grandChild">
-                                    <td class="bold text-medium">{{ grand_sub.name }}</td>
-                                    <td class="bold text-small">₦{{ grand_sub.get_allocation }}</td>
-                                    <td class="bold text-small">₦{{ grand_sub.amount_allocated }}</td>
-                                </tr>
-
-                                {% for pro in child_sub.projects %}
-                                    <tr class="greatGrandChild">
-                                        <td class="text-medium">{{ pro.title }}</td>
-                                        <td class="text-small">₦{{ pro.budget_limit }}</td>
-                                        <td class="text-small">₦{{ pro.amount_spent }}</td>
-                                    </tr>
-                                {% endfor %}
-                            {% endfor %}
                         {% endfor %}
-                        <tr class="Total">
-                            <td class="bold text-big">Total</td>
-                            <td class="bold text-medium">₦{{ b.get_allocation }}</td>
-                            <td class="bold text-medium">₦{{ b.amount_allocated }}</td>
-                        </tr>
-                    </tbody>
+                    {% endfor %}
                 {% endfor %}
+                <tr class="Total">
+                    <td class="bold text-big">Total</td>
+                    <td class="bold text-medium">₦{{ budget.total_budget }}</td>
+                    <td class="bold text-medium">₦{{ budget.amount_allocated }}</td>
+                </tr>
+                </tbody>
             </table>
 
             

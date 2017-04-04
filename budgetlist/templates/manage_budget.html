@@ -99,9 +99,9 @@
                                     <button class="task edit" data-bind="click: function(){ editBudget({{ grand.id }}); }"><i class="fa fa-edit" aria-hidden="true"></i> Edit</button>
                                     <button class="task" data-bind="click: function(){ viewBudget({{ grand.id }}); }"><i class="fa fa-folder-open-o" aria-hidden="true"></i> View</button>
                                     {% if grand.status == 0 %}
-                                        <a href="{{ url_for('.toggle_budget_status', id=grand.id, action=1)}}"><button class="warning"><i class="fa fa-warning" aria-hidden="true"></i> Freeze Budget</button></a>
+                                        <a href="{{ url_for('.toggle_budget_status', id=grand.id, action=1)}}"><button class="task warning"><i class="fa fa-warning" aria-hidden="true"></i> Freeze</button></a>
                                     {% else %}
-                                        <a href="{{ url_for('.toggle_budget_status', id=grand.id, action=0)}}"><button><i class="fa fa-warning" aria-hidden="true"></i> Unfreeze Budget</button></a>
+                                        <a href="{{ url_for('.toggle_budget_status', id=grand.id, action=0)}}"><button class="task sub"><i class="fa fa-warning" aria-hidden="true"></i> Unfreeze</button></a>
                                     {% endif %}
                                 </td>
                             </tr>
@@ -469,6 +469,11 @@ ko.applyBindings(addNewBudget, $('.addBudget')[0]);
 </script>
 
 <script type="text/javascript">
+/* reload when modal is closed */
+$(document).on('hide.bs.modal','.showDetails', function () {
+    window.location.replace("http://localhost:9000/manage-budget");
+});
+
 /* for form submission */
 function form_submit() {
     document.getElementById("addBudgetForm").submit();

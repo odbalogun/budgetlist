@@ -387,8 +387,10 @@ function CreateProjectModel() {
     self.checkBudget = function (){
         if(self.allocation() > self.max_budget()){
             $('#submitBtn').prop('disabled', true);
+            document.getElementById('submitBtn').className = "save disabled";
         }else{
             $('#submitBtn').prop('disabled', false);
+           document.getElementById('submitBtn').className = "save";
         }
     }
 }
