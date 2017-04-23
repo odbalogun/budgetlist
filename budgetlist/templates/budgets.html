@@ -18,7 +18,7 @@
 </div>
 {% endblock %}
 {% block body %}
-<div class="backlogs" style="background-color: #efefef; height: 70em;">
+<div class="backlogs" style="background-color: #efefef; min-height: 70em;">
     <div class="wrapper clearfix">
         <div class="dashboardWrap">
             <div class="col-md-8">
@@ -39,93 +39,22 @@
             </div>    
         </div>
     </div>
+
+    {% for sub in budget.main_subs %}
+    <div class="wrapper clearfix">
+        <div class="dashboardWrap">
+            <div class="col-md-12">
+                <div class="barSection">
+                <div class="title">{{ sub.name }}</div>
+                    <div class="barContent">
+                        <div id="{{ sub.id }}" style="height: 300px;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
 </div>
-
-
-
-<script>
-
-    $(function ()  
-    {
-        var dataSource = [];
-
-        {% for b in budget.main_subs %}
-            dataSource.push({ budget: "{{ b.name }}", budgeted: {{ b.get_allocation }}, performed: {{ b.amount_allocated }} });
-        {% endfor %}
-
-
-
-        $("#chartContainer").dxChart({
-            dataSource: dataSource,
-            commonSeriesSettings: {
-                argumentField: "budget",
-                type: "bar",
-                hoverMode: "allArgumentPoints",
-                selectionMode: "allArgumentPoints",
-                label: {
-                    visible: true,
-                    format: "fixedPoint",
-                    precision: 0
-                }
-            },
-            series: [
-                { valueField: "budgeted", name: "budgeted" },
-                { valueField: "performed", name: "performed" }
-            ],
-            title: "{{ budget.name }}",
-            legend: {
-                verticalAlignment: "bottom",
-                horizontalAlignment: "center"
-            },
-            pointClick: function (point) {
-                this.select();
-            }
-        });
-    }
-
-    );
-</script>
-
-<script>
-    $(function ()  
-    {
-        var dataSource = [];
-
-        {% for b in budget.main_subs %}
-            dataSource.push({ country: "{{ b.name }}", area: {{b.get_allocation}} });
-        {% endfor %}
-
-        $("#pieContainer").dxPieChart({
-            size:{ 
-                width: 400
-            },
-            dataSource: dataSource,
-            series: [
-                {
-                    argumentField: "country",
-                    valueField: "area",
-                    label:{
-                        visible: true,
-                        format: "fixedPoint",
-                        connector:{
-                            visible:true,           
-                            width: 1
-                        }
-                    }
-                }
-            ],
-            title: "Total Budget",
-            legend: {
-                verticalAlignment: "bottom",
-                horizontalAlignment: "center"
-            },
-        });
-    }
-
-    );
-
-</script>
-
 
 {% endblock %}
 
@@ -136,7 +65,7 @@
      var datapie = []
 
     {% for bud in budget.main_subs %}
-        data.push({ y: "{{ bud.name }}", a: {{ bud.get_allocation }}, b: {{ bud.amount_allocated }} });
+        data.push({ y: "{{ bud.name }}", a: {{ bud.get_allocation }}, b: {{ bud.total_amount_allocated }} });
         datapie.push({ label: "{{ bud.name }}", value: {{ bud.get_allocation }} });
     {% endfor %}
 
@@ -161,5 +90,32 @@
                 data: datapie
         });
 </script>
+
+{% for sub in budget.main_subs %}
+<script>
+    var data = [];
+
+    {% for bud in sub.child_budgets %}
+        data.push({ y: "{{ bud.name }}", a: {{ bud.get_allocation }}, b: {{ bud.total_amount_allocated }} });
+    {% endfor %}
+
+    var  config = {
+        data: data,
+        xkey: 'y',
+        ykeys: ['a', 'b'],
+        labels: ['Budgeted', 'Performed'],
+        fillOpacity: 0.6,
+        hideHover: 'auto',
+        behaveLikeLine: true,
+        resize: true,
+        pointFillColors: ['#ffffff'],
+        pointStrokeColors: ['black'],
+        lineColors: ['gray', 'red']
+    };
+
+    config.element = '{{ sub.id }}';
+    Morris.Bar(config);
+</script>
+{% endfor %}
 
 {% endblock %}

@@ -1,0 +1,187 @@
+{% extends "layout.html" %}
+{% block secondLayer %}
+<div class="secondLayer">
+    <div class="wrapper">
+        <ul>
+            <li>
+                <a class="{% if request.path == '/periods'%} active {% endif %}" href="{{ url_for('.periods')}}">Period Settings</a>
+            </li>
+            <li>
+                <a class="{% if request.path == '/user-settings'%} active {% endif %}" href="{{ url_for('.user_settings')}}">User Settings</a>
+            </li>
+            <li>
+                <a class="{% if request.path == '/sub-budget-setup'%} active {% endif %}" href="{{ url_for('.sub_budget_settings')}}">Budget Settings</a>
+            </li>
+            <li>
+                <a class="{% if request.path == '/departments'%} active {% endif %}" href="{{ url_for('.departments')}}">Department Settings</a>
+            </li>
+        </ul>
+    </div>
+</div>
+{% endblock %}
+
+{% block body %}
+<div class="details">
+    <div class="wrapper">
+        <div class="settings">
+            <div class="dHeading clearfix">
+                <div class="title pull-left">User Settings</div>
+            </div>
+             <div class="col-md-12">
+                <table class="assignedTask full">
+                    <thead>
+                        <tr>
+                            <th>S/N</th>
+                            <th>Username</th>
+                            <th>Full Name</th>
+                            <th>Email</th>
+                            <th>Account Type</th>
+                            <th>Status</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody class="tableBody">
+                        {% for user in users %}
+                        <tr>
+                            <td>{{ loop.index }}</td>
+                            <td>
+                                {% if user.uid %}
+                                    {{ user.uid }}
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if user.cn %}
+                                    {{ user.cn }}
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if user.mail %}
+                                    {{ user.mail }}
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if user.type %}
+                                    {{ user.type }}
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if user.status != None %}
+                                    {% if user.status == 0 %}
+                                        Active
+                                    {% elif user.status == 1 %}
+                                        Inactive
+                                    {% else %}
+                                        No Access
+                                    {% endif %}
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if user.status != None %}
+                                    {% if user.uid != current_user.username %}
+                                        {% if user.status == 0 %}
+                                            <a class="edit-ldap" href="#" onclick="showEditModal(this)" data-name="{{ user.cn }}" data-id="{{ user.uid }}" data-toggle="modal" data-target=".edit">Edit</a>
+                                            <a class="deactivated" href="{{ url_for('.toggle_ldap_status', action=1, username=user.uid) }}">Deactivate</a>
+                                        {% elif user.status == 1 %}
+                                            <a class="edit-ldap" href="#" onclick="showEditModal(this)" data-name="{{ user.cn }}" data-id="{{ user.uid }}" data-toggle="modal" data-target=".edit">Edit</a>
+                                            <a class="activated" href="{{ url_for('.toggle_ldap_status', action=0, username=user.uid) }}">Activate</a>
+                                        {% elif user.status == 2 %}
+                                            <a class="activated" href="#" onclick="showModal(this)" data-name="{{ user.cn }}" data-id="{{ user.uid }}" data-toggle="modal" data-target=".access">Grant Access</a>
+                                        {% endif %}
+                                    {% endif %}
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- modal -->
+<div class="modal fade editTask access" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+        <div class="title clearfix">
+            <span class="pull-left" id="titlebar">Grant Access</span>
+            <span data-dismiss="modal" aria-label="Close" class="pull-right"><i class="fa fa-times" aria-hidden="true"></i></span>
+        </div>
+        <input type="hidden" name="user_id" id="user_id" value="" />
+        <div class="content clearfix">
+            <div class="col-md-12">
+                <label for="">Select an account type</label>
+                <select name="type" id="type" class="form-control">
+                    <option value="0">Basic User</option>
+                    <option value="1">Super User</option>
+                    <option value="2">Administrator</option>
+                </select>
+            </div>
+        </div>
+        <div class="buttonWrap">
+            <button type="submit" id="submit" onclick="submitModal()" class="save"><i class="fa fa-floppy-o" aria-hidden="true"></i> Save & close</button>
+        </div>
+    </div>
+    </div>
+  </div>
+</div>
+
+<!-- edit user -->
+<div class="modal fade editTask edit" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+        <div class="title clearfix">
+            <span class="pull-left" id="editbar">Grant Access</span>
+            <span data-dismiss="modal" aria-label="Close" class="pull-right"><i class="fa fa-times" aria-hidden="true"></i></span>
+        </div>
+        <input type="hidden" name="user_id" id="edit_user" value="" />
+        <div class="content clearfix">
+            <div class="col-md-12">
+                <label for="">Select an account type</label>
+                <select name="type" id="edit_type" class="form-control">
+                    <option value="0">Basic User</option>
+                    <option value="1">Super User</option>
+                    <option value="2">Administrator</option>
+                </select>
+            </div>
+        </div>
+        <div class="buttonWrap">
+            <button type="submit" id="edit_submit" onclick="submitEditModal()" class="save"><i class="fa fa-floppy-o" aria-hidden="true"></i> Save & close</button>
+        </div>
+    </div>
+    </div>
+  </div>
+</div>
+
+<script type="text/javascript">
+    function showModal(elem){
+        console.log($(elem).data("id"));
+        console.log($(elem).data("name"));
+        var username = $(elem).data("id");
+        var fullname = $(elem).data("name");
+        document.getElementById("titlebar").textContent="Grant Access to "+fullname;
+        document.getElementById('user_id').value = username;
+    }
+
+    function showEditModal(elem){
+        var username = $(elem).data("id");
+        var fullname = $(elem).data("name");
+        document.getElementById("editbar").textContent="Change Access Level for "+fullname;
+        document.getElementById('edit_user').value = username;
+    }
+
+    function submitModal(){
+        var username = document.getElementById('user_id').value;
+        var acc_type = document.getElementById('type').value;
+
+         window.location.replace('http://localhost:9000/grant-ldap-access/'+username+'/'+acc_type);
+    }
+
+    function submitEditModal(){
+        var username = document.getElementById('edit_user').value;
+        var acc_type = document.getElementById('edit_type').value;
+
+         window.location.replace('http://localhost:9000/edit-ldap-access-level/'+username+'/'+acc_type);
+    }
+</script>
+{% endblock %}

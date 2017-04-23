@@ -33,18 +33,19 @@
                 <div class="col-md-8 right-text">
                     <div class="title">
                         <span class="caption">Budgeted Amount</span>
-                        <span class="dTitle blue"> ₦{{ budget.total_budget }}</span>
+                        <span class="dTitle blue"> ₦{{ "{:,}".format(budget.total_budget)}}</span>
                     </div>
                     <div class="title">
                         <span class="caption">Amount Assigned</span>
-                        <span class="dTitle pupple">₦{{ budget.amount_allocated }}</span>
+                        <span class="dTitle pupple">₦{{ "{:,}".format(budget.amount_allocated) }}</span>
                     </div>
                     <div class="title">
                         <span class="caption">Amount Unassigned</span>
-                        <span class="dTitle red">₦{{ budget.budget_difference}}</span>
+                        <span class="dTitle red">₦{{ "{:,}".format(budget.budget_difference)}}</span>
                     </div>
                 </div>
             </div>
+        <button class="task" data-toggle="modal" data-target=".transfer"><i class="fa fa-arrow-h" aria-hidden="true"></i> Move Budget</button>
     <table class="taskTable collaptable">
     <thead>
         <tr>
@@ -60,8 +61,8 @@
         {% for sub in budget.main_subs %}
             <tr data-id="{{ sub.id }}" data-parent="">
                 <td class="withBar">{{ sub.name }}</td>
-                <td>₦{{ sub.get_allocation }}</td>
-                <td>₦{{ sub.amount_allocated }}</td>
+                <td>₦{{ "{:,}".format(sub.get_allocation) }}</td>
+                <td>₦{{ "{:,}".format(sub.total_amount_allocated) }}</td>
                 <td>{{ sub.date_created_string.date }}</td>
                 <td>{{ sub.statusText }}</td>
                 <td class="actionBtn">
@@ -73,8 +74,8 @@
                 {% for kid in sub.child_budgets %}
                     <tr data-id="{{ kid.id }}" data-parent="{{ kid.parent_budget }}">
                         <td class="withInnerBar innerShift">{{ kid.name }}</td>
-                        <td>₦{{ kid.get_allocation }}</td>
-                        <td>₦{{ kid.amount_allocated }}</td>
+                        <td>₦{{ "{:,}".format(kid.get_allocation) }}</td>
+                        <td>₦{{ "{:,}".format(kid.total_amount_allocated) }}</td>
                         <td>{{ kid.date_created_string.date }}</td>
                         <td>{{ kid.statusText }}</td>
                         <td class="actionBtn">
@@ -91,8 +92,8 @@
                         {% for grand in kid.child_budgets %}
                             <tr data-id="{{ grand.id }}" data-parent="{{ grand.parent_budget }}">
                                 <td class="withInnerinnerBar innerInnerShift">{{ grand.name }}</td>
-                                <td>₦{{ grand.get_allocation }}</td>
-                                <td>₦{{ grand.amount_allocated }}</td>
+                                <td>₦{{ "{:,}".format(grand.get_allocation) }}</td>
+                                <td>₦{{ "{:,}".format(grand.total_amount_allocated) }}</td>
                                 <td>{{ grand.date_created_string.date }}</td>
                                 <td>{{ grand.statusText }}</td>
                                 <td class="actionBtn">
@@ -109,17 +110,17 @@
                                 {% for great in grand.child_budgets %}
                                     <tr data-id="{{ great.id }}" data-parent="{{ great.parent_budget }}">
                                         <td class="withInnerinnerBar innerInnerInnerShift">{{ great.name }}</td>
-                                        <td>₦{{ great.get_allocation }}</td>
-                                        <td>₦{{ great.amount_allocated }}</td>
+                                        <td>₦{{ "{:,}".format(great.get_allocation) }}</td>
+                                        <td>₦{{ "{:,}".format(great.total_amount_allocated) }}</td>
                                         <td>{{ great.date_created_string.date }}</td>
                                         <td>{{ great.statusText }}</td>
                                         <td class="actionBtn">
                                             <button class="task edit" data-bind="click: function(){ editBudget({{ great.id }}); }"><i class="fa fa-edit" aria-hidden="true"></i> Edit</button>
                                             <button class="task" data-bind="click: function(){ viewBudget({{ great.id }}); }"><i class="fa fa-folder-open-o" aria-hidden="true"></i> View</button>
                                             {% if great.status == 0 %}
-                                                <a href="{{ url_for('.toggle_budget_status', id=great.id, action=1)}}"><button class="warning"><i class="fa fa-warning" aria-hidden="true"></i> Freeze Budget</button></a>
+                                                <a href="{{ url_for('.toggle_budget_status', id=great.id, action=1)}}"><button class="task warning"><i class="fa fa-warning" aria-hidden="true"></i> Freeze Budget</button></a>
                                             {% else %}
-                                                <a href="{{ url_for('.toggle_budget_status', id=great.id, action=0)}}"><button><i class="fa fa-warning" aria-hidden="true"></i> Unfreeze Budget</button></a>
+                                                <a href="{{ url_for('.toggle_budget_status', id=great.id, action=0)}}"><button class="task sub"><i class="fa fa-warning" aria-hidden="true"></i> Unfreeze Budget</button></a>
                                             {% endif %}
                                         </td>
                                     </tr>
@@ -135,6 +136,76 @@
         </div>
     </div>
 </div>
+
+<!-- Transfer -->
+<div class="modal fade editTask transfer" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+        <div class="title clearfix">
+            <span class="pull-left" id="titlebar">Transfer Budget Funds</span>
+            <span data-dismiss="modal" aria-label="Close" class="pull-right"><i class="fa fa-times" aria-hidden="true"></i></span>
+        </div>
+        <input type="hidden" name="transfer_from" id="transfer_from" value="" />
+        <div class="content clearfix">
+            <div class="col-md-6">
+                <label for="">Transfer From:</label>
+                <select name="f1" id="f1" class="form-control" data-bind="value: ftier, event:{ change: loadFAmount(ftier()) }">
+                    {% for sub in budget.main_subs %}
+                        <option value="{{ sub.id }}">{{ sub.name}}</option>
+                    {% endfor %}
+                </select>
+
+                <select name="f2" id="f2" class="form-control" data-bind="value: ftier1v, options: ftier1, optionsCaption: 'Select a budget',
+                optionsText: 'name', optionsValue: 'id', event:{ change: loadFAmount(ftier1v()) }">
+                </select>
+
+                <select name="f3" id="f3" class="form-control" data-bind="value: ftier2v, options: ftier2, optionsCaption: 'Select a budget',
+                optionsText: 'name', optionsValue: 'id', event:{ change: loadFAmount(ftier2v()) }">
+                </select>
+
+                <select name="f4" id="f4" class="form-control" data-bind="value: ftier3v, options: ftier3, optionsCaption: 'Select a budget',
+                optionsText: 'name', optionsValue: 'id', event:{ change: loadFAmount(ftier3v()) }">
+                </select>
+
+                <input name="famount" id="famount" type="text" disabled="disabled" data-bind="value: famount" />
+                <input type="hidden" name="from" id="from" data-bind="value: from" />
+            </div>
+            <div class="col-md-6">
+                <label for="">Transfer To:</label>
+                <select name="t1" id="t1" class="form-control" data-bind="value: ttier, event:{ change: loadTAmount(ttier()) }">
+                    {% for sub in budget.main_subs %}
+                        <option value="{{ sub.id }}">{{ sub.name}}</option>
+                    {% endfor %}
+                </select>
+
+                <select name="t2" id="t2" class="form-control" data-bind="value: ttier1v, options: ttier1, optionsCaption: 'Select a budget',
+                optionsText: 'name', optionsValue: 'id', event:{ change: loadTAmount(ttier1v()) }">
+                </select>
+
+                <select name="t3" id="t3" class="form-control" data-bind="value: ttier2v, options: ttier2, optionsCaption: 'Select a budget',
+                optionsText: 'name', optionsValue: 'id', event:{ change: loadTAmount(ttier2v()) }">
+                </select>
+
+                <select name="t4" id="t4" class="form-control" data-bind="value: ttier3v, options: ttier3, optionsCaption: 'Select a budget',
+                optionsText: 'name', optionsValue: 'id', event:{ change: loadTAmount(ttier3v()) }">
+                </select>
+
+                <input name="tamount" id="tamount" type="text" disabled="disabled" data-bind="value: tamount" />
+                <input type="hidden" name="to" id="to" data-bind="value: to" />
+            </div>
+            <div class="col-md-12">
+                <label for="">Amount To Transfer:</label>
+                <input type="text" name="amount" id="amount" class="form-control" />
+            </div>
+        </div>
+        <div class="buttonWrap">
+            <button type="submit" id="submit" onclick="submitTransfer()" class="save"><i class="fa fa-floppy-o" aria-hidden="true"></i> Save & close</button>
+        </div>
+    </div>
+    </div>
+  </div>
+</div>
+
 
 <!-- Edit Budget modal -->
 <div class="modal fade editTask addBudget" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel">
@@ -277,6 +348,10 @@
 </div>
 
 <script type="text/javascript">
+function numberWithCommas(x) {
+    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+}
+
 /* knockoutjs view models */
 function AddBudgetModel(){
     var self = this;
@@ -375,6 +450,120 @@ function FetchBudgetModel() {
 
 }
 
+function MoveBudgetModel(){
+    var self = this;
+
+    self.ftier = ko.observable();
+    self.ftier1v  = ko.observable();
+    self.ftier1  = ko.observableArray();
+    self.ftier2v = ko.observable();
+    self.ftier2  = ko.observableArray();
+    self.ftier3v = ko.observable();
+    self.ftier3  = ko.observableArray();
+
+    self.ttier = ko.observable();
+    self.ttier1v  = ko.observable();
+    self.ttier1  = ko.observableArray();
+    self.ttier2v = ko.observable();
+    self.ttier2  = ko.observableArray();
+    self.ttier3v = ko.observable();
+    self.ttier3  = ko.observableArray();
+
+    self.famount = ko.observable();
+    self.from = ko.observable();
+    self.to = ko.observable();
+    self.tamount = ko.observable();
+    self.getSubsURI = 'http://localhost:9000/api/v1.0/budgets/children';
+    self.getBudgetURI = 'http://localhost:9000/api/v1.0/budgets/get';
+
+    self.ajax = function(uri, method, data){
+        var request = {
+            url: uri,
+            type: method,
+            contentType: "application/json",
+            accepts: "application/json",
+            cache: true,
+            dataType: 'json',
+            data: JSON.stringify(data),
+            error: function(jqXHR) {
+                console.log("ajax error " + jqXHR.status);
+            }
+        };
+        return $.ajax(request);
+    }
+
+    self.populateTiers= function(budget_id, tier){
+        // get list of sub budgets
+        self.ajax(self.getSubsURI+'/'+budget_id, 'GET').done(function(data){
+            tier.removeAll();
+
+            //tier.push({id: 0, name:'------'});
+            for (var i = 0; i < data.subs.length; i++) {
+                tier.push({
+                    id: data.subs[i].id,
+                    name: data.subs[i].name
+                });
+            }
+
+        });
+    }
+
+    self.ftier.subscribe(function(newValue) {
+        
+        if(newValue !== undefined){
+            self.populateTiers(newValue, self.ftier1);
+        }
+    });
+    self.ftier1v.subscribe(function(newValue) {
+        
+        if(newValue){
+            self.populateTiers(newValue, self.ftier2);
+        }
+    });
+    self.ftier2v.subscribe(function(newValue) {
+        
+        if(newValue){
+            self.populateTiers(newValue, self.ftier3);
+        }
+    });
+
+    self.loadFAmount = function(budget_id){
+        if(budget_id !== undefined) {
+            self.ajax(self.getBudgetURI + '/' + budget_id, 'GET').done(function (data) {
+                self.famount(data.sub.amount_remaining);
+                self.from(data.sub.id);
+            });
+        }
+    }
+
+    self.ttier.subscribe(function(newValue) {
+        
+        if(newValue !== undefined){
+            self.populateTiers(newValue, self.ttier1);
+        }
+    });
+     self.ttier1v.subscribe(function(newValue) {
+        
+        if(newValue){
+            self.populateTiers(newValue, self.ttier2);
+        }
+    });
+    self.ttier2v.subscribe(function(newValue) {
+        
+        if(newValue){
+            self.populateTiers(newValue, self.ttier3);
+        }
+    });
+    self.loadTAmount = function(budget_id){
+        if(budget_id !== undefined) {
+            self.ajax(self.getBudgetURI + '/' + budget_id, 'GET').done(function (data) {
+                self.tamount(data.sub.amount_remaining);
+                self.to(data.sub.id);
+            });
+        }
+    }
+}
+
 function ViewBudgetModel(){
     var self = this;
     self.budget_id = ko.observable();
@@ -413,8 +602,8 @@ function ViewBudgetModel(){
         self.clearFields();
         self.budget_id(budget.id);
         self.budget_name(budget.name);
-        self.allocation('₦'+budget.allocation);
-        self.total_allocation('₦'+budget.total_allocation);
+        self.allocation('₦'+numberWithCommas(budget.allocation));
+        self.total_allocation('₦'+numberWithCommas(budget.total_allocation));
         self.total(budget.total_allocation);
         self.statusText(budget.statusText);
         self.activityCount(budget.activityCount);
@@ -422,7 +611,7 @@ function ViewBudgetModel(){
         for (var i = 0; i < budget.subs.length; i++) {
             self.subs_array.push({
                 name: budget.subs[i].name,
-                allocation: '₦'+budget.subs[i].allocation,
+                allocation: '₦'+numberWithCommas(budget.subs[i].allocation),
                 statusText: budget.subs[i].statusText
             });
         }
@@ -434,12 +623,12 @@ function ViewBudgetModel(){
         self.ajax(self.createSubURI, 'POST', {budget_id: self.budget_id(), name: self.new_budget(), allocation: self.new_allocation(), owner_id: {{ current_user.id }} }).done(function(data){
             self.subs_array.push({
                 name: self.new_budget(),
-                allocation: '₦'+self.new_allocation(),
+                allocation: '₦'+numberWithCommas(self.new_allocation()),
                 statusText: 'Active'
             });
 
             var amt = parseInt(self.total()) + parseInt(self.new_allocation());
-            self.total_allocation('₦'+amt);
+            self.total_allocation('₦'+numberWithCommas(amt));
             self.total(amt);
             self.new_budget("");
             self.new_allocation("");
@@ -462,13 +651,23 @@ var fetchTask = new FetchBudgetModel();
 var showEdit = new ShowEditBudgetModel();
 var addNewBudget = new AddBudgetModel();
 var showBudget = new ViewBudgetModel();
+var moveBudget = new MoveBudgetModel();
 ko.applyBindings(fetchTask, $('.budgetlist')[0]);
 ko.applyBindings(showEdit, $('.editBudget')[0]);
 ko.applyBindings(showBudget, $('.showDetails')[0]);
 ko.applyBindings(addNewBudget, $('.addBudget')[0]);
+ko.applyBindings(moveBudget, $('.transfer')[0]);
 </script>
 
 <script type="text/javascript">
+ function submitTransfer(){
+    var transfer_from = document.getElementById('from').value;
+    var transfer_to = document.getElementById('to').value;
+    var amount = document.getElementById('amount').value;
+
+     window.location.replace('http://localhost:9000/budget-transfer/'+transfer_from+'/'+transfer_to+'/'+amount);
+}
+
 /* reload when modal is closed */
 $(document).on('hide.bs.modal','.showDetails', function () {
     window.location.replace("http://localhost:9000/manage-budget");

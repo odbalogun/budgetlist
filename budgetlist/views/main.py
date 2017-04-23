@@ -1,12 +1,14 @@
 from flask import Blueprint, redirect, url_for, abort, render_template, flash
 from flask_login import login_user, logout_user, login_required, current_user
-from budgetlist.models import db, User, Project, Task, Company, Period, Department, Permissions, Budget, TaskHistory, SubBudgets, Audit
+from budgetlist.models import db, User, Project, Task, Period, Department, Permissions, Budget, TaskHistory, \
+    SubBudgets, Audit, SubBudgetClass
 from functools import wraps
-from budgetlist import lm
-from budgetlist.forms import LoginForm, CompanyForm, PeriodForm, DepartmentForm, UserForm, BudgetForm, ProjectForm, \
+from budgetlist import lm, app
+from budgetlist.forms import LoginForm, PeriodForm, DepartmentForm, UserForm, BudgetForm, ProjectForm, \
     TaskForm, SubTaskForm, EditUserForm, UpdateTaskForm, SubBudgetForm, EditSubBudgetForm, ChangePasswordForm
-from budgetlist.helpers import list_budget_types, list_priority, list_audit_types
+from budgetlist.helpers import list_budget_types, list_priority
 from datetime import date
+import ldap
 
 main = Blueprint('main', __name__)
 lm.login_view = '.login'
@@ -21,7 +23,7 @@ def load_user(userid):
 def is_admin(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
-        if not current_user.is_admin():
+        if not current_user.is_admin:
             abort(403)
         return f(*args, **kwargs)
     return decorated_function
@@ -35,18 +37,43 @@ def is_super(f):
         return f(*args, **kwargs)
     return decorated_function
 
+# decorator to determine if user is not basic
+def is_not_basic(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if current_user.is_basic:
+            abort(403)
+        return f(*args, **kwargs)
+    return decorated_function
+
+def user_status(username):
+    user = User.query.filter(User.username == username).one_or_none()
+
+    if user:
+        # check status
+        return user.status
+    return 2
+
+def user_type(username):
+    user = User.query.filter(User.username == username).one_or_none()
+
+    if user:
+        return user.user_type
+    return None
+
 # function redirects to user's home page based on user type
 @main.route('/home', methods=['GET'])
 @login_required
 def home():
     # switch this check to is_super
-    if current_user.is_basic:
-        return redirect(url_for('.assigned_tasks'))
-    else:
+    if current_user.is_super:
         return redirect(url_for('.budget_overview'))
+    else:
+        return redirect(url_for('.assigned_tasks'))
 
 @main.route('/overview', methods=['GET'])
 @login_required
+@is_super
 def overview():
     # get active period
     period = Period.query.filter(Period.status==0).first()
@@ -74,6 +101,7 @@ def overview():
                            ongoing_count=ongoing_count, overdue_count=overdue_count, budgets=b.main_subs)
 
 @main.route('/all-activities', methods=['GET'])
+@is_super
 def all_projects():
     period = Period.query.filter(Period.status==0).first()
     projects = Project.query.filter(Project.period_id==period.id).order_by(Project.date_created.desc()).all()
@@ -81,6 +109,7 @@ def all_projects():
     return render_template('allProjects.html', projects=projects)
 
 @main.route('/activity-detail/<int:id>', methods=['GET', 'POST'])
+@is_super
 def project_detail(id):
     project = Project.query.get(id)
     form = TaskForm()
@@ -137,6 +166,7 @@ def project_detail(id):
     return render_template('backlogs.html', project=project, form=form, subform=subform)
 
 @main.route('/close-project/<int:id>', methods=['GET', 'POST'])
+@is_super
 def close_project(id):
     project = Project.query.get(id)
     project.status = 2
@@ -150,6 +180,7 @@ def close_project(id):
     return redirect(url_for('.project_detail', id=project.id))
 
 @main.route('/completed-activities', methods=['GET'])
+@is_super
 def completed_projects():
     period = Period.query.filter(Period.status==0).first()
     projects = Project.query.filter(Project.status==2, Project.period_id==period.id).order_by(Project.date_created.desc()).all()
@@ -157,6 +188,7 @@ def completed_projects():
     return render_template('completedProjects.html', projects=projects)
 
 @main.route('/overdue-activities', methods=['GET'])
+@is_super
 def overdue_projects():
     period = Period.query.filter(Period.status==0).first()
     projects = Project.query.filter(date.today() > Project.end_date, Project.status != 2, Project.period_id==period.id).order_by(Project.date_created.desc()).all()
@@ -164,6 +196,7 @@ def overdue_projects():
     return render_template('overdueProjects.html', projects=projects)
 
 @main.route('/assigned-tasks', methods=['GET', 'POST'])
+@login_required
 def assigned_tasks():
     form = UpdateTaskForm()
 
@@ -205,19 +238,41 @@ def login():
         return redirect(url_for('.home'))
     form = LoginForm()
     if form.validate_on_submit():
-        user = User.query.filter(User.username==form.username.data).one_or_none()
+        if not app.config['USE_LDAP_AUTH']:
+            user = User.query.filter(User.username==form.username.data).one_or_none()
 
-        if not user:
-            flash('Invalid login credentials', 'error')
-        else:
-            if user.check_password(form.password.data):
-                login_user(user)
-                audit = Audit(user.id, "User logged in", 0, 'User', user.id)
-                db.session.add(audit)
-                db.session.commit()
-                return redirect(url_for('.home'))
-            else:
+            if not user:
                 flash('Invalid login credentials', 'error')
+            else:
+                if user.check_password(form.password.data):
+                    login_user(user)
+                    audit = Audit(user.id, "User logged in", 0, 'User', user.id)
+                    db.session.add(audit)
+                    db.session.commit()
+                    return redirect(url_for('.home'))
+                else:
+                    flash('Invalid login credentials', 'error')
+        else:
+            connect = ldap.initialize(app.config['LDAP_PROVIDER_URL'])
+            search_filter = "uid=" + form.username.data + ",dc=example,dc=com"
+
+            try:
+                connect.set_option(ldap.OPT_REFERRALS,0)
+                res = connect.simple_bind_s(search_filter, form.password.data)
+                # check if user exists in our database
+                user = User.query.filter(User.username==form.username.data).one_or_none()
+                if user and user.status == 0:
+                    login_user(user)
+                    audit = Audit(user.id, "User logged in", 0, 'User', user.id)
+                    db.session.add(audit)
+                    db.session.commit()
+                    return redirect(url_for('.home'))
+                else:
+                    flash('You are not authorized to use this portal. Please contact an administrator')
+            except ldap.INVALID_CREDENTIALS:
+                flash('Invalid Active Directory credentials', 'error')
+            except ldap.CONNECT_ERROR:
+                flash('Could not connect to Active Directory', 'error')
     return render_template('login.html', form=form)
 
 @main.route('/logout', methods=['GET'])
@@ -231,6 +286,7 @@ def logout():
     return redirect(url_for('.login'))
 
 @main.route('/change-password', methods=['GET', 'POST'])
+@login_required
 def change_password():
     form = ChangePasswordForm()
 
@@ -243,6 +299,7 @@ def change_password():
 
 # user management
 @main.route('/users', methods=['GET'])
+@is_admin
 def users():
     # get users
     users = User.query.all()
@@ -250,6 +307,7 @@ def users():
     return render_template('members.html', users=users)
 
 @main.route('/activeUsers', methods=['GET'])
+@is_admin
 def active_users():
     # get users
     users = User.query.filter(User.status==0).all()
@@ -257,6 +315,7 @@ def active_users():
     return render_template('members.html', users=users)
 
 @main.route('/inactiveUsers', methods=['GET'])
+@is_admin
 def inactive_users():
     # get users
     users = User.query.filter(User.status==1).all()
@@ -264,6 +323,7 @@ def inactive_users():
     return render_template('members.html', users=users)
 
 @main.route('/edit-user/<int:userid>', methods=['GET', 'POST'])
+@is_admin
 def edit_user(userid):
     # get users
     user = User.query.get(userid)
@@ -296,6 +356,7 @@ def edit_user(userid):
     return render_template('edit_user.html', user=user, users=users, form=form)
 
 @main.route('/toggle_user_status/<int:action>/<int:userid>', methods=['GET'])
+@is_admin
 def toggle_user_status(action, userid):
     # check if action is valid
     if action in [0, 1]:
@@ -319,13 +380,41 @@ def toggle_user_status(action, userid):
     else:
         abort(400)
 
+@main.route('/toggle_ldap_status/<int:action>/<username>', methods=['GET'])
+@is_admin
+def toggle_ldap_status(action, username):
+    # check if action is valid
+    if action in [0, 1]:
+        # check if user exists
+        user = User.query.filter(User.username == username).one_or_none()
+        if user:
+            user.status = action
+            db.session.add(user)
+            db.session.commit()
+
+            if action == 0:
+                audit = Audit(current_user.id, "User account was activated", 5, 'User', user.id)
+            else:
+                audit = Audit(current_user.id, "User account was deactivated", 5, 'User', user.id)
+            db.session.add(audit)
+            db.session.commit()
+            flash('The user\'s account status has been updated', 'success')
+            return redirect(url_for('.user_settings'))
+        else:
+            flash('Invalid user account', 'error')
+            return redirect(url_for('.user_settings'))
+    else:
+        flash('Invalid action', 'error')
+        return redirect(url_for('.user_settings'))
 
 # settings
 @main.route('/settings', methods=['GET', 'POST'])
+@is_admin
 def settings():
     return redirect(url_for('.periods'))
 
 @main.route('/periods', methods=['GET', 'POST'])
+@is_admin
 def periods():
     form = PeriodForm()
     if form.validate_on_submit():
@@ -346,11 +435,12 @@ def periods():
         budget.name = 'Budget'
 
         # add sub budgets
-        for i in list_budget_types:
+        for i in SubBudgetClass.query.all():
             sub_budget = SubBudgets()
-            sub_budget.name = i
+            sub_budget.name = i.sub_budget_class
             sub_budget.created_by = current_user.id
             sub_budget.parent_budget = None
+            sub_budget.sub_budget_type = i.id
 
             budget.main_subs.append(sub_budget)
 
@@ -373,6 +463,7 @@ def periods():
     return render_template('periodSettings.html', form=form, periods=periods)
 
 @main.route('/activate-period/<int:id>', methods=['GET'])
+@is_admin
 def activate_period(id):
     period = Period.query.get(id)
     if period:
@@ -385,10 +476,11 @@ def activate_period(id):
         db.session.add(audit)
         db.session.commit()
         flash('The period has been activated', 'success')
-        return redirect(url_for('.manage_budget'))
+        return redirect(url_for('.periods'))
     return redirect(url_for('.periods'))
 
 @main.route('/departments', methods=['GET', 'POST'])
+@is_admin
 def departments():
     form = DepartmentForm()
 
@@ -427,6 +519,7 @@ def departments():
     return render_template('departmentSetting.html', form=form, departments=departments)
 
 @main.route('/edit-department/<int:id>', methods=['GET', 'POST'])
+@is_admin
 def edit_department(id):
     dept = Department.query.get(id)
 
@@ -442,6 +535,7 @@ def edit_department(id):
     return render_template('edit_department.html', form=form, dept=dept, departments=departments)
 
 @main.route('/create-user', methods=['GET', 'POST'])
+@is_admin
 def create_user():
     form = UserForm()
     form.department.choices = [(a.id, a.name) for a in Department.query.all()]
@@ -455,56 +549,161 @@ def create_user():
     return render_template('userSetting.html', form=form)
 
 @main.route('/user-settings', methods=['GET', 'POST'])
+@is_admin
 def user_settings():
-    form = UserForm()
-    form.department.choices = [(a.id, a.name) for a in Department.query.all()]
+    if not app.config['USE_LDAP_AUTH']:
+        form = UserForm()
+        form.department.choices = [(a.id, a.name) for a in Department.query.all()]
+        if form.validate_on_submit():
+            if form.user_id.data:
+                # check if username or email already exists
+                chk = User.query.filter(User.username == form.username.data, User.id != form.user_id.data).first()
+                chk2 = User.query.filter(User.email == form.email.data, User.id != form.user_id.data).first()
 
-    if form.validate_on_submit():
-        if form.user_id.data:
-            # check if username or email already exists
-            chk = User.query.filter(User.username == form.username.data, User.id != form.user_id.data).first()
-            chk2 = User.query.filter(User.email == form.email.data, User.id != form.user_id.data).first()
+                if chk or chk2:
+                    if chk:
+                        flash('This username already exists', 'error')
+                    if chk2:
+                        flash('This email already exists', 'error')
+                else:
+                    user = User.query.get(form.user_id.data)
+                    # assign values
+                    user.username = form.username.data
+                    user.full_name = form.full_name.data
+                    user.email = form.email.data
+                    user.department_id = form.department.data
+                    user.account_type = form.user_type.data
 
-            if chk or chk2:
-                if chk:
-                    flash('This username already exists', 'error')
-                if chk2:
-                    flash('This email already exists', 'error')
+                    if form.password.data:
+                        user.set_password(form.password.data)
+
+                    db.session.add(user)
+                    db.session.commit()
+                    flash('The user\'s account has been successfully updated', 'success')
             else:
-                user = User.query.get(form.user_id.data)
-                # assign values
-                user.username = form.username.data
-                user.full_name = form.full_name.data
-                user.email = form.email.data
-                user.department_id = form.department.data
-                user.account_type = form.user_type.data
+                # check if username or email already exists
+                chk = User.query.filter(User.username == form.username.data).first()
+                chk2 = User.query.filter(User.email == form.email.data).first()
 
-                if form.password.data:
-                    user.set_password(form.password.data)
+                if chk or chk2:
+                    if chk:
+                        flash('This username already exists', 'error')
+                    if chk2:
+                        flash('This email already exists', 'error')
+                else:
+                    user = User(form.full_name.data, form.username.data, form.email.data, form.password.data, form.department.data,
+                            form.user_type.data)
+                    db.session.add(user)
+                    db.session.commit()
+                    flash('The user has been successfully created', 'success')
+        users = User.query.order_by(User.date_created.asc()).all()
+        return render_template('user_setting.html', form=form, users=users)
+    else:
+        connect = ldap.initialize(app.config['LDAP_PROVIDER_URL'])
+        try:
+            connect.set_option(ldap.OPT_REFERRALS, 0)
+            criteria = "(objectClass=person)"
+            attributes = ['uid', 'cn', 'mail']
+            result = connect.search_s(app.config['LDAP_BIND_DN'], ldap.SCOPE_SUBTREE, criteria, attributes)
+            users_stat = [entry for dn, entry in result if isinstance(entry, dict)]
+            users = []
+            for row in users_stat:
+                user_dict = {}
+                print row
+                user_dict['uid'] = row['uid'][0] if 'uid' in row else None
+                user_dict['cn'] = row['cn'][0] if 'cn' in row else None
+                user_dict['mail'] = row['mail'][0] if 'mail' in row else None
+                user_dict['status'] = user_status(row['uid'][0]) if 'uid' in row else None
+                user_dict['type'] = user_type(row['uid'][0]) if 'uid' in row else None
+                users.append(user_dict)
+            connect.unbind()
+        except ldap.CONNECT_ERROR:
+            flash('Could not connect to Active Directory', 'error')
+        return render_template('ldap_user_setting.html', users=users)
 
-                db.session.add(user)
-                db.session.commit()
-                flash('The user\'s account has been successfully updated', 'success')
+@main.route('/sub-budget-setup', methods=['GET'])
+@is_admin
+def sub_budget_settings():
+    subs = SubBudgetClass.query.order_by(SubBudgetClass.id.asc()).all()
+    return render_template('sub_budget_settings.html', subs=subs)
+
+@main.route('/toggle-budget-movable-status/<int:sub>/<int:action>', methods=['GET'])
+@is_admin
+def toggle_budget_movable_status(sub, action):
+    budget_class = SubBudgetClass.query.get(sub)
+
+    if budget_class:
+        budget_class.movable = action
+        db.session.add(budget_class)
+        db.session.commit()
+
+        if action == 0:
+            audit = Audit(current_user.id, "User marked budget as movable", 11, 'Sub Budget Class', budget_class.id)
         else:
-            # check if username or email already exists
-            chk = User.query.filter(User.username == form.username.data).first()
-            chk2 = User.query.filter(User.email == form.email.data).first()
+            audit = Audit(current_user.id, "User marked budget as fixed", 11, 'Sub Budget Class', budget_class.id)
+        db.session.add(audit)
+        db.session.commit()
 
-            if chk or chk2:
-                if chk:
-                    flash('This username already exists', 'error')
-                if chk2:
-                    flash('This email already exists', 'error')
-            else:
-                user = User(form.full_name.data, form.username.data, form.email.data, form.password.data, form.department.data,
-                        form.user_type.data)
+        flash('The budget has been updated successfully', 'success')
+    else:
+        flash('This budget does not exist', 'error')
+    return redirect(url_for('.sub_budget_settings'))
+
+@main.route('/edit-ldap-access-level/<username>/<int:type>', methods=['GET', 'POST'])
+@is_admin
+def edit_ldap_access(username, type):
+    # check if user exists
+    user = User.query.filter(User.username == username).one_or_none()
+    if user:
+        user.account_type = type
+        db.session.add(user)
+        db.session.commit()
+
+        # for audit
+        audit = Audit(current_user.id, "User\'s account type was updated", 5, 'User', user.id)
+        db.session.add(audit)
+        db.session.commit()
+        flash('This user\'s account type has been updated', 'success')
+    else:
+        flash('This user does not exist', 'error')
+    return redirect(url_for('.user_settings'))
+
+@main.route('/grant-ldap-access/<username>/<int:type>', methods=['GET', 'POST'])
+@is_admin
+def grant_ldap_access(username, type):
+    # check if user exists
+    user = User.query.filter(User.username == username).one_or_none()
+    if not user:
+        # get user details from ldap
+        connect = ldap.initialize(app.config['LDAP_PROVIDER_URL'])
+        try:
+            connect.set_option(ldap.OPT_REFERRALS, 0)
+            # searchFilter = "(&(gidNumber=123456)(objectClass=posixAccount))"
+            criteria = "(&(objectClass=person)(uid=" + username + "))"
+            attributes = ['uid', 'cn', 'mail']
+            result = connect.search_s(app.config['LDAP_BIND_DN'], ldap.SCOPE_SUBTREE, criteria, attributes)
+            ldap_user = [entry for dn, entry in result if isinstance(entry, dict)]
+            if len(ldap_user) == 1:
+                # create user
+                user = User(ldap_user[0]['cn'][0], ldap_user[0]['uid'][0], ldap_user[0]['mail'][0], 'password', 1, type)
                 db.session.add(user)
                 db.session.commit()
-                flash('The user has been successfully created', 'success')
-    users = User.query.order_by(User.date_created.asc()).all()
-    return render_template('user_setting.html', form=form, users=users)
+
+                # for audit
+                audit = Audit(current_user.id, "LDAP user was granted access", 5, 'User', user.id)
+                db.session.add(audit)
+                db.session.commit()
+                flash('The user has been granted access', 'success')
+            else:
+                flash('Invalid number of users in AD', 'error')
+        except ldap.CONNECT_ERROR:
+            flash('Could not connect to Active Directory', 'error')
+    else:
+        flash('This user already exists', 'error')
+    return redirect(url_for('.user_settings'))
 
 @main.route('/budgets', methods=['GET', 'POST'])
+@is_super
 def budgets():
     form = BudgetForm()
     form.period.choices = [(a.id, a.name) for a in Period.query.all()]
@@ -523,6 +722,7 @@ def budgets():
     return render_template('budgetSetting.html', form=form, budgets=budgets)
 
 @main.route('/manage-budget', methods=['GET', 'POST'])
+@is_super
 def manage_budget():
     # get budget
     period = Period.query.filter(Period.status==0).first()
@@ -565,7 +765,33 @@ def manage_budget():
 
     return render_template('manage_budget.html', budget=budget, form=form, editform=editform)
 
+@main.route('/budget-transfer/<int:bfrom>/<int:bto>/<amount>', methods=['GET'])
+@is_super
+def budget_transfer(bfrom, bto, amount):
+    budget_from = SubBudgets.query.get(bfrom)
+    budget_to = SubBudgets.query.get(bto)
+    amount = int(amount)
+
+    if not budget_from or not budget_to:
+        flash('One or more budgets does not exist', 'error')
+    elif budget_from.amount_remaining < amount:
+        flash('Amount to be transferred exceeds budget balance', 'error')
+    else:
+        budget_from.allocation -= amount
+        budget_to.allocation += amount
+        db.session.add(budget_from)
+        db.session.add(budget_to)
+        db.session.commit()
+
+        audit = Audit(current_user.id, "User transferred %d from %s to %s" % (amount, budget_from.name, budget_to.name), 10, 'Sub Budget', budget_from.id)
+        db.session.add(audit)
+        db.session.commit()
+
+        flash('Budget transfer has been successfully carried out', 'success')
+    return redirect(url_for('.manage_budget'))
+
 @main.route('/toggle-budget/<int:id>/<int:action>', methods=['GET'])
+@is_super
 def toggle_budget_status(id, action):
     sub = SubBudgets.query.get(id)
     sub.status = action
@@ -580,6 +806,7 @@ def toggle_budget_status(id, action):
     return redirect(url_for('.manage_budget'))
 
 @main.route('/budget-details', methods=['GET', 'POST'])
+@is_super
 def budget_details():
     # get budget
     period = Period.query.filter(Period.status==0).first()
@@ -590,6 +817,7 @@ def budget_details():
     return render_template('budget-details.html', budget=budget, periods=periods)
 
 @main.route('/dashboard', methods=['GET', 'POST'])
+@is_super
 def budget_overview():
     # get budget
     period = Period.query.filter(Period.status==0).first()
@@ -598,13 +826,66 @@ def budget_overview():
     return render_template('budgets.html', budget=budget)
 
 @main.route('/audit', methods=['GET', 'POST'])
+@is_not_basic
 def audit():
-    audits = Audit.query.all()
+    audits = Audit.query.order_by(Audit.date_created.desc()).all()
     return render_template('audit.html', audits=audits)
-
 
 # error handling
 @main.app_errorhandler(404)
 def error_not_found(e):
-    return render_template('error.html'), 404
+    return render_template('error.html', error=404), 404
 
+@main.app_errorhandler(403)
+def error_not_authorized(e):
+    return render_template('error.html', error=403), 403
+
+@main.route('/ldap-login', methods=['GET', 'POST'])
+def ldap_login():
+    if app.config['USE_LDAP_AUTH']:
+        username ='einstein'
+        connect = ldap.initialize(app.config['LDAP_PROVIDER_URL'])
+        search_filter = "uid=" + username + ",dc=example,dc=com"
+        #user_dn = "ou=scientists,dc=example,dc=com"
+
+        try:
+            connect.set_option(ldap.OPT_REFERRALS,0)
+            res = connect.simple_bind_s(search_filter, "password")
+            print res
+            criteria = "(objectClass=person)"
+            attributes = ['uid', 'cn', 'sn', 'mail']
+            result = connect.search_s(app.config['LDAP_BIND_DN'], ldap.SCOPE_SUBTREE, criteria, attributes)
+            results = [entry for dn, entry in result if isinstance(entry, dict)]
+            print results
+            connect.unbind()
+            return "Successful binding"
+        except ldap.INVALID_CREDENTIALS:
+            print "Invalid credentials"
+        finally:
+            print "End"
+
+@main.route('/prepare-existsing-budgets', methods=['GET'])
+def prep_budgets():
+    mains = Budget.query.all()
+
+    for m in mains:
+        # get subs
+        for s in m.main_subs:
+            # get child_budgets
+            for a in s.child_budgets:
+                a.sub_budget_type = s.sub_budget_type
+                #print a.sub_budget_type
+                db.session.add(a)
+                db.session.commit()
+                for b in a.child_budgets:
+                    b.sub_budget_type = s.sub_budget_type
+                    db.session.add(b)
+                    db.session.commit()
+                    for c in b.child_budgets:
+                        c.sub_budget_type = s.sub_budget_type
+                        db.session.add(c)
+                        db.session.commit()
+                        for d in c.child_budgets:
+                            d.sub_budget_type = s.sub_budget_type
+                            db.session.add(d)
+                            db.session.commit()

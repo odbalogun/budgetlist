@@ -29,7 +29,7 @@
                     {% for task in project.main_tasks %}
                         <tr data-id="{{ task.id }}" data-parent="">
                             <td class="withBar">{{ task.title }}</td>
-                            <td>₦{{ task.budget }}</td>
+                            <td>₦{{ "{:,}".format(task.budget) }}</td>
                             {% if task.status == 2 %}
                                 <td class="completed">
                             {% else %}
@@ -47,7 +47,7 @@
                             {% for pikin in task.child_tasks %}
                                 <tr data-id="{{ pikin.id }}" data-parent="{{ pikin.parent_task }}">
                                     <td class="withInnerBar innerShift">{{ pikin.title }}</td>
-                                    <td>₦{{ pikin.budget }}</td>
+                                    <td>₦{{ "{:,}".format(pikin.budget) }}</td>
                                     {% if pikin.status == 2 %}
                                         <td class="completed">
                                     {% else %}
@@ -65,7 +65,7 @@
                                     {% for grand in pikin.child_tasks %}
                                         <tr data-id="{{ grand.id }}" data-parent="{{ grand.parent_task }}">
                                             <td class="withInnerinnerBar innerInnerShift">{{ grand.title }}</td>
-                                            <td>₦{{ grand.budget }}</td>
+                                            <td>₦{{ "{:,}".format(grand.budget) }}</td>
                                             {% if grand.status == 2 %}
                                                 <td class="completed">
                                             {% else %}
@@ -83,7 +83,7 @@
                                             {% for great in grand.child_tasks %}
                                                 <tr data-id="{{ great.id }}" data-parent="{{ great.parent_task }}">
                                                     <td class="withInnerinnerBar innerInnerInnerShift">{{ great.title }}</td>
-                                                    <td>₦{{ great.budget }}</td>
+                                                    <td>₦{{ "{:,}".format(great.budget) }}</td>
                                                     {% if great.status == 2 %}
                                                         <td class="completed">
                                                     {% else %}
@@ -116,19 +116,19 @@
                 <div class="infoSec">
                     <div class="title">Budget</div>
                     <div class="content price blue">
-                        ₦{{ project.budget_limit }}
+                        ₦{{ "{:,}".format(project.budget_limit) }}
                     </div>
                 </div>
                 <div class="infoSec">
                     <div class="title">Amount Assigned</div>
                     <div class="content smallPrice pupple">
-                        ₦{{ project.amount_spent }}
+                        ₦{{ "{:,}".format(project.amount_spent) }}
                     </div>
                 </div>
                 <div class="infoSec">
                     <div class="title">Amount Unassigned</div>
                     <div class="content smallPrice red">
-                        ₦{{ project.amount_remaining }}
+                        ₦{{ "{:,}".format(project.amount_remaining) }}
                     </div>
                 </div>
             </div>  
@@ -173,7 +173,7 @@
                 <div class="col-md-6">
                     <label for="">Allocation</label>
                     {{ subform.allocation(class_='stateForm plan money', placeholder="Amount(₦)", id='sub_allocation', **{'onchange': 'checkAllocation()'})}}
-                    <sub style="color: red;">Maximum amount allowed: ₦{{ project.amount_remaining }}</sub>
+                    <sub style="color: red;">Maximum amount allowed: ₦{{ "{:,}".format(project.amount_remaining) }}</sub>
                 </div>
 
                 <div class="col-md-6">
@@ -228,7 +228,7 @@
                 <div class="col-md-6">
                     <label for="">Allocation</label>
                     {{ form.allocation(class_='stateForm plan money noMargin ', placeholder="Amount(₦)", id='form_allocation', **{'onchange': 'fcheckAllocation()'})}}
-                    <sub style="color: red;">Maximum amount allowed: ₦{{ project.amount_remaining }}</sub>
+                    <sub style="color: red;">Maximum amount allowed: ₦{{ "{:,}".format(project.amount_remaining) }}</sub>
                 </div>
 
                 <div class="col-md-6">
@@ -263,9 +263,11 @@
   </div>
 </div>
 
-
-
 <script type="text/javascript">
+function numberWithCommas(x) {
+    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+}
+
 $(document).on("click", ".task", function(){
     var parent_id = $(this).data('id');
     console.log($(this).data('id'));

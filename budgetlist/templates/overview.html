@@ -233,6 +233,10 @@
 </div>
 
 <script type="text/javascript">
+function numberWithCommas(x) {
+    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+}
+
 function OngoingModel(){
     var self = this;
     self.ongoingURI = 'http://localhost:9000/api/v1.0/projects/ongoing'
@@ -371,7 +375,7 @@ function CreateProjectModel() {
 
     self.getBudget  = function(budget){
         self.ajax(self.budgetURI + budget, 'GET').done(function(data){
-            self.budget_limit_text("Maximum amount allowed: "+ data.sub.amount_remaining);
+            self.budget_limit_text("Maximum amount allowed: "+ '₦'+numberWithCommas(data.sub.amount_remaining));
             self.max_budget(data.sub.amount_remaining);
         });
     }

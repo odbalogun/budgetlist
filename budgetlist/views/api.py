@@ -19,10 +19,14 @@ def get_budget_children(budget_id):
 
 @api.route('/v1.0/budgets/create-sub', methods=['POST'])
 def add_sub_budget():
+    # get parent sub
+    parent_sub = SubBudgets.query.get(request.json["budget_id"])
+
     sub = SubBudgets()
     sub.allocation = request.json["allocation"]
     sub.name = request.json["name"]
     sub.parent_budget = request.json["budget_id"]
+    sub.sub_budget_type = parent_sub.sub_budget_type
     sub.created_by = request.json["owner_id"]
 
     db.session.add(sub)

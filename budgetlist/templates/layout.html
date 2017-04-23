@@ -68,7 +68,7 @@
                         <li>
                             <a class="projectName" href="{{ url_for('.home')}}">Budgeting App</a>
                         </li>
-                        {% if not current_user.is_basic %}
+                        {% if current_user.is_super %}
                         <li class="
                             {% if
                                 request.path == '/manage-budget' or
@@ -127,11 +127,11 @@
                         </li>
                         {% endif %}
                         <li class="withDropDown">
-                            <strong>{{ current_user.full_name }} &nbsp; <i class="fa fa-caret-down" aria-hidden="true"></i></strong>
+                            <a href="#"><strong>{{ current_user.full_name }} &nbsp; <i class="fa fa-caret-down" aria-hidden="true"></i></strong></a>
 
                             <div class="dDrop">
                                 <a href="{{ url_for('.logout')}}"><i class="fa fa-sign-out" aria-hidden="true"></i>&nbsp;  Logout</a>
-                                <a href="{{ url_for('.change_password')}}"><i class="fa fa-lock" aria-hidden="true"></i>&nbsp;  Change Password</a>
+                                <!--<a href="{{ url_for('.change_password')}}"><i class="fa fa-lock" aria-hidden="true"></i>&nbsp;  Change Password</a>-->
                             </div>
                         </li>
                     </ul>

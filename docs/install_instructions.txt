@@ -1,0 +1,17 @@
+To install python ldap:
+###########################
+First, sudo apt-get install python-dev
+
+Next: sudo apt-get install libldap2-dev
+
+Next: sudo apt-get install libsasl2-dev
+
+Lastly: pip install python-ldap
+
+################################
+To setup Sub Budget Classes:
+################################
+insert into sub_budget_classes (sub_budget_class) values ('Operational Ex.');
+insert into sub_budget_classes (sub_budget_class) values ('Capital Ex.');
+insert into sub_budget_classes (sub_budget_class) values ('Consultancy');
+insert into sub_budget_classes (sub_budget_class) values ('Moveables');

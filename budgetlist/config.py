@@ -12,9 +12,13 @@ class Config(object):
     """
 
     DEBUG = False
+    USE_LDAP_AUTH = True
+    LDAP_PROVIDER_URL = 'ldap://ldap.forumsys.com:389/'
+    LDAP_BIND_DN = 'dc=example,dc=com'
     SECRET_KEY = 'rcace2376bde12345'
     SQLALCHEMY_DATABASE_URI = "postgresql://budgetuser:budge1234list*@localhost:5432/budgetlist"
     SQLALCHEMY_TRACK_MODIFICATIONS = False
+
     # SERVER_NAME = 'budgetlist.local:5000'
 
 

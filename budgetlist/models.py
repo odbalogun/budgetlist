@@ -42,11 +42,11 @@ class User(UserMixin, db.Model):
     @property
     def user_type(self):
         if self.account_type == 1:
-            return 'Super'
+            return 'Super User'
         elif self.account_type == 0:
-            return 'Basic'
+            return 'Basic User'
         else:
-            return 'Admin'
+            return 'Administrator'
 
     @property
     def is_super(self):
@@ -408,7 +408,7 @@ class Budget(db.Model):
     def amount_allocated(self):
         amount = 0
         for sub in self.main_subs:
-            amount = amount + sub.amount_allocated
+            amount = amount + sub.total_amount_allocated
         return amount
 
     @property
@@ -433,6 +433,7 @@ class SubBudgets(db.Model):
     created_by = Column(Integer, ForeignKey('users.id'))
     date_created = Column(DateTime, default=func.now())
     status = Column(Integer, default=0)
+    sub_budget_type = Column(Integer, ForeignKey('sub_budget_classes.id'))
 
     # amount allocated
     # amt_allocated_budget = Column(Integer, default=0)
@@ -440,15 +441,24 @@ class SubBudgets(db.Model):
 
     creator = relationship("User", uselist=False)
     budget = relationship("Budget", uselist=False)
-    child_budgets = relationship("SubBudgets", primaryjoin="SubBudgets.id == SubBudgets.parent_budget")
+    child_budgets = relationship("SubBudgets", primaryjoin="SubBudgets.id == SubBudgets.parent_budget", order_by="SubBudgets.id")
     projects = relationship("Project")
+    budget_class = relationship("SubBudgetClass", primaryjoin="SubBudgets.sub_budget_type == SubBudgetClass.id", uselist=False)
 
     def __repr__(self):
         return self.name
 
     @property
     def amount_allocated(self):
-        return self.amt_allocated_project
+        amount = self.amt_allocated_project
+        return amount
+
+    @property
+    def total_amount_allocated(self):
+        amount = self.amt_allocated_project
+        for i in self.child_budgets:
+            amount = amount + i.amount_allocated
+        return amount
 
     @property
     def amount_remaining(self):
@@ -461,7 +471,7 @@ class SubBudgets(db.Model):
         # return 0
         amount = self.allocation
         for i in self.child_budgets:
-            amount = amount + i.allocation
+            amount = amount + i.get_allocation
         return amount
 
     @property
@@ -469,6 +479,18 @@ class SubBudgets(db.Model):
         if self.parent_budget:
             return True
         return False
+
+    @property
+    def is_movable(self):
+        if self.budget_class.movable == 0:
+            return True
+        return False
+
+    @property
+    def has_child_budget(self):
+        if len(self.child_budgets) == 0:
+            return False
+        return True
 
     @property
     def date_created_string(self):
@@ -498,6 +520,8 @@ class SubBudgets(db.Model):
                 'id': i.id,
                 'name': i.name,
                 'allocation': i.allocation,
+                'amount_remaining': i.amount_remaining,
+                'has_child_budget': i.has_child_budget,
                 'statusText': i.statusText,
                 'editable': i.is_editable
             })
@@ -509,6 +533,16 @@ class SubBudgets(db.Model):
             return 'Active'
         else:
             return 'Suspended'
+
+class SubBudgetClass(db.Model):
+    __tablename__ = 'sub_budget_classes'
+
+    id = Column(Integer, primary_key=True)
+    sub_budget_class = Column(String(100))
+    movable = Column(Integer, default=0)
+
+    def __repr__(self):
+        return self.sub_budget_class
 
 class Audit(db.Model):
     __tablename__ = 'audit'
@@ -531,6 +565,8 @@ class Audit(db.Model):
                                                                                 " Audit.action_model == 'Budget')", uselist=False)
     sub_budget = relationship("SubBudgets", foreign_keys="Audit.item_id", primaryjoin="and_(SubBudgets.id==Audit.item_id,"
                                                                                 " Audit.action_model == 'Sub Budget')", uselist=False)
+    sub_budget_class = relationship("SubBudgetClass", foreign_keys="Audit.item_id", primaryjoin="and_(SubBudgetClass.id==Audit.item_id,"
+                                                                                " Audit.action_model == 'Sub Budget Class')", uselist=False)
     department = relationship("Department", foreign_keys="Audit.item_id", primaryjoin="and_(Department.id==Audit.item_id,"
                                                                                 " Audit.action_model == 'Department')", uselist=False)
 
@@ -558,6 +594,8 @@ class Audit(db.Model):
             return self.budget
         elif self.action_model == 'Sub Budget':
             return self.sub_budget
+        elif self.action_model == 'Sub Budget Class':
+            return self.sub_budget_class
         elif self.action_model == 'Department':
             return self.department
         elif self.action_model == 'Period':

@@ -2,7 +2,7 @@ from flask import json
 from wtforms.validators import ValidationError
 
 # constants
-list_account_types = ['Basic', 'Super User', 'Administrator']
+list_account_types = ['Basic User', 'Super User', 'Administrator']
 list_project_status = ['Pending', 'Ongoing', 'Completed', 'Suspended']
 list_task_status = ['Pending', 'Ongoing', 'Completed', 'Suspended']
 list_percentages = [(0, '0%'), (10, '10%'), (20, '20%'), (30, '30%'), (40, '40%'), (50, '50%'), (60, '60%'), (70, '70%'),
@@ -13,7 +13,7 @@ list_priority = ['Normal', 'Medium', 'High']
 
 list_audit_types = ['User Access', 'Activity Creation', 'Task Creation', 'Task Update', 'Budget Creation',
                     'User Management', 'Period Management', 'Department Management', 'Project Management',
-                    'Sub Budget Creation', 'Sub Budget Management']
+                    'Sub Budget Creation', 'Sub Budget Management', 'Budget Management']
 list_audit_models = ['User', 'Project', 'Task', 'Budget', 'Sub Budget', 'Period']
 
 def dump_datetime(value):

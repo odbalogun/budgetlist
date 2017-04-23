@@ -1,0 +1,67 @@
+{% extends "layout.html" %}
+{% block secondLayer %}
+<div class="secondLayer">
+    <div class="wrapper">
+        <ul>
+            <li>
+                <a class="{% if request.path == '/periods'%} active {% endif %}" href="{{ url_for('.periods')}}">Period Settings</a>
+            </li>
+            <li>
+                <a class="{% if request.path == '/user-settings'%} active {% endif %}" href="{{ url_for('.user_settings')}}">User Settings</a>
+            </li>
+            <li>
+                <a class="{% if request.path == '/sub-budget-setup'%} active {% endif %}" href="{{ url_for('.sub_budget_settings')}}">Budget Settings</a>
+            </li>
+            <li>
+                <a class="{% if request.path == '/departments'%} active {% endif %}" href="{{ url_for('.departments')}}">Department Settings</a>
+            </li>
+        </ul>
+    </div>
+</div>
+{% endblock %}
+
+{% block body %}
+<div class="details">
+    <div class="wrapper">
+        <div class="settings">
+            <div class="dHeading clearfix">
+                <div class="title pull-left">Budget Settings</div>
+            </div>
+             <div class="col-md-12">
+                <table class="assignedTask full">
+                    <thead>
+                        <tr>
+                            <th>S/N</th>
+                            <th>Budget Name</th>
+                            <th>Movable</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody class="tableBody">
+                        {% for sub in subs %}
+                        <tr>
+                            <td>{{ loop.index }}</td>
+                            <td>{{ sub.sub_budget_class }}</td>
+                            <td>
+                                {% if sub.movable == 0 %}
+                                    Yes
+                                {% else %}
+                                    No
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if sub.movable == 0 %}
+                                    <a class="deactivated" href="{{ url_for('.toggle_budget_movable_status', action=1, sub=sub.id) }}">Mark as Fixed</a>
+                                {% else %}
+                                    <a class="activated" href="{{ url_for('.toggle_budget_movable_status', action=0, sub=sub.id) }}">Mark as Movable</a>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

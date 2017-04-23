@@ -151,3 +151,7 @@
   color: #939393;
   text-shadow: 0 1px 1px #fff;
 }
+
+.details table tr td a.edit-ldap{
+    text-decoration:none;padding:5px 10px;border-radius:3px;color:#fff;background:#0078d7;margin-right:10px
+}
