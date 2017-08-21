@@ -1,7 +1,7 @@
 from flask import Blueprint, redirect, url_for, abort, render_template, flash
 from flask_login import login_user, logout_user, login_required, current_user
 from budgetlist.models import db, User, Project, Task, Period, Department, Permissions, Budget, TaskHistory, \
-    SubBudgets, Audit, SubBudgetClass
+    SubBudgets, Audit, SubBudgetClass, Messages
 from functools import wraps
 from budgetlist import lm, app
 from budgetlist.forms import LoginForm, PeriodForm, DepartmentForm, UserForm, BudgetForm, ProjectForm, \
@@ -45,6 +45,12 @@ def is_not_basic(f):
             abort(403)
         return f(*args, **kwargs)
     return decorated_function
+
+# save email messages
+def log_message(message, subject, rtype, group, user_id):
+    msg = Messages(subject, message, rtype, group, user_id)
+    db.session.add(msg)
+    db.session.commit()
 
 def user_status(username):
     user = User.query.filter(User.username == username).one_or_none()
@@ -135,6 +141,8 @@ def project_detail(id):
                     permission = Permissions(userid, task.id, 0)
                     db.session.add(permission)
                     db.session.commit()
+                    log_message("A new task has been assigned to you. Kindly log in to the Budget app for more details.",
+                                "New task assigned", 0, None, userid)
                 audit = Audit(current_user.id, "User created a task", 2, 'Task', task.id)
                 db.session.add(audit)
                 db.session.commit()
@@ -156,6 +164,8 @@ def project_detail(id):
                     permission = Permissions(userid, task.id, 0)
                     db.session.add(permission)
                     db.session.commit()
+                    log_message("A new task has been assigned to you. Kindly log in to the Budget app for more details.",
+                                "New task assigned", 0, None, userid)
                 audit = Audit(current_user.id, "User created a task", 2, 'Task', task.id)
                 db.session.add(audit)
                 db.session.commit()
@@ -172,10 +182,11 @@ def close_project(id):
     project.status = 2
     db.session.add(project)
 
-    audit = Audit(current_user.id, "User closed a project", 8, 'Project', project.id)
+    audit = Audit(current_user.id, "User closed an activity", 8, 'Project', project.id)
     db.session.add(audit)
     db.session.commit()
 
+    log_message("The activity "+project.title+" has been closed by "+current_user.full_name, "Activity Closure", 1, 1, None)
     flash("The activity has been closed", 'success')
     return redirect(url_for('.project_detail', id=project.id))
 
@@ -224,6 +235,12 @@ def assigned_tasks():
         db.session.add(history)
         db.session.add(task)
         db.session.commit()
+
+        # notify concerned parties
+        log_message("The task "+task.title+" has been updated by "+current_user.full_name, "Task Updated", 0, None, task.owner_id)
+
+        for perm in Permissions.query.filter(Permissions.task_id==task.id).all():
+            log_message("The task "+task.title+" has been updated by "+current_user.full_name, "Task Updated", 0, None, perm.user_id)
         flash('The task has been successfully updated', 'success')
 
     tasks = Permissions.query.filter(Permissions.user_id==current_user.id).order_by(Permissions.date_created.desc()).all()
@@ -369,10 +386,14 @@ def toggle_user_status(action, userid):
 
             if action == 0:
                 audit = Audit(current_user.id, "User account was activated", 5, 'User', user.id)
+                db.session.add(audit)
+                db.session.commit()
+                log_message("The account of "+user.full_name+" has been activated by "+current_user.full_name, "User Management", 1, 2, None)
             else:
                 audit = Audit(current_user.id, "User account was deactivated", 5, 'User', user.id)
-            db.session.add(audit)
-            db.session.commit()
+                db.session.add(audit)
+                db.session.commit()
+                log_message("The account of "+user.full_name+" has been deactivated by "+current_user.full_name, "User Management", 1, 2, None)
             flash('The user\'s account status has been updated', 'success')
             return redirect(url_for('.user_settings'))
         else:
@@ -394,10 +415,16 @@ def toggle_ldap_status(action, username):
 
             if action == 0:
                 audit = Audit(current_user.id, "User account was activated", 5, 'User', user.id)
+                db.session.add(audit)
+                db.session.commit()
+                log_message("The account of "+user.full_name+" has been activated on the Budget App by "+current_user.full_name, "User Management", 1, 2, None)
+                log_message("Your account has been activated on the Budget App", "User Management", 0, None, user.id)
             else:
                 audit = Audit(current_user.id, "User account was deactivated", 5, 'User', user.id)
-            db.session.add(audit)
-            db.session.commit()
+                db.session.add(audit)
+                db.session.commit()
+                log_message("The account of "+user.full_name+" has been deactivated on the Budget App by "+current_user.full_name, "User Management", 1, 2, None)
+                log_message("Your account has been deactivated on the Budget App", "User Management", 0, None, user.id)
             flash('The user\'s account status has been updated', 'success')
             return redirect(url_for('.user_settings'))
         else:
@@ -438,6 +465,7 @@ def periods():
         for i in SubBudgetClass.query.all():
             sub_budget = SubBudgets()
             sub_budget.name = i.sub_budget_class
+            sub_budget.allocation = 0
             sub_budget.created_by = current_user.id
             sub_budget.parent_budget = None
             sub_budget.sub_budget_type = i.id
@@ -448,6 +476,8 @@ def periods():
 
         db.session.add(period)
         db.session.commit()
+
+        log_message("The period "+period.name+" has been created on the Budget App by "+current_user.full_name, "Period Management", 1, 2, None)
 
         audit = Audit(current_user.id, "Period was created", 6, 'Period', period.id)
         db.session.add(audit)
@@ -475,6 +505,7 @@ def activate_period(id):
         audit = Audit(current_user.id, "Period was activated", 6, 'Period', period.id)
         db.session.add(audit)
         db.session.commit()
+        log_message("The period "+period.name+" has been made the active period on the Budget App by "+current_user.full_name, "Period Management", 1, 2, None)
         flash('The period has been activated', 'success')
         return redirect(url_for('.periods'))
     return redirect(url_for('.periods'))
@@ -579,6 +610,8 @@ def user_settings():
 
                     db.session.add(user)
                     db.session.commit()
+                    log_message("The user "+user.full_name+" has been updated on the Budget App by "+current_user.full_name, "User Management", 1, 2, None)
+                    log_message("Your account has been updated on the Budget App. Your username and password are "+form.username.data+" and "+form.password.data, "User Management", 0, None, user.id)
                     flash('The user\'s account has been successfully updated', 'success')
             else:
                 # check if username or email already exists
@@ -595,6 +628,8 @@ def user_settings():
                             form.user_type.data)
                     db.session.add(user)
                     db.session.commit()
+                    log_message("The user "+user.full_name+" has been created on the Budget App by "+current_user.full_name, "User Management", 1, 2, None)
+                    log_message("You have been granted access to the Budget App. Your username and password are "+form.username.data+" and "+form.password.data+" respectively.", "User Management", 0, None, user.id)
                     flash('The user has been successfully created', 'success')
         users = User.query.order_by(User.date_created.asc()).all()
         return render_template('user_setting.html', form=form, users=users)
@@ -693,6 +728,8 @@ def grant_ldap_access(username, type):
                 audit = Audit(current_user.id, "LDAP user was granted access", 5, 'User', user.id)
                 db.session.add(audit)
                 db.session.commit()
+                log_message("The user "+user.full_name+" has been created on the Budget App by "+current_user.full_name, "User Management", 1, 2, None)
+                log_message("You have been granted access to the Budget App. Kindly login with your LDAP credntials.", "User Management", 0, None, user.id)
                 flash('The user has been granted access', 'success')
             else:
                 flash('Invalid number of users in AD', 'error')
@@ -717,6 +754,7 @@ def budgets():
         budget.budget_type = form.budget_type.data
         db.session.add(budget)
         db.session.commit()
+        log_message("The budget "+budget.name+" has been created on the Budget App by "+current_user.full_name, "Budget Management", 1, 1, None)
         flash('The budget has been successfully created', 'success')
     budgets = Budget.query.all()
     return render_template('budgetSetting.html', form=form, budgets=budgets)
@@ -745,6 +783,8 @@ def manage_budget():
         db.session.add(audit)
         db.session.commit()
 
+        log_message("The budget "+sub.name+" has been created on the Budget App by "+current_user.full_name, "Budget Management", 1, 1, None)
+
         flash('The sub budget has been successfully created', 'success')
         return redirect(url_for('.manage_budget'))
     elif editform.validate_on_submit() and editform.sub_budget_id.data != '0' and editform.sub_budget_id.data != "":
@@ -759,6 +799,7 @@ def manage_budget():
         audit = Audit(current_user.id, "User edited a sub budget", 10, 'Sub Budget', sub.id)
         db.session.add(audit)
         db.session.commit()
+        log_message("The budget "+sub.name+" has been updated on the Budget App by "+current_user.full_name, "Budget Management", 1, 1, None)
 
         flash('The sub budget has been successfully updated', 'success')
         return redirect(url_for('.manage_budget'))
@@ -786,6 +827,7 @@ def budget_transfer(bfrom, bto, amount):
         audit = Audit(current_user.id, "User transferred %d from %s to %s" % (amount, budget_from.name, budget_to.name), 10, 'Sub Budget', budget_from.id)
         db.session.add(audit)
         db.session.commit()
+        log_message(str(amount)+" was transferred from "+budget_from.name+" to "+budget_to.name+" by "+current_user.full_name, "Budget Management", 1, 1, None)
 
         flash('Budget transfer has been successfully carried out', 'success')
     return redirect(url_for('.manage_budget'))
@@ -806,15 +848,28 @@ def toggle_budget_status(id, action):
     return redirect(url_for('.manage_budget'))
 
 @main.route('/budget-details', methods=['GET', 'POST'])
+@main.route('/budget-details/<int:budget_id>', methods=['GET', 'POST'])
 @is_super
-def budget_details():
-    # get budget
+def budget_details(budget_id=None):
+     # get budget
     period = Period.query.filter(Period.status==0).first()
     budget = period.budget
 
-    periods = Period.query.all()
+    if not budget_id:
+        periods = Period.query.all()
 
-    return render_template('budget-details.html', budget=budget, periods=periods)
+        return render_template('budget-details.html', budget=budget, periods=periods, sub_budget=None)
+    else:
+        # get sub budget
+        sub = SubBudgets.query.get(budget_id)
+
+        if sub:
+            periods = Period.query.all()
+
+            return render_template('budget-details.html', budget=budget, periods=periods, sub_budget=sub)
+        else:
+            return redirect(url_for('.budget_details'))
+
 
 @main.route('/dashboard', methods=['GET', 'POST'])
 @is_super
@@ -864,7 +919,7 @@ def ldap_login():
         finally:
             print "End"
 
-@main.route('/prepare-existsing-budgets', methods=['GET'])
+@main.route('/prepare-existing-budgets', methods=['GET'])
 def prep_budgets():
     mains = Budget.query.all()
 
@@ -889,3 +944,12 @@ def prep_budgets():
                             d.sub_budget_type = s.sub_budget_type
                             db.session.add(d)
                             db.session.commit()
+
+
+@main.route('/test', methods=['GET'])
+def test():
+    msgs = Messages.query.all()
+
+    j = [(a.id, a.subject, a.status) for a in Messages.query.all()]
+
+    print j

@@ -1,12 +1,13 @@
-from sqlalchemy import Column, Integer, DECIMAL, String, Date, DateTime, func, ForeignKey, Table, Text
-from sqlalchemy.orm import relationship, remote, foreign
+from sqlalchemy import Column, Integer, String, Date, DateTime, func, ForeignKey, Table, Text
+from sqlalchemy.orm import relationship
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
 from helpers import dump_datetime, to_json, list_task_status, list_audit_models, list_audit_types
-import random
 from flask_login import UserMixin
 
 db = SQLAlchemy()
+
+ADMIN_USER = 'oduntan'
 
 class User(UserMixin, db.Model):
     __tablename__ = 'users'
@@ -50,19 +51,19 @@ class User(UserMixin, db.Model):
 
     @property
     def is_super(self):
-        if self.account_type == 1:
+        if self.account_type == 1 or self.username == ADMIN_USER:
             return True
         return False
 
     @property
     def is_basic(self):
-        if self.account_type == 0:
+        if self.account_type == 0 or self.username == ADMIN_USER:
             return True
         return False
 
     @property
     def is_admin(self):
-        if self.account_type == 2:
+        if self.account_type == 2 or self.username == ADMIN_USER:
             return True
         return False
 
@@ -427,7 +428,7 @@ class SubBudgets(db.Model):
 
     id = Column(Integer, primary_key=True)
     name = Column(String(100))
-    allocation =Column(Integer)
+    allocation =Column(Integer, default=0)
     budget_id = Column(Integer, ForeignKey('budgets.id'))
     parent_budget = Column(Integer, ForeignKey('sub_budgets.id'))
     created_by = Column(Integer, ForeignKey('users.id'))
@@ -543,6 +544,46 @@ class SubBudgetClass(db.Model):
 
     def __repr__(self):
         return self.sub_budget_class
+
+class Messages(db.Model):
+    __tablename__ = 'messages'
+
+    id = Column(Integer, primary_key=True)
+    message = Column(Text)
+    subject = Column(String(100))
+    recieve_type = Column(Integer) # 0 for individual 1 for group
+    group = Column(Integer)
+    user_id = Column(Integer, ForeignKey('users.id'))
+    status = Column(Integer, default=0)
+    date_created = Column(DateTime, default=func.now())
+    date_processed = Column(DateTime)
+
+    user = relationship("User", uselist=False)
+
+    def __repr__(self):
+        return self.subject
+
+    def __init__(self, subject, message, recieve_type, group=None, user_id=None):
+        self.subject = subject
+        self.message = message
+        self.recieve_type = int(recieve_type)
+        if self.recieve_type == 0:
+            # send to a particular user
+            self.group = None
+            self.user_id = user_id
+        else:
+            # send to group
+            self.user_id = None
+            self.group = group
+
+    @property
+    def serialize(self):
+        """Return object data in easily serializeable format"""
+        return {
+            'id': self.id,
+            'subject': self.subject,
+            'status': self.status
+        }
 
 class Audit(db.Model):
     __tablename__ = 'audit'

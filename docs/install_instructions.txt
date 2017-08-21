@@ -15,3 +15,22 @@ insert into sub_budget_classes (sub_budget_class) values ('Operational Ex.');
 insert into sub_budget_classes (sub_budget_class) values ('Capital Ex.');
 insert into sub_budget_classes (sub_budget_class) values ('Consultancy');
 insert into sub_budget_classes (sub_budget_class) values ('Moveables');
+
+###############################
+Mailing
+###############################
+update mailing configuration
+
+
+###############################
+To setup Celery:
+###############################
+first install rabbitmq:
+sudo apt-get install rabbitmq-server
+
+
+##############################
+To run celery:
+##############################
+celery -A budgetlist:celery worker --loglevel=info
+celery beat --app budgetlist:celery

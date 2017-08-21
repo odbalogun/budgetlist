@@ -142,7 +142,12 @@
                 </div>
                 <div class="col-md-6">
                     <div class="title">Chart Information</div>
-                    <div id="graph"></div>
+                    <div class="pieSection">
+
+                        <div class="pieContent">
+                            <div id="pie-chart" style="height: 200px;"></div>
+                        </div>
+                    </div>
                 </div>
             </div>  
         </div>
@@ -419,5 +424,15 @@ ko.applyBindings(createView, $('#addProject')[0]);
 ko.applyBindings(statView, $('.analyticsWrap')[0]);
 ko.applyBindings(ongoingView, $('.rightUpdate')[0]);
 </script>
-{% endblock %}
 
+{% endblock %}
+{% block extraJs %}
+<script>
+        var datapie = []
+        datapie.push({ label: "Ongoing", value: {{ ongoing_count }} },{ label: "Completed", value: {{ completed_count }} }, { label: "Overdue", value: {{ overdue_count }} });
+        Morris.Donut({
+            element: 'pie-chart',
+            data: datapie
+        });
+</script>
+{% endblock %}

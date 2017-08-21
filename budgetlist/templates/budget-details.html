@@ -24,13 +24,13 @@
     <div class="wrapper clearfix">
         <div class="filterWrap clearfix mt-30 dontprint">
             <div class="col-md-8">
-                <button type="button" class="btn btn-info btn-sm p-btn printPDF"><i class="fa fa-file-pdf-o" aria-hidden="true"></i> Download PDF</button>
+                <button type="button" class="btn btn-info btn-sm p-btn" id="btnExport" onclick="fnExcelReport();"><i class="fa fa-file-excel-o" aria-hidden="true"></i> Download Excel</button>
                 <button type="button" class="btn btn-primary btn-sm p-btn printMe"><i class="fa fa-print" aria-hidden="true"></i> Print</button>
             </div>
             <div class="col-md-2">
                 <div class="filter">
                     <label for="">Budget Type</label>
-                    <select>
+                    <select id="filterbudget" onclick="filterBudget()">
                         <option value="">--Select One--</option>
                         {% for sub in budget.main_subs %}
                             <option value="{{ sub.id }}">{{ sub.name }}</option>
@@ -53,240 +53,209 @@
             <div id="editor"></div><br><br>
 
 
-            <table class="table table-bordered budgetTable">
+            <table class="table table-bordered budgetTable" id="budget">
                 <thead>
                     <tr class="">
-                        <th class="w-70">Name</th>
+                        <th class="w-70" style="width:70%">Name</th>
                         <th>Allocation</th>
                         <th>Performance</th>
                     </tr>
                 </thead>
                 <tbody>
-                {% for b in budget.main_subs %}
-                    <tr class="parent">
-                        <td class="bold text-big">{{ b.name }}</td>
-                        <td class="bold text-medium">₦{{ "{:,}".format(b.get_allocation) }}</td>
-                        <td class="bold text-medium">₦{{ "{:,}".format(b.total_amount_allocated) }}</td>
+                {% if not sub_budget %}
+                    {% for b in budget.main_subs %}
+                        <tr class="parent">
+                            <td class="bold text-big" style="font-weight:700; font-size:17px">{{ b.name }}</td>
+                            <td class="bold text-medium" style="font-weight:700; font-size:14px">₦{{ "{:,}".format(b.get_allocation) }}</td>
+                            <td class="bold text-medium" style="font-weight:700; font-size:14px">₦{{ "{:,}".format(b.total_amount_allocated) }}</td>
+                        </tr>
+                        {% for pro in b.projects %}
+                            <tr class="child">
+                                <td class="text-medium" style="font-size:14px; padding-left:30px">{{ pro.title }}</td>
+                                <td class="text-small" style="font-size:13px">₦{{ "{:,}".format(pro.budget_limit) }}</td>
+                                <td class="text-small" style="font-size:13px">₦{{ "{:,}".format(pro.amount_spent) }}</td>
+                            </tr>
+                        {% endfor %}
+                        {% for child_sub in b.child_budgets %}
+                            <tr class="child">
+                                <td class="bold text-medium" style="font-weight:700; font-size:14px; padding-left:30px">{{ child_sub.name }}</td>
+                                <td class="bold text-small" style="font-weight:700; font-size:13px">₦{{ "{:,}".format(child_sub.get_allocation) }}</td>
+                                <td class="bold text-small" style="font-weight:700; font-size:13px">₦{{ "{:,}".format(child_sub.total_amount_allocated) }}</td>
+                            </tr>
+
+                            {% for pro in child_sub.projects %}
+                                <tr class="grandChild">
+                                    <td class="text-medium" style="font-size:14px; padding-left:45px">{{ pro.title }}</td>
+                                    <td class="text-small" style="font-size:13px">₦{{ "{:,}".format(pro.budget_limit) }}</td>
+                                    <td class="text-small" style="font-size:13px">₦{{ "{:,}".format(pro.amount_spent) }}</td>
+                                </tr>
+                            {% endfor %}
+
+                            {% for grand_sub in child_sub.child_budgets %}
+                                <tr class="grandChild">
+                                    <td class="bold text-medium" style="font-weight:700; font-size:14px; padding-left:45px">{{ grand_sub.name }}</td>
+                                    <td class="bold text-small" style="font-weight:700; font-size:13px">₦{{ "{:,}".format(grand_sub.get_allocation) }}</td>
+                                    <td class="bold text-small" style="font-weight:700; font-size:13px">₦{{ "{:,}".format(grand_sub.total_amount_allocated) }}</td>
+                                </tr>
+
+                                {% for pro in child_sub.projects %}
+                                    <tr class="greatGrandChild">
+                                        <td class="text-medium" style="font-size:14px; padding-left:55px">{{ pro.title }}</td>
+                                        <td class="text-small" style="font-size:13px">₦{{ "{:,}".format(pro.budget_limit) }}</td>
+                                        <td class="text-small" style="font-size:13px">₦{{ "{:,}".format(pro.amount_spent) }}</td>
+                                    </tr>
+                                {% endfor %}
+                            {% endfor %}
+                        {% endfor %}
+                    {% endfor %}
+                    <tr class="Total">
+                        <td class="bold text-big" style="font-weight:700; font-size:14px; color:#d43f3a">Total</td>
+                        <td class="bold text-medium" style="font-weight:700; font-size:13px">₦{{ "{:,}".format(budget.total_budget) }}</td>
+                        <td class="bold text-medium" style="font-weight:700; font-size:13px">₦{{ "{:,}".format(budget.amount_allocated) }}</td>
                     </tr>
-                    {% for pro in b.projects %}
+                {% else %}
+                    <tr class="parent">
+                        <td class="bold text-big" style="font-weight:700; font-size:17px">{{ sub_budget.name }}</td>
+                        <td class="bold text-medium" style="font-weight:700; font-size:14px">₦{{ "{:,}".format(sub_budget.get_allocation) }}</td>
+                        <td class="bold text-medium" style="font-weight:700; font-size:14px">₦{{ "{:,}".format(sub_budget.total_amount_allocated) }}</td>
+                    </tr>
+                    {% for pro in sub_budget.projects %}
                         <tr class="child">
-                            <td class="text-medium">{{ pro.title }}</td>
-                            <td class="text-small">₦{{ "{:,}".format(pro.budget_limit) }}</td>
-                            <td class="text-small">₦{{ "{:,}".format(pro.amount_spent) }}</td>
+                            <td class="text-medium" style="font-size:14px; padding-left:30px">{{ pro.title }}</td>
+                            <td class="text-small" style="font-size:13px">₦{{ "{:,}".format(pro.budget_limit) }}</td>
+                            <td class="text-small" style="font-size:13px">₦{{ "{:,}".format(pro.amount_spent) }}</td>
                         </tr>
                     {% endfor %}
-                    {% for child_sub in b.child_budgets %}
+                    {% for child_sub in sub_budget.child_budgets %}
                         <tr class="child">
-                            <td class="bold text-medium">{{ child_sub.name }}</td>
-                            <td class="bold text-small">₦{{ "{:,}".format(child_sub.get_allocation) }}</td>
-                            <td class="bold text-small">₦{{ "{:,}".format(child_sub.total_amount_allocated) }}</td>
+                            <td class="bold text-medium" style="font-weight:700; font-size:14px; padding-left:30px">{{ child_sub.name }}</td>
+                            <td class="bold text-small" style="font-weight:700; font-size:13px">₦{{ "{:,}".format(child_sub.get_allocation) }}</td>
+                            <td class="bold text-small" style="font-weight:700; font-size:13px">₦{{ "{:,}".format(child_sub.total_amount_allocated) }}</td>
                         </tr>
 
                         {% for pro in child_sub.projects %}
                             <tr class="grandChild">
-                                <td class="text-medium">{{ pro.title }}</td>
-                                <td class="text-small">₦{{ "{:,}".format(pro.budget_limit) }}</td>
-                                <td class="text-small">₦{{ "{:,}".format(pro.amount_spent) }}</td>
+                                <td class="text-medium" style="font-size:14px; padding-left:45px">{{ pro.title }}</td>
+                                <td class="text-small" style="font-size:13px">₦{{ "{:,}".format(pro.budget_limit) }}</td>
+                                <td class="text-small" style="font-size:13px">₦{{ "{:,}".format(pro.amount_spent) }}</td>
                             </tr>
                         {% endfor %}
 
                         {% for grand_sub in child_sub.child_budgets %}
                             <tr class="grandChild">
-                                <td class="bold text-medium">{{ grand_sub.name }}</td>
-                                <td class="bold text-small">₦{{ "{:,}".format(grand_sub.get_allocation) }}</td>
-                                <td class="bold text-small">₦{{ "{:,}".format(grand_sub.total_amount_allocated) }}</td>
+                                <td class="bold text-medium" style="font-weight:700; font-size:14px; padding-left:45px">{{ grand_sub.name }}</td>
+                                <td class="bold text-small" style="font-weight:700; font-size:13px">₦{{ "{:,}".format(grand_sub.get_allocation) }}</td>
+                                <td class="bold text-small" style="font-weight:700; font-size:13px">₦{{ "{:,}".format(grand_sub.total_amount_allocated) }}</td>
                             </tr>
 
                             {% for pro in child_sub.projects %}
                                 <tr class="greatGrandChild">
-                                    <td class="text-medium">{{ pro.title }}</td>
-                                    <td class="text-small">₦{{ "{:,}".format(pro.budget_limit) }}</td>
-                                    <td class="text-small">₦{{ "{:,}".format(pro.amount_spent) }}</td>
+                                    <td class="text-medium" style="font-size:14px; padding-left:55px">{{ pro.title }}</td>
+                                    <td class="text-small" style="font-size:13px">₦{{ "{:,}".format(pro.budget_limit) }}</td>
+                                    <td class="text-small" style="font-size:13px">₦{{ "{:,}".format(pro.amount_spent) }}</td>
                                 </tr>
                             {% endfor %}
                         {% endfor %}
                     {% endfor %}
-                {% endfor %}
-                <tr class="Total">
-                    <td class="bold text-big">Total</td>
-                    <td class="bold text-medium">₦{{ "{:,}".format(budget.total_budget) }}</td>
-                    <td class="bold text-medium">₦{{ "{:,}".format(budget.amount_allocated) }}</td>
-                </tr>
+                    <tr class="Total">
+                        <td class="bold text-big" style="font-weight:700; font-size:14px; color:#d43f3a">Total</td>
+                        <td class="bold text-medium" style="font-weight:700; font-size:13px">₦{{ "{:,}".format(sub_budget.get_allocation) }}</td>
+                        <td class="bold text-medium" style="font-weight:700; font-size:13px">₦{{ "{:,}".format(sub_budget.total_amount_allocated) }}</td>
+                    </tr>
+                {% endif %}
                 </tbody>
             </table>
-
-            
-            <!-- <div class="hv-container">
-                <div class="hv-wrapper">
-
-                    <div class="hv-item">
-
-                        <div class="hv-item-parent">
-                            <div class="simple-card clearfix"> 
-                                <div class="col-md-12 p-0">
-                                    <div class="dInfoWrap">
-                                        <div class="title">Name</div>
-                                        <div class="content extra">Capital Ex.</div>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="dInfoWrap">
-                                        <div class="title">Allocation</div>
-                                        <div class="content">₦20,000,000</div>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="dInfoWrap">
-                                        <div class="title">Performance</div>
-                                        <div class="content">₦21,000,000</div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="hv-item-children">
-
-                            <div class="hv-item-child">
-
-                                <div class="hv-item">
-
-                                    <div class="hv-item-parent">
-                                        <div class="simple-card clearfix"> 
-                                            <div class="col-md-12 p-0">
-                                                <div class="dInfoWrap">
-                                                    <div class="title">Name</div>
-                                                    <div class="content extra">Building Offices</div>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-6 p-0">
-                                                <div class="dInfoWrap">
-                                                    <div class="title">Allocation</div>
-                                                    <div class="content">₦20,000,000</div>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-6 p-0">
-                                                <div class="dInfoWrap">
-                                                    <div class="title">Performance</div>
-                                                    <div class="content">₦21,000,000</div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="hv-item-children">
-
-                                        <div class="hv-item-child">
-                                            <div class="simple-card clearfix"> 
-                                                <div class="col-md-12 p-0">
-                                                    <div class="dInfoWrap">
-                                                        <div class="title">Name</div>
-                                                        <div class="content extra">Build Wall</div>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-6 p-0">
-                                                    <div class="dInfoWrap">
-                                                        <div class="title">Allocation</div>
-                                                        <div class="content">₦20,000,000</div>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-6 p-0">
-                                                    <div class="dInfoWrap">
-                                                        <div class="title">Performance</div>
-                                                        <div class="content">₦21,000,000</div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-
-
-                                        <div class="hv-item-child">
-                                            <div class="simple-card clearfix"> 
-                                                <div class="col-md-12 p-0">
-                                                    <div class="dInfoWrap">
-                                                        <div class="title">Name</div>
-                                                        <div class="content extra">Buy Paints</div>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-6 p-0">
-                                                    <div class="dInfoWrap">
-                                                        <div class="title">Allocation</div>
-                                                        <div class="content">₦20,000,000</div>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-6 p-0">
-                                                    <div class="dInfoWrap">
-                                                        <div class="title">Performance</div>
-                                                        <div class="content">₦21,000,000</div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <div class="hv-item-child">
-                                            <div class="simple-card clearfix"> 
-                                                <div class="col-md-12 p-0">
-                                                    <div class="dInfoWrap">
-                                                        <div class="title">Name</div>
-                                                        <div class="content extra">Pay Bills</div>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-6 p-0">
-                                                    <div class="dInfoWrap">
-                                                        <div class="title">Allocation</div>
-                                                        <div class="content">₦20,000,000</div>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-6 p-0">
-                                                    <div class="dInfoWrap">
-                                                        <div class="title">Performance</div>
-                                                        <div class="content">₦21,000,000</div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                    </div>
-
-                                </div>
-                            </div>
-
-
-                            <div class="hv-item-child">
-                                <div class="simple-card clearfix"> 
-                                    <div class="col-md-12 p-0">
-                                        <div class="dInfoWrap">
-                                            <div class="title">Name</div>
-                                            <div class="content extra">Investment</div>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6 p-0">
-                                        <div class="dInfoWrap">
-                                            <div class="title">Allocation</div>
-                                            <div class="content">₦20,000,000</div>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6 p-0">
-                                        <div class="dInfoWrap">
-                                            <div class="title">Performance</div>
-                                            <div class="content">₦21,000,000</div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                        </div>
-
-                    </div>
-
-                </div>
-            </div><br><br><br><br> -->
-
 
         </div>
     </div>
 </div>
 
 <script type="text/javascript">
+    function fnDownloadExcel(){
+        //getting values of current time for generating the file name
+        var dt = new Date();
+        var day = dt.getDate();
+        var month = dt.getMonth() + 1;
+        var year = dt.getFullYear();
+        var hour = dt.getHours();
+        var mins = dt.getMinutes();
+        var postfix = day + "." + month + "." + year + "_" + hour + "." + mins;
+        //creating a temporary HTML link element (they support setting file names)
+        var a = document.createElement('a');
+        //getting data from our div that contains the HTML table
+        var data_type = 'data:application/vnd.ms-excel';
+        var table_div = document.getElementById('budget');
+        var table_html = table_div.outerHTML.replace(/ /g, '%20');
+        a.href = data_type + ', ' + table_html;
+        //setting the file name
+        a.download = 'exported_table_' + postfix + '.xls';
+        //triggering the function
+        a.click();
+        //just in case, prevent default behaviour
+        e.preventDefault();
+    }
 
+
+    function fnExcelReport()
+    {
+        var tab_text="<table border='2px'><tr bgcolor='#87AFC6'>";
+        var textRange; var j=0;
+        tab = document.getElementById('budget'); // id of table
+
+        for(j = 0 ; j < tab.rows.length ; j++)
+        {
+            tab_text=tab_text+tab.rows[j].innerHTML+"</tr>";
+            //tab_text=tab_text+"</tr>";
+        }
+
+        tab_text=tab_text+"</table>";
+        tab_text= tab_text.replace(/<A[^>]*>|<\/A>/g, "");//remove if u want links in your table
+        tab_text= tab_text.replace(/<img[^>]*>/gi,""); // remove if u want images in your table
+        tab_text= tab_text.replace(/<input[^>]*>|<\/input>/gi, ""); // reomves input params
+
+        var ua = window.navigator.userAgent;
+        var msie = ua.indexOf("MSIE ");
+
+        if (msie > 0 || !!navigator.userAgent.match(/Trident.*rv\:11\./))      // If Internet Explorer
+        {
+            txtArea1.document.open("txt/html","replace");
+            txtArea1.document.write(tab_text);
+            txtArea1.document.close();
+            txtArea1.focus();
+            sa=txtArea1.document.execCommand("SaveAs",true,"budget_download.xls");
+        }
+        else                 //other browser not tested on IE 11
+            //sa = window.open('data:application/vnd.ms-excel,' + encodeURIComponent(tab_text), "budget_download.xls");
+            //return (sa);
+            var dt = new Date();
+            var day = dt.getDate();
+            var month = dt.getMonth() + 1;
+            var year = dt.getFullYear();
+            var hour = dt.getHours();
+            var mins = dt.getMinutes();
+            var postfix = day + "." + month + "." + year + "_" + hour + "." + mins;
+            saveContent(encodeURIComponent(tab_text), 'budget_download_'+postfix+'.xls');
+    }
+
+    function saveContent(fileContents, fileName)
+    {
+        var link = document.createElement('a');
+        link.download = fileName;
+        link.href = 'data:,' + fileContents;
+        link.click();
+    }
+
+    function filterBudget()
+    {
+        budgetId = document.getElementById('filterbudget').value;
+        console.log(budgetId);
+        if(budgetId){
+            window.location.replace('http://localhost:9000/budget-details/'+budgetId);
+        }else{
+            window.location.replace('http://localhost:9000/budget-details');
+        }
+        //window.location.replace('http://localhost:9000/budget-details/'+1);
+    }
 </script>
+<iframe id="txtArea1" style="display:none"></iframe>
 {% endblock %}

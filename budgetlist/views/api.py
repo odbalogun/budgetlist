@@ -1,5 +1,6 @@
 from flask import Blueprint, jsonify, abort, make_response, request
 from budgetlist.models import db, User, Project, Task, SubBudgets, Department, Audit, Period, SubBudgets
+from budgetlist.views.main import log_message
 
 api = Blueprint('api', __name__)
 
@@ -35,6 +36,7 @@ def add_sub_budget():
     audit = Audit(sub.created_by, "User created a sub budget", 9, 'Sub Budget', sub.id)
     db.session.add(audit)
     db.session.commit()
+    log_message("The budget "+sub.name+" has been created on the Budget App by "+sub.created_by, "Budget Management", 1, 1, None)
 
     return jsonify({'status': 'success'}), 201
 
@@ -124,6 +126,7 @@ def create_project():
     audit = Audit(request.json['owner_id'], "Activity was created", 1, 'Project', project.id)
     db.session.add(audit)
     db.session.commit()
+    log_message("The activity "+project.title+" has been created on the Budget App by "+project.owner.full_name, "Budget Management", 1, 1, None)
 
     return jsonify({'status': 'success', 'project': project.serialize}), 201
 
@@ -189,6 +192,7 @@ def create_tasks():
     audit = Audit(request.json['owner_id'], "Task was created", 2, 'Task', task.id)
     db.session.add(audit)
     db.session.commit()
+    log_message("The task "+task.title+" has been created on the Budget App by "+task.owner.full_name, "Task Management", 1, 1, None)
 
     return jsonify({'status': 'success', 'task': task.serialize}), 201
 
