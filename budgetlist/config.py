@@ -27,6 +27,7 @@ class Config(object):
     MAIL_PORT = 587
     MAIL_USE_TLS = True
     MAIL_USERNAME = 'sigma.balogun@gmail.com'
+
     MAIL_PASSWORD = 'dimeji@19'
     MAIL_DEFAULT_SENDER = 'flask@example.com'
 
